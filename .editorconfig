@@ -1,0 +1,16 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 2
+
+# Microsoft .NET properties
+csharp_indent_braces = false
+csharp_new_line_before_open_brace = none
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+
+# ReSharper properties
+resharper_csharp_indent_size = 2
+resharper_csharp_insert_final_newline = true
+resharper_csharp_remove_blank_lines_near_braces_in_code = false

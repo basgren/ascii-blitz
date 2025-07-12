@@ -9,12 +9,13 @@ public class MapGridRenderer {
   private const int CellHeight = 3;
     
   private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
-  private readonly Sprite _unknownSprite;
+  private readonly UnknownSprite _unknownSprite;
 
   public MapGridRenderer() {
     _spriteMapping = new Dictionary<MapObjectType, Sprite> {
       { MapObjectType.Empty, new EmptySprite() },
-      { MapObjectType.Wall, new WallSprite() }
+      { MapObjectType.Wall, new WallSprite() },
+      { MapObjectType.Tank, new TankSprite() },
     };
 
     _unknownSprite = new UnknownSprite();
@@ -36,10 +37,11 @@ public class MapGridRenderer {
     // Render the map
     for (int mapY = 0; mapY < renderHeight; mapY++) {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
+        MapObject mapObject = GetMapObject(map, mapX, mapY) ?? MapEmpty.Instance;
+        var sprite = GetSpriteForMapObject(mapObject);
+        var spriteData = sprite.GetSprite(mapObject);
+        
         for (int spriteY = 0; spriteY < CellHeight; spriteY++) {
-          var sprite = GetSpriteForPosition(map, mapX, mapY);
-          var spriteData = sprite.GetSprite();
-
           // Render 3 characters for each map cell
           for (int spriteX = 0; spriteX < CellWidth; spriteX++) {
             var x = mapX * CellWidth + spriteX;
@@ -56,6 +58,20 @@ public class MapGridRenderer {
     }
   }
 
+  private MapObject? GetMapObject(GameMap map, int x, int y) {
+    // Check layers from highest index to lowest (back to front)
+    for (int layerIndex = map.LayerCount - 1; layerIndex >= 0; layerIndex--) {
+      var layer = map.GetLayer(layerIndex);
+      var mapObject = layer.GetAt(x, y);
+
+      if (mapObject != null) {
+        return mapObject;
+      }
+    }
+
+    return null;
+  }
+  
   private Sprite GetSpriteForPosition(GameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
     for (int layerIndex = map.LayerCount - 1; layerIndex >= 0; layerIndex--) {

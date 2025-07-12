@@ -16,11 +16,14 @@ public class TestMapGenerator : IMapGenerator {
   public GameMap Build() {
     GameMap map = new GameMap();
 
-    map.SetSize(_size.x, _size.y);
+    map.SetSize(_size.X, _size.Y);
     
     MapLayer layer = map.AddLayer();
 
-    Rect(layer, 0, 0, layer.Width, layer.Height, MapObjectType.Wall);
+    Rect(layer, 0, 0, map.Width, map.Height, MapObjectType.Wall);
+    
+    MapUnitLayer tankLayer = map.AddUnitLayer();
+    tankLayer.Player.Pos = new Vec2Int(1, 1);
     
     return map;
   }

@@ -27,8 +27,8 @@ public class GrassSprite : Sprite<MapGrass> {
   }
 
   private static readonly string[] _grassChars = [
-    "YVWvw,.'   ",
-    "ywv;,.'  ",
+    "YVWvwi   ",
+    "ywv,.'  ",
     "vy.,.'  ",
     "v,.`    ",
     "#.`    ",

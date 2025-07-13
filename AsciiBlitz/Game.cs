@@ -23,7 +23,7 @@ public class Game {
     IMapGenerator mapGen = new TestMapGenerator();
 
     _map = mapGen
-      .SetSize(30, 10)
+      .SetSize(20, 10)
       .Build();
 
     // Test rendering - when needed to show generated map.

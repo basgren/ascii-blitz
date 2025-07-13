@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Core.Map.Objects;
+﻿using AsciiBlitz.Core.Map.Layers;
+using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Map.Generator;
@@ -18,20 +19,20 @@ public class TestMapGenerator : IMapGenerator {
 
     map.SetSize(_size.X, _size.Y);
 
-    MapLayer backLayer = map.AddLayer();
+    TileLayer backLayer = map.AddLayer();
     Rect(backLayer, 1, 1, map.Width - 1, map.Height - 1, MapObjectType.Grass, true);
     
-    MapLayer layer = map.AddLayer();
+    TileLayer layer = map.AddLayer();
 
     Rect(layer, 0, 0, map.Width, map.Height, MapObjectType.Wall);
     
-    MapUnitLayer tankLayer = map.AddUnitLayer();
+    ObjectLayer tankLayer = map.AddUnitLayer();
     tankLayer.Player.Pos = new Vec2Int(1, 1);
     
     return map;
   }
 
-  private void Rect(MapLayer layer, int x1, int y1, int x2, int y2, MapObjectType type, bool fill = false) {
+  private void Rect(TileLayer layer, int x1, int y1, int x2, int y2, MapObjectType type, bool fill = false) {
     if (fill) {
       for (int x = x1; x < x2; x++) {
         for (int y = y1; y < y2; y++) {

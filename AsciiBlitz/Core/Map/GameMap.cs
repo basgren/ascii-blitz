@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Core.Map.Objects;
+﻿using AsciiBlitz.Core.Map.Layers;
+using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Map;
@@ -12,7 +13,7 @@ public class GameMap {
   private readonly List<IMapLayer> _layers;
   private int _width;
   private int _height;
-  private MapUnitLayer? _unitLayer;
+  private ObjectLayer? _unitLayer;
 
   public GameMap() {
     _layers = new List<IMapLayer>();
@@ -27,23 +28,23 @@ public class GameMap {
     }
   }
 
-  public MapLayer AddLayer() {
-    var layer = new MapLayer(_width, _height);
+  public TileLayer AddLayer() {
+    var layer = new TileLayer(_width, _height);
     _layers.Add(layer);
     return layer;
   }
 
-  public MapUnitLayer AddUnitLayer() {
+  public ObjectLayer AddUnitLayer() {
     if (_unitLayer != null) {
       throw new InvalidOperationException("Unit layer already exists");
     }
     
-    _unitLayer = new MapUnitLayer();
+    _unitLayer = new ObjectLayer();
     _layers.Add(_unitLayer);
     return _unitLayer;
   }
 
-  public MapUnitLayer GetUnitLayer() {
+  public ObjectLayer GetUnitLayer() {
     if (_unitLayer == null) {
       throw new InvalidOperationException("Unit layer does not exist");   
     }

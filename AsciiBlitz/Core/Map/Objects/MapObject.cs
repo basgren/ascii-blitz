@@ -13,10 +13,17 @@ public enum MapObjectType {
   Empty,
   Wall,
   Tank,
+  Grass,
 }
 
 public abstract class MapObject {
+  private static int _nextId = 1;
+  public readonly int Id = _nextId++;
+  
   public abstract MapObjectType Type { get; }
+
+  public virtual void Visited() {
+  }
 }
 
 public abstract class MapUnitObject() : MapObject() {
@@ -30,6 +37,15 @@ public class MapTank() : MapUnitObject() {
 
 public class MapWall() : MapObject() {
   public override MapObjectType Type => MapObjectType.Wall;
+}
+
+public class MapGrass() : MapObject() {
+  public override MapObjectType Type => MapObjectType.Grass;
+  public int GrassDamageLevel = 0;
+
+  public override void Visited() {
+    GrassDamageLevel += 1;
+  }
 }
 
 public class MapEmpty() : MapObject() {
@@ -49,6 +65,9 @@ public class MapObjectFactory {
       
       case MapObjectType.Tank:
         return new MapTank();
+      
+      case MapObjectType.Grass:
+        return new MapGrass();
       
       default:
         throw new ArgumentOutOfRangeException(nameof(type), type, null);

@@ -56,7 +56,7 @@ public class GameMap {
   }
 
   public bool CanMove(Vec2Int playerPos, Vec2Int offs) {
-    var layer = GetLayer(0);
+    var layer = GetLayer(1);
     
     var newPos = playerPos + offs;
     var obj = layer.GetAt(newPos.X, newPos.Y);

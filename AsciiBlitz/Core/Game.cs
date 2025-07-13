@@ -80,15 +80,15 @@ public class Game {
           
           case ConsoleKey.Spacebar:
           case ConsoleKey.C:
-            Console.Write($"Key: {(int)keyInfo.Key}    ");
+            // Console.Write($"Key: {(int)keyInfo.Key}    ");
             break;
           default:
-            Console.Write("Key: 0   ");
+            // Console.Write("Key: 0   ");
             break;
         }
       } else {
         // No key pressed
-        Console.Write("Key: 0   ");
+        // Console.Write("Key: 0   ");
       }
       
       // Frame rate limiting
@@ -127,6 +127,12 @@ public class Game {
 
     if (_map.CanMove(player.Pos, offs)) {
       player.Pos += offs;
+      
+      MapObject? obj = _map.GetLayer(0).GetAt(player.Pos.X, player.Pos.Y);
+
+      if (obj != null) {
+        obj.Visited();
+      }
     }
   }
 }

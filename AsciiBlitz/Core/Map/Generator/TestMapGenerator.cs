@@ -17,6 +17,9 @@ public class TestMapGenerator : IMapGenerator {
     GameMap map = new GameMap();
 
     map.SetSize(_size.X, _size.Y);
+
+    MapLayer backLayer = map.AddLayer();
+    Rect(backLayer, 1, 1, map.Width - 1, map.Height - 1, MapObjectType.Grass, true);
     
     MapLayer layer = map.AddLayer();
 
@@ -28,21 +31,31 @@ public class TestMapGenerator : IMapGenerator {
     return map;
   }
 
-  private void Rect(MapLayer layer, int x1, int y1, int x2, int y2, MapObjectType type) {
-    for (int x = x1; x < x2; x++) {
-      var obj = _factory.Create(type);
-      layer.SetAt(x, y1, obj);
-      
-      var obj2 = _factory.Create(type);
-      layer.SetAt(x, y2 - 1, obj2);
+  private void Rect(MapLayer layer, int x1, int y1, int x2, int y2, MapObjectType type, bool fill = false) {
+    if (fill) {
+      for (int x = x1; x < x2; x++) {
+        for (int y = y1; y < y2; y++) {
+          var obj = _factory.Create(type);
+          layer.SetAt(x, y, obj);
+        }
+      }
     }
-    
-    for (int y = y1 + 1; y < y2; y++) {
-      var obj = _factory.Create(type);
-      layer.SetAt(x1, y, obj);
+    else {
+      for (int x = x1; x < x2; x++) {
+        var obj = _factory.Create(type);
+        layer.SetAt(x, y1, obj);
       
-      var obj2 = _factory.Create(type);
-      layer.SetAt(x2 - 1, y, obj2);
+        var obj2 = _factory.Create(type);
+        layer.SetAt(x, y2 - 1, obj2);
+      }
+    
+      for (int y = y1 + 1; y < y2; y++) {
+        var obj = _factory.Create(type);
+        layer.SetAt(x1, y, obj);
+      
+        var obj2 = _factory.Create(type);
+        layer.SetAt(x2 - 1, y, obj2);
+      }      
     }
   }
 }

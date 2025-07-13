@@ -19,7 +19,7 @@ public class Game {
     IMapGenerator mapGen = new TestMapGenerator();
     
     _map = mapGen
-      .SetSize(10, 10)
+      .SetSize(30, 10)
       .Build();
 
     // Test rendering - when needed to show generated map.
@@ -29,15 +29,17 @@ public class Game {
     MapGridRenderer mapRenderer = new();
     
     // Main game loop - 60 FPS
-    const int targetFps = 60;
+    const int targetFps = 30;
     const int frameTimeMs = 1000 / targetFps;
     
     bool gameRunning = true;
+    var startTime = DateTime.Now;
     var lastFrameTime = DateTime.Now;
     
     while (gameRunning) {
       var currentTime = DateTime.Now;
       var deltaTime = (currentTime - lastFrameTime).TotalMilliseconds;
+      var totalTimeSeconds = (currentTime - startTime).TotalSeconds;
       
       // Handle input
       ConsoleKeyInfo keyInfo = default;
@@ -54,7 +56,7 @@ public class Game {
         }
       }
       
-      mapRenderer.Render(_map);
+      mapRenderer.Render(_map, totalTimeSeconds);
       
       // Display key information at position 0,0
       Console.SetCursorPosition(0, 0);

@@ -24,7 +24,7 @@ public class MapGridRenderer {
     _unknownSprite = new UnknownSprite();
   }
 
-  public void Render(GameMap map) {
+  public void Render(GameMap map, double timeSeconds) {
     // Get console size to check available space
     int consoleWidth = Console.WindowWidth;
     int consoleHeight = Console.WindowHeight;
@@ -42,8 +42,8 @@ public class MapGridRenderer {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
         MapObject mapObject = GetMapObject(map, mapX, mapY) ?? MapEmpty.Instance;
         var sprite = GetSpriteForMapObject(mapObject);
-        var spriteData = sprite.GetChars(mapObject);
-        var colors = sprite.GetColors(mapObject);
+        var spriteData = sprite.GetChars(mapObject, timeSeconds);
+        var colors = sprite.GetColors(mapObject, timeSeconds);
 
         for (int spriteY = 0; spriteY < CellHeight; spriteY++) {
           // Render 3 characters for each map cell
@@ -105,22 +105,6 @@ public class MapGridRenderer {
     return null;
   }
 
-  private Sprite GetSpriteForPosition(GameMap map, int x, int y) {
-    // Check layers from highest index to lowest (back to front)
-    for (int layerIndex = map.LayerCount - 1; layerIndex >= 0; layerIndex--) {
-      var layer = map.GetLayer(layerIndex);
-      var mapObject = layer.GetAt(x, y);
-
-      if (mapObject != null) {
-        // Return sprite for the first non-null object found
-        return GetSpriteForMapObject(mapObject);
-      }
-    }
-
-    // If no object found in any layer, render as empty sprite
-    return _spriteMapping[MapObjectType.Empty];
-  }
-
   private Sprite GetSpriteForMapObject(MapObject mapObject) {
     if (_spriteMapping.TryGetValue(mapObject.Type, out var sprite)) {
       return sprite;
@@ -128,10 +112,6 @@ public class MapGridRenderer {
 
     // Return unknown sprite for unmapped objects
     return _unknownSprite;
-  }
-
-  public void RegisterSprite(MapObjectType objectType, Sprite sprite) {
-    _spriteMapping[objectType] = sprite;
   }
 }
 

@@ -1,6 +1,8 @@
-﻿using AsciiBlitz.Core.Input;
+﻿using AsciiBlitz.Core.Core;
+using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Generator;
+using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Types;
@@ -12,6 +14,7 @@ public class Game {
   private IGameInput _input = new ConsoleInput();
 
   private bool _gameRunning = true;
+  private readonly GameState _gameState = new();
 
   public void Run() {
     Console.Clear();
@@ -26,6 +29,10 @@ public class Game {
       .SetSize(20, 10)
       .Build();
 
+    ObjectLayer tankLayer = _map.GetLayer<ObjectLayer>(GameMap.LayerObjectsId);
+    _gameState.Player.Pos = new Vec2(1, 1);
+    tankLayer.Add(_gameState.Player);
+    
     // Test rendering - when needed to show generated map.
     // GameMapRenderer mapRenderer = new GameMapRenderer();
     // mapRenderer.Render(map);
@@ -89,40 +96,41 @@ public class Game {
   private void OnQuit() {
     _gameRunning = false;
   }
-  
 
   private void TryMove(Direction dir) {
-    var layer = _map.GetUnitLayer();
-    Vec2Int offs = new Vec2Int(0, 0);
+    Vec2 offs = Vec2.Zero;
 
     switch (dir) {
       case Direction.Up:
-        offs = Vec2Int.Up;
+        offs = Vec2.Up;
         break;
 
       case Direction.Down:
-        offs = Vec2Int.Down;
+        offs = Vec2.Down;
         break;
 
       case Direction.Left:
-        offs = Vec2Int.Left;
+        offs = Vec2.Left;
         break;
 
       case Direction.Right:
-        offs = Vec2Int.Right;
+        offs = Vec2.Right;
         break;
     }
 
-    var player = layer.Player;
+    MapTank player = _gameState.Player;
     player.Dir = dir;
 
-    if (_map.CanMove(player.Pos, offs)) {
-      player.Pos += offs;
+    if (!offs.IsZero && _map.CanMove(player.Pos, offs)) {
+      var newPos = player.Pos + offs;
+      var oldGridPos = MapUtils.PosToGrid(player.Pos);
+      var newGridPos = MapUtils.PosToGrid(newPos);
+      
+      player.Pos = newPos;
 
-      MapObject? obj = _map.GetLayer(0).GetAt(player.Pos.X, player.Pos.Y);
-
-      if (obj != null) {
-        obj.Visited();
+      if (oldGridPos != newGridPos) {
+        MapObject? obj = _map.GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(player.Pos);
+        obj?.Visited();        
       }
     }
   }

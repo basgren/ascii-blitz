@@ -1,8 +1,10 @@
 ﻿using System.Drawing;
 
 using AsciiBlitz.Core.Map;
+using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Render.Sprites;
+using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Render;
 
@@ -12,6 +14,9 @@ public class MapGridRenderer {
 
   private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
   private readonly UnknownSprite _unknownSprite;
+  
+  private int consoleWidth = Console.WindowWidth;
+  private int consoleHeight = Console.WindowHeight;
 
   public MapGridRenderer() {
     _spriteMapping = new Dictionary<MapObjectType, Sprite> {
@@ -26,8 +31,8 @@ public class MapGridRenderer {
 
   public void Render(GameMap map, double timeSeconds) {
     // Get console size to check available space
-    int consoleWidth = Console.WindowWidth;
-    int consoleHeight = Console.WindowHeight;
+    consoleWidth = Console.WindowWidth;
+    consoleHeight = Console.WindowHeight;
 
     // Calculate how many map cells we can fit (each cell is 3x3)
     int maxMapWidth = consoleWidth / 3;
@@ -40,7 +45,7 @@ public class MapGridRenderer {
     // Render the map
     for (int mapY = 0; mapY < renderHeight; mapY++) {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
-        MapObject mapObject = GetMapObject(map, mapX, mapY) ?? MapEmpty.Instance;
+        MapObject mapObject = GetMapTile(map, mapX, mapY) ?? new MapEmpty(new Vec2Int(mapX, mapY));
         var sprite = GetSpriteForMapObject(mapObject);
         var spriteData = sprite.GetChars(mapObject, timeSeconds);
         var colors = sprite.GetColors(mapObject, timeSeconds);
@@ -62,6 +67,57 @@ public class MapGridRenderer {
             Console.Write(sym);
           }
         }
+      }
+    }
+    
+    // TODO: implement proper rendering of tiled/object layers. I belive it will be easier to do when we have screen
+    //   buffer implemented.
+    var layers = map.GetOrderedLayers();
+
+    for (int i = 0; i < layers.Count; i++) {
+      var layer = layers[i];
+
+      if (layer is ObjectLayer objLayer) {
+        foreach (var obj in objLayer.GetObjects()) {
+          RenderObject(obj, timeSeconds);
+        }
+      }
+    }
+  }
+
+  private void RenderObject(MapUnitObject obj, double timeSeconds) {
+    var sprite = GetSpriteForMapObject(obj);
+    RenderSprite(sprite, obj, obj.Pos, timeSeconds);
+  }
+
+  private void RenderSprite(Sprite sprite, MapObject obj, Vec2 pos, double timeSeconds) {
+    var spriteData = sprite.GetChars(obj, timeSeconds);
+    var colors = sprite.GetColors(obj, timeSeconds);
+    
+    // Here we round to grid cell, as smooth movement requires more work with collision detections, etc.
+    Vec2Int posInt = MapUtils.PosToGrid(pos);
+    
+    int startX = posInt.X * CellWidth;
+    int startY = posInt.Y * CellHeight;
+    
+    // int startX = (int)(pos.X * CellWidth);
+    // int startY = (int)(pos.Y * CellHeight);
+    
+    for (int spriteY = 0; spriteY < CellHeight; spriteY++) {
+      // Render 3 characters for each map cell
+      for (int spriteX = 0; spriteX < CellWidth; spriteX++) {
+        var x = startX + spriteX;
+        var y = startY + spriteY;
+        if (x >= consoleWidth || y >= consoleHeight) {
+          continue;
+        }
+
+        string sym = colors != null
+          ? ApplyColor(spriteData[spriteX, spriteY], colors[spriteX, spriteY])
+          : spriteData[spriteX, spriteY].ToString();
+
+        Console.SetCursorPosition(x, y);
+        Console.Write(sym);
       }
     }
   }
@@ -91,14 +147,19 @@ public class MapGridRenderer {
     };
   }
 
-  private MapObject? GetMapObject(GameMap map, int x, int y) {
+  private MapTile? GetMapTile(GameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
-    for (int layerIndex = map.LayerCount - 1; layerIndex >= 0; layerIndex--) {
-      var layer = map.GetLayer(layerIndex);
-      var mapObject = layer.GetAt(x, y);
+    var layers = map.GetOrderedLayers();
 
-      if (mapObject != null) {
-        return mapObject;
+    for (int layerIndex = layers.Count - 1; layerIndex >= 0; layerIndex--) {
+      var layer = layers[layerIndex];
+
+      if (layer is TileLayer tileLayer) {
+        var tile = tileLayer.GetTileAt(x, y);
+
+        if (tile != null) {
+          return tile;
+        }        
       }
     }
 

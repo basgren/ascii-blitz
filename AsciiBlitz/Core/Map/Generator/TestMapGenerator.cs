@@ -19,15 +19,12 @@ public class TestMapGenerator : IMapGenerator {
 
     map.SetSize(_size.X, _size.Y);
 
-    TileLayer backLayer = map.AddLayer();
+    TileLayer backLayer = map.GetLayer<TileLayer>(GameMap.LayerGroundId);
     Rect(backLayer, 1, 1, map.Width - 1, map.Height - 1, MapObjectType.Grass, true);
     
-    TileLayer layer = map.AddLayer();
-
+    TileLayer layer = map.GetLayer<TileLayer>(GameMap.LayerSolidsId);
     Rect(layer, 0, 0, map.Width, map.Height, MapObjectType.Wall);
-    
-    ObjectLayer tankLayer = map.AddUnitLayer();
-    tankLayer.Player.Pos = new Vec2Int(1, 1);
+    Rect(layer, 2, map.Height / 2, map.Width - 2, map.Height / 2, MapObjectType.Wall);
     
     return map;
   }
@@ -36,26 +33,26 @@ public class TestMapGenerator : IMapGenerator {
     if (fill) {
       for (int x = x1; x < x2; x++) {
         for (int y = y1; y < y2; y++) {
-          var obj = _factory.Create(type);
-          layer.SetAt(x, y, obj);
+          var obj = _factory.Tile(type, new Vec2Int(x, y));
+          layer.Add(obj);
         }
       }
     }
     else {
       for (int x = x1; x < x2; x++) {
-        var obj = _factory.Create(type);
-        layer.SetAt(x, y1, obj);
+        var obj = _factory.Tile(type, new Vec2Int(x, y1));
+        layer.Add(obj);
       
-        var obj2 = _factory.Create(type);
-        layer.SetAt(x, y2 - 1, obj2);
+        var obj2 = _factory.Tile(type, new Vec2Int(x, y2 - 1));
+        layer.Add(obj2);
       }
     
       for (int y = y1 + 1; y < y2; y++) {
-        var obj = _factory.Create(type);
-        layer.SetAt(x1, y, obj);
+        var obj = _factory.Tile(type, new Vec2Int(x1, y));
+        layer.Add(obj);
       
-        var obj2 = _factory.Create(type);
-        layer.SetAt(x2 - 1, y, obj2);
+        var obj2 = _factory.Tile(type, new Vec2Int(x2 - 1, y));
+        layer.Add(obj2);
       }      
     }
   }

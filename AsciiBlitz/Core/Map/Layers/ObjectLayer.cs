@@ -2,34 +2,22 @@
 
 namespace AsciiBlitz.Core.Map.Layers;
 
-public class ObjectLayer : IMapLayer {
-  public MapTank Player => _tank;
-  
-  private List<MapUnitObject> _units = new();
-  private MapTank _tank = new();
+public class ObjectLayer(int id, int order) : AbstractMapLayer<MapUnitObject>(id, order) {
+  private readonly List<MapUnitObject> _objects = new();
 
-  public ObjectLayer() {
-    AddUnit(_tank); 
-  }
-  
-  public MapObject? GetAt(int x, int y) {
-    foreach (var unit in _units) {
-      if (unit.Pos.X == x && unit.Pos.Y == y) {
-        return unit;
-      }
-    }
-    
-    return null;
+  public override void Resize(int width, int height) {
+    // In this class we don't have a specific size of the layer, so do nothing here.
   }
 
-  public void Resize(int width, int height) {
-    // We don't care about resizing
-  }
-  
-  public void SetAt(int x, int y, MapObject? obj) {
+  public override IReadOnlyList<MapUnitObject> GetObjects() {
+    return _objects;
   }
 
-  public void AddUnit(MapUnitObject obj) {
-    _units.Add(obj);
+  public override void Add(MapUnitObject obj) {
+    _objects.Add(obj);
+  }
+
+  public override void Remove(MapUnitObject obj) {
+    _objects.Remove(obj);
   }
 }

@@ -26,8 +26,12 @@ public abstract class MapObject {
   }
 }
 
+public abstract class MapTile(Vec2Int pos) : MapObject {
+  public readonly Vec2Int Pos = pos;
+}
+
 public abstract class MapUnitObject() : MapObject() {
-  public Vec2Int Pos;
+  public Vec2 Pos;
   public Direction Dir = Direction.Down;
 }
 
@@ -35,11 +39,11 @@ public class MapTank() : MapUnitObject() {
   public override MapObjectType Type => MapObjectType.Tank;
 }
 
-public class MapWall() : MapObject() {
+public class MapWall(Vec2Int pos) : MapTile(pos) {
   public override MapObjectType Type => MapObjectType.Wall;
 }
 
-public class MapGrass() : MapObject() {
+public class MapGrass(Vec2Int pos) : MapTile(pos) {
   public override MapObjectType Type => MapObjectType.Grass;
   public int GrassDamageLevel = 0;
 
@@ -48,41 +52,24 @@ public class MapGrass() : MapObject() {
   }
 }
 
-public class MapEmpty() : MapObject() {
-  public static readonly MapEmpty Instance = new();
-
+public class MapEmpty(Vec2Int pos) : MapTile(pos) {
   public override MapObjectType Type => MapObjectType.Empty;
 }
 
 public class MapObjectFactory {
-  public MapObject Create(MapObjectType type) {
-    switch (type) {
-      case MapObjectType.Empty:
-        return new MapEmpty();
-      
-      case MapObjectType.Wall:
-        return new MapWall();
-      
-      case MapObjectType.Tank:
-        return new MapTank();
-      
-      case MapObjectType.Grass:
-        return new MapGrass();
-      
-      default:
-        throw new ArgumentOutOfRangeException(nameof(type), type, null);
-    }
-    
+  public MapTile Tile(MapObjectType type, Vec2Int pos) {
+    return type switch {
+      MapObjectType.Empty => new MapEmpty(pos),
+      MapObjectType.Wall => new MapWall(pos),
+      MapObjectType.Grass => new MapGrass(pos),
+      _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+    };
   }
   
-  public MapUnitObject CreateUnit(MapObjectType type) {
-    switch (type) {
-      case MapObjectType.Tank:
-        return new MapTank();
-      
-      default:
-        throw new ArgumentOutOfRangeException(nameof(type), type, null);
-    }
-    
+  public MapUnitObject Object(MapObjectType type) {
+    return type switch {
+      MapObjectType.Tank => new MapTank(),
+      _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+    };
   }
 }

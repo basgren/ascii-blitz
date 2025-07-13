@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core.Map;
+using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
 
 namespace AsciiBlitz.Core.Render;
@@ -28,13 +29,18 @@ public class GameMapRenderer {
   
   private char GetCharForPosition(GameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
-    for (int layerIndex = map.LayerCount - 1; layerIndex >= 0; layerIndex--) {
-      var layer = map.GetLayer(layerIndex);
-      var mapObject = layer.GetAt(x, y);
+    var layers = map.GetOrderedLayers();
+    
+    for (int layerIndex = layers.Count - 1; layerIndex >= 0; layerIndex--) {
+      var layer = layers[layerIndex];
+
+      if (layer is TileLayer tileLayer) {
+        var mapObject = tileLayer.GetTileAt(x, y);
       
-      if (mapObject != null) {
-        // Return character for the first non-null object found
-        return GetCharForMapObject(mapObject);
+        if (mapObject != null) {
+          // Return character for the first non-null object found
+          return GetCharForMapObject(mapObject);
+        }
       }
     }
     

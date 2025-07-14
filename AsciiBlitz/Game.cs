@@ -37,9 +37,9 @@ public class Game {
     Player.Pos = new Vec2(1, 1);
     
     // Test rendering - when needed to show generated map.
-    // GameMapRenderer mapRenderer = new GameMapRenderer();
-    // mapRenderer.Render(map);
-
+    GameMapRenderer mapRenderer = new GameMapRenderer();
+    mapRenderer.Render(map);
+    Console.ReadKey();
     // Main game loop - 30 FPS
     const int targetFps = 30;
     const int frameTimeMs = 1000 / targetFps;

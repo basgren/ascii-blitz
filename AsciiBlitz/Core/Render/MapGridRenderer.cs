@@ -16,8 +16,8 @@ public class MapGridRenderer {
   private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
   private readonly UnknownSprite _unknownSprite;
   
-  private int consoleWidth = Console.WindowWidth;
-  private int consoleHeight = Console.WindowHeight;
+  private int consoleWidth = ConsoleUtils.Width;
+  private int consoleHeight = ConsoleUtils.Height;
 
   private ScreenBuffer _buffer = new();
 
@@ -36,8 +36,8 @@ public class MapGridRenderer {
 
   public void Render(GameMap map, double timeFromStartSec) {
     // Get console size to check available space
-    consoleWidth = Console.WindowWidth;
-    consoleHeight = Console.WindowHeight;
+    consoleWidth = ConsoleUtils.Width;
+    consoleHeight = ConsoleUtils.Height;
 
     // Calculate how many map cells we can fit (each cell is 3x3)
     int maxMapWidth = consoleWidth / 3;

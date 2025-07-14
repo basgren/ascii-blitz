@@ -27,10 +27,10 @@ public class GrassSprite : Sprite<GrassTile> {
   }
 
   private static readonly string[] _grassChars = [
-    "YVWvwi   ",
-    "ywv,.'  ",
-    "vy.,.'  ",
-    "v,.`    ",
+    "WVYwvi   ",
+    "wv,.'  ",
+    "v.,.'  ",
+    ",.`    ",
     "#.`    ",
     "#.       ",
   ];

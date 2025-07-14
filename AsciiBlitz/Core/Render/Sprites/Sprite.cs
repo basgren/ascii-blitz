@@ -4,13 +4,14 @@ using AsciiBlitz.Core.Types;
 namespace AsciiBlitz.Core.Render.Sprites;
 
 public abstract class Sprite {
+  public virtual int Height => 3;
+  public virtual int Width => 3;
+
   public abstract char[,] GetChars(GameObject gameObject, double timeSeconds);
   public abstract char[,]? GetColors(GameObject gameObject, double timeSeconds);
 }
 
 public abstract class Sprite<T> : Sprite where T: GameObject {
-  protected const int SpriteWidth = 3;
-  protected const int SpriteHeight = 3;
   protected readonly char[,] Chars;
   protected readonly char[,] Colors;
     
@@ -22,18 +23,18 @@ public abstract class Sprite<T> : Sprite where T: GameObject {
   }
 
   protected void InitChars(string[] lines) {
-    for (int y = 0; y < SpriteHeight; y++) {
+    for (int y = 0; y < Height; y++) {
       var line = lines[y].PadRight(3);
       
-      for (int x = 0; x < SpriteWidth; x++) {
+      for (int x = 0; x < Width; x++) {
         Chars[x, y] = line[x];
       }
     }
   }
   
   protected void InitChars(Func<Vec2Int, char> charCallback) {
-    for (int y = 0; y < SpriteHeight; y++) {
-      for (int x = 0; x < SpriteWidth; x++) {
+    for (int y = 0; y < Height; y++) {
+      for (int x = 0; x < Width; x++) {
         Chars[x, y] = charCallback(new Vec2Int(x, y));
       }
     }
@@ -50,8 +51,8 @@ public abstract class Sprite<T> : Sprite where T: GameObject {
   }
   
   protected void InitColors(Func<Vec2Int, char> colorCallback) {
-    for (int y = 0; y < SpriteHeight; y++) {
-      for (int x = 0; x < SpriteWidth; x++) {
+    for (int y = 0; y < Height; y++) {
+      for (int x = 0; x < Width; x++) {
         Colors[x, y] = colorCallback(new Vec2Int(x, y));
       }
     }

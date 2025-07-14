@@ -1,17 +1,11 @@
 ﻿namespace AsciiBlitz.Core.Map.Objects;
 
-public enum Direction {
-  Up,
-  Down,
-  Left,
-  Right,
-}
-
 public enum MapObjectType {
   Empty,
   Wall,
   Tank,
   Grass,
+  Projectile,
 }
 
 public abstract class GameObject {

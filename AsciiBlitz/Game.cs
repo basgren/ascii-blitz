@@ -1,4 +1,4 @@
-﻿using AsciiBlitz.Core.Core;
+﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Generator;
@@ -7,14 +7,16 @@ using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Types;
 
-namespace AsciiBlitz.Core;
+namespace AsciiBlitz;
 
 public class Game {
-  private GameMap _map;
   private IGameInput _input = new ConsoleInput();
 
   private bool _gameRunning = true;
   private readonly GameState _gameState = new();
+  
+  private MapTank Player => _gameState.Player;
+  private MapGridRenderer _mapRenderer = new();
 
   public void Run() {
     Console.Clear();
@@ -25,43 +27,55 @@ public class Game {
 
     IMapGenerator mapGen = new TestMapGenerator();
 
-    _map = mapGen
+    var map = mapGen
       .SetSize(40, 10)
       .Build();
 
-    ObjectLayer tankLayer = _map.GetLayer<ObjectLayer>(GameMap.LayerObjectsId);
-    _gameState.Player.Pos = new Vec2(1, 1);
-    tankLayer.Add(_gameState.Player);
+    _gameState.SetMap(map);
+    _gameState.Init();
+    
+    Player.Pos = new Vec2(1, 1);
     
     // Test rendering - when needed to show generated map.
     // GameMapRenderer mapRenderer = new GameMapRenderer();
     // mapRenderer.Render(map);
 
-    MapGridRenderer mapRenderer = new();
-
-    // Main game loop - 60 FPS
+    // Main game loop - 30 FPS
     const int targetFps = 30;
     const int frameTimeMs = 1000 / targetFps;
 
-    var startTime = DateTime.Now;
-    var lastFrameTime = DateTime.Now;
+    // Move to game state?
+    var gameStartTime = DateTime.Now;
+    var deltaTimeSec = 0.0f;
 
     while (_gameRunning) {
-      var currentTime = DateTime.Now;
-      var deltaTime = (currentTime - lastFrameTime).TotalMilliseconds;
-      var totalTimeSeconds = (currentTime - startTime).TotalSeconds;
-
-      _input.Update();
-
-      mapRenderer.Render(_map, totalTimeSeconds);
-
+      var frameStartTime = DateTime.Now;
+      var timeFromGameStart = (float)(frameStartTime - gameStartTime).TotalSeconds;
+      
+      ProcessFrame(timeFromGameStart, deltaTimeSec);
+      
+      var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
+      
       // Frame rate limiting
-      if (deltaTime < frameTimeMs) {
-        Thread.Sleep((int)(frameTimeMs - deltaTime));
+      if (frameProcessingTime < frameTimeMs) {
+        Thread.Sleep((int)(frameTimeMs - frameProcessingTime));
       }
 
-      lastFrameTime = DateTime.Now;
+      var frameEndTime = DateTime.Now;
+      deltaTimeSec = (float)(frameEndTime - frameStartTime).TotalSeconds;
     }
+  }
+
+  private void ProcessFrame(float timeFromStart, float deltaTime) {
+    // Important to make a copy using ToList, as some objects may be destroyed. Should not
+    // have performance issues with small number of objects.
+    foreach (var obj in _gameState.GetObjects().ToList()) {
+      obj.Update(deltaTime);
+    }
+      
+    _input.Update();
+      
+    _mapRenderer.Render(_gameState.GetMap(), timeFromStart);
   }
 
   private void InitInput() {
@@ -90,7 +104,9 @@ public class Game {
   }
   
   private void OnFire() {
-    // do nothing for now
+    var bullet = _gameState.CreateUnit<Projectile>();
+    bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 10f;
+    bullet.Pos = Player.GetShootPoint();
   }
 
   private void OnQuit() {
@@ -121,7 +137,7 @@ public class Game {
     MapTank player = _gameState.Player;
     player.Dir = dir;
 
-    if (!offs.IsZero && _map.CanMove(player.Pos, offs)) {
+    if (!offs.IsZero && _gameState.GetMap().CanMove(player.Pos, offs)) {
       var newPos = player.Pos + offs;
       var oldGridPos = MapUtils.PosToGrid(player.Pos);
       var newGridPos = MapUtils.PosToGrid(newPos);
@@ -129,7 +145,7 @@ public class Game {
       player.Pos = newPos;
 
       if (oldGridPos != newGridPos) {
-        GameObject? obj = _map.GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(player.Pos);
+        GameObject? obj = _gameState.GetMap().GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(player.Pos);
         obj?.Visited();        
       }
     }

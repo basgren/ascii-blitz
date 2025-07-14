@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Render.Sprites;
 

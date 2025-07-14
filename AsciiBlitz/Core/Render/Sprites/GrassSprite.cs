@@ -36,10 +36,10 @@ public class GrassSprite : Sprite<GrassTile> {
   ];
 
   protected override char[,] GetChars(GrassTile gameObject, double timeSeconds) {
-    for (int y = 0; y < SpriteHeight; y++) {
-      for (int x = 0; x < SpriteWidth; x++) {
+    for (int y = 0; y < Height; y++) {
+      for (int x = 0; x < Width; x++) {
         var samples = _grassChars[Math.Min(gameObject.GrassDamageLevel, _grassChars.Length - 1)];
-        int index = RandInt((x + y * SpriteHeight) * gameObject.Id, samples.Length - 1);
+        int index = RandInt((x + y * Height) * gameObject.Id, samples.Length - 1);
         
         Chars[x, y] = samples[index];
       }
@@ -54,7 +54,7 @@ public class GrassSprite : Sprite<GrassTile> {
     } else {
       InitColors(delegate(Vec2Int pos) {
         // Just random periodic effect of wind on grass
-        var value = Math.Cos(timeSeconds * (pos.X + pos.Y * SpriteWidth) / 10 + grass.Id) * 0.5 + 0.5;
+        var value = Math.Cos(timeSeconds * (pos.X + pos.Y * Width) / 10 + grass.Id) * 0.5 + 0.5;
         
         return value < 0.5
           ? 'g'

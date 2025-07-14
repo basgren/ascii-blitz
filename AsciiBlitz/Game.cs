@@ -129,7 +129,7 @@ public class Game {
       player.Pos = newPos;
 
       if (oldGridPos != newGridPos) {
-        MapObject? obj = _map.GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(player.Pos);
+        GameObject? obj = _map.GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(player.Pos);
         obj?.Visited();        
       }
     }

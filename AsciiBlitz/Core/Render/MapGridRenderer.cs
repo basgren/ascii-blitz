@@ -45,10 +45,10 @@ public class MapGridRenderer {
     // Render the map
     for (int mapY = 0; mapY < renderHeight; mapY++) {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
-        MapObject mapObject = GetMapTile(map, mapX, mapY) ?? new MapEmpty(new Vec2Int(mapX, mapY));
-        var sprite = GetSpriteForMapObject(mapObject);
-        var spriteData = sprite.GetChars(mapObject, timeSeconds);
-        var colors = sprite.GetColors(mapObject, timeSeconds);
+        GameObject gameObject = GetMapTile(map, mapX, mapY) ?? new EmptyTile(new Vec2Int(mapX, mapY));
+        var sprite = GetSpriteForMapObject(gameObject);
+        var spriteData = sprite.GetChars(gameObject, timeSeconds);
+        var colors = sprite.GetColors(gameObject, timeSeconds);
 
         for (int spriteY = 0; spriteY < CellHeight; spriteY++) {
           // Render 3 characters for each map cell
@@ -90,7 +90,7 @@ public class MapGridRenderer {
     RenderSprite(sprite, obj, obj.Pos, timeSeconds);
   }
 
-  private void RenderSprite(Sprite sprite, MapObject obj, Vec2 pos, double timeSeconds) {
+  private void RenderSprite(Sprite sprite, GameObject obj, Vec2 pos, double timeSeconds) {
     var spriteData = sprite.GetChars(obj, timeSeconds);
     var colors = sprite.GetColors(obj, timeSeconds);
     
@@ -147,7 +147,7 @@ public class MapGridRenderer {
     };
   }
 
-  private MapTile? GetMapTile(GameMap map, int x, int y) {
+  private TileObject? GetMapTile(GameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
     var layers = map.GetOrderedLayers();
 
@@ -166,8 +166,8 @@ public class MapGridRenderer {
     return null;
   }
 
-  private Sprite GetSpriteForMapObject(MapObject mapObject) {
-    if (_spriteMapping.TryGetValue(mapObject.Type, out var sprite)) {
+  private Sprite GetSpriteForMapObject(GameObject gameObject) {
+    if (_spriteMapping.TryGetValue(gameObject.Type, out var sprite)) {
       return sprite;
     }
 

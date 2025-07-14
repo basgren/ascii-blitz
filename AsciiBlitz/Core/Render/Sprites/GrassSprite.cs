@@ -3,7 +3,7 @@ using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Render.Sprites;
 
-public class GrassSprite : Sprite<MapGrass> {
+public class GrassSprite : Sprite<GrassTile> {
   private static readonly string[] SpriteLines = [
     ",,,",
     ",,,",
@@ -35,11 +35,11 @@ public class GrassSprite : Sprite<MapGrass> {
     "#.       ",
   ];
 
-  protected override char[,] GetChars(MapGrass mapObject, double timeSeconds) {
+  protected override char[,] GetChars(GrassTile gameObject, double timeSeconds) {
     for (int y = 0; y < SpriteHeight; y++) {
       for (int x = 0; x < SpriteWidth; x++) {
-        var samples = _grassChars[Math.Min(mapObject.GrassDamageLevel, _grassChars.Length - 1)];
-        int index = RandInt((x + y * SpriteHeight) * mapObject.Id, samples.Length - 1);
+        var samples = _grassChars[Math.Min(gameObject.GrassDamageLevel, _grassChars.Length - 1)];
+        int index = RandInt((x + y * SpriteHeight) * gameObject.Id, samples.Length - 1);
         
         Chars[x, y] = samples[index];
       }
@@ -48,7 +48,7 @@ public class GrassSprite : Sprite<MapGrass> {
     return Chars;
   }
 
-  protected override char[,] GetColors(MapGrass grass, double timeSeconds) {
+  protected override char[,] GetColors(GrassTile grass, double timeSeconds) {
     if (grass.GrassDamageLevel >= 4) {
       InitColors(SpriteColors2);
     } else {

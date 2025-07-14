@@ -48,8 +48,8 @@ public class GameMapRenderer {
     return ' ';
   }
   
-  private char GetCharForMapObject(MapObject mapObject) {
-    return mapObject.Type switch {
+  private char GetCharForMapObject(GameObject gameObject) {
+    return gameObject.Type switch {
       MapObjectType.Empty => ' ',
       MapObjectType.Wall => '#',
       _ => '?' // Unknown objects

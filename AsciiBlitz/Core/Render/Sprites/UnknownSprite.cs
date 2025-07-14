@@ -2,7 +2,7 @@
 
 namespace AsciiBlitz.Core.Render.Sprites;
 
-public class UnknownSprite : Sprite<MapObject> {
+public class UnknownSprite : Sprite<GameObject> {
   private static readonly string[] SpriteLines = {
     "???",
     "???",

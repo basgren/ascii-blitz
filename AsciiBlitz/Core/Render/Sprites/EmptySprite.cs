@@ -2,7 +2,7 @@
 
 namespace AsciiBlitz.Core.Render.Sprites;
 
-public class EmptySprite : Sprite<MapEmpty> {
+public class EmptySprite : Sprite<EmptyTile> {
   private static readonly string[] SpriteLines = [
     "   ",
     "   ",

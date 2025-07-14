@@ -3,17 +3,17 @@ using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Map.Layers;
 
-public class TileLayer(int id, int order) : AbstractMapLayer<MapTile>(id, order) {
-  private MapTile?[,] _tiles;
-  private List<MapTile>? _allObjects;
+public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, order) {
+  private TileObject?[,] _tiles;
+  private List<TileObject>? _allObjects;
 
   public override void Resize(int width, int height) {
-    _tiles = new MapTile?[width, height];
+    _tiles = new TileObject?[width, height];
   }
 
-  public override List<MapTile> GetObjects() {
+  public override List<TileObject> GetObjects() {
     if (_allObjects == null) {
-      _allObjects = new List<MapTile>();
+      _allObjects = new List<TileObject>();
 
       int width = _tiles.GetLength(0);
       int height = _tiles.GetLength(1);
@@ -32,13 +32,13 @@ public class TileLayer(int id, int order) : AbstractMapLayer<MapTile>(id, order)
     return _allObjects;
   }
 
-  public override void Add(MapTile obj) {
+  public override void Add(TileObject obj) {
     _tiles[obj.Pos.X, obj.Pos.Y] = obj;
 
     ClearCache();
   }
 
-  public override void Remove(MapTile obj) {
+  public override void Remove(TileObject obj) {
     _tiles[obj.Pos.X, obj.Pos.Y] = null;
     
     ClearCache();
@@ -52,16 +52,16 @@ public class TileLayer(int id, int order) : AbstractMapLayer<MapTile>(id, order)
     return GetTileAt(pos) != null;
   }
   
-  public MapTile? GetTileAt(Vec2 pos) {
+  public TileObject? GetTileAt(Vec2 pos) {
     var posInt = MapUtils.PosToGrid(pos);
     return _tiles[posInt.X, posInt.Y];
   }
   
-  public MapTile? GetTileAt(int x, int y) {
+  public TileObject? GetTileAt(int x, int y) {
     return _tiles[x, y];
   }
   
-  public MapTile? GetTileAt(Vec2Int pos) {
+  public TileObject? GetTileAt(Vec2Int pos) {
     return _tiles[pos.X, pos.Y];
   }
 

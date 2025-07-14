@@ -4,11 +4,11 @@ using AsciiBlitz.Core.Types;
 namespace AsciiBlitz.Core.Render.Sprites;
 
 public abstract class Sprite {
-  public abstract char[,] GetChars(MapObject mapObject, double timeSeconds);
-  public abstract char[,]? GetColors(MapObject mapObject, double timeSeconds);
+  public abstract char[,] GetChars(GameObject gameObject, double timeSeconds);
+  public abstract char[,]? GetColors(GameObject gameObject, double timeSeconds);
 }
 
-public abstract class Sprite<T> : Sprite where T: MapObject {
+public abstract class Sprite<T> : Sprite where T: GameObject {
   protected const int SpriteWidth = 3;
   protected const int SpriteHeight = 3;
   protected readonly char[,] Chars;
@@ -57,16 +57,16 @@ public abstract class Sprite<T> : Sprite where T: MapObject {
     }
   }
 
-  public override char[,] GetChars(MapObject mapObject, double timeSeconds) {
-    if (mapObject is T typedObject) {
+  public override char[,] GetChars(GameObject gameObject, double timeSeconds) {
+    if (gameObject is T typedObject) {
       return GetChars(typedObject, timeSeconds);
     }
 
     return Chars;
   }
 
-  public override char[,]? GetColors(MapObject mapObject, double timeSeconds) {
-    if (mapObject is T typedObject) {
+  public override char[,]? GetColors(GameObject gameObject, double timeSeconds) {
+    if (gameObject is T typedObject) {
       return GetColors(typedObject, timeSeconds);
     }
     

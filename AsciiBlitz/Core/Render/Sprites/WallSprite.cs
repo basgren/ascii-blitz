@@ -2,7 +2,7 @@
 
 namespace AsciiBlitz.Core.Render.Sprites;
 
-public class WallSprite : Sprite<MapWall> {
+public class WallSprite : Sprite<WallTile> {
   private static readonly string[] SpriteLines = [
     "███",
     "███",

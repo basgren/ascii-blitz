@@ -26,7 +26,7 @@ public class Game {
     IMapGenerator mapGen = new TestMapGenerator();
 
     _map = mapGen
-      .SetSize(20, 10)
+      .SetSize(40, 10)
       .Build();
 
     ObjectLayer tankLayer = _map.GetLayer<ObjectLayer>(GameMap.LayerObjectsId);

@@ -5,10 +5,9 @@ using AsciiBlitz.Debug;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-bool running = true;
-int perRow = 24;
+// DebugUtils.PrintAInAllColors(1);
+// Console.ReadKey();
 
-// DebugUtils.PrintAInAllColors();
 
 Game game = new Game();
 game.Run();

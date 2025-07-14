@@ -3,6 +3,7 @@
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
 using AsciiBlitz.Core.Types;
 
@@ -18,6 +19,8 @@ public class MapGridRenderer {
   private int consoleWidth = Console.WindowWidth;
   private int consoleHeight = Console.WindowHeight;
 
+  private ScreenBuffer _buffer = new();
+
   public MapGridRenderer() {
     _spriteMapping = new Dictionary<MapObjectType, Sprite> {
       { MapObjectType.Empty, new EmptySprite() },
@@ -27,6 +30,7 @@ public class MapGridRenderer {
     };
 
     _unknownSprite = new UnknownSprite();
+    _buffer.SetSize(Console.WindowWidth, Console.WindowHeight);
   }
 
   public void Render(GameMap map, double timeSeconds) {
@@ -59,12 +63,10 @@ public class MapGridRenderer {
               continue;
             }
 
-            string sym = colors != null
-              ? ApplyColor(spriteData[spriteX, spriteY], colors[spriteX, spriteY])
-              : spriteData[spriteX, spriteY].ToString();
-
-            Console.SetCursorPosition(x, y);
-            Console.Write(sym);
+            char? c = colors?[spriteX, spriteY];
+            int color = c == null ? 7 : GetCharColor(c.Value);
+            
+            _buffer.Set(x, y, spriteData[spriteX, spriteY], color, 0);
           }
         }
       }
@@ -83,6 +85,31 @@ public class MapGridRenderer {
         }
       }
     }
+    
+    _buffer.RenderChangesOnly();
+  }
+
+  private int GetCharColor(char color) {
+    return color switch {
+      'l' => 0,
+      'L' => 8,
+      'r' => 1,
+      'R' => 9,
+      'g' => 2,
+      'G' => 10,
+      'y' => 3,
+      'Y' => 11,
+      'b' => 4,
+      'B' => 12,
+      'p' => 5,
+      'P' => 13,
+      'c' => 6,
+      'C' => 14,
+      'w' => 7,
+      'W' => 15,
+      'x' => 8,
+      _ => 0 // Default to no color
+    };
   }
 
   private void RenderObject(MapUnitObject obj, double timeSeconds) {
@@ -112,12 +139,10 @@ public class MapGridRenderer {
           continue;
         }
 
-        string sym = colors != null
-          ? ApplyColor(spriteData[spriteX, spriteY], colors[spriteX, spriteY])
-          : spriteData[spriteX, spriteY].ToString();
-
-        Console.SetCursorPosition(x, y);
-        Console.Write(sym);
+        char? c = colors?[spriteX, spriteY];
+        int color = c == null ? 7 : GetCharColor(c.Value);
+        
+        _buffer.Set(x, y, spriteData[spriteX, spriteY], color, 0);
       }
     }
   }

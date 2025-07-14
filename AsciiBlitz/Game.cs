@@ -37,9 +37,10 @@ public class Game {
     Player.Pos = new Vec2(1, 1);
     
     // Test rendering - when needed to show generated map.
-    GameMapRenderer mapRenderer = new GameMapRenderer();
-    mapRenderer.Render(map);
-    Console.ReadKey();
+    // GameMapRenderer mapRenderer = new GameMapRenderer();
+    // mapRenderer.Render(map);
+    // Console.ReadKey();
+    
     // Main game loop - 30 FPS
     const int targetFps = 30;
     const int frameTimeMs = 1000 / targetFps;
@@ -74,6 +75,11 @@ public class Game {
     }
       
     _input.Update();
+
+    var collidables = _gameState.GetObjectsOfType<ICollidable>();
+    var layer = _gameState.GetMap().GetLayer<TileLayer>(GameMap.LayerSolidsId);
+    
+    CollisionSystem.CheckCollisionsWithTiles(collidables, layer);
       
     _mapRenderer.Render(_gameState.GetMap(), timeFromStart);
   }
@@ -105,7 +111,7 @@ public class Game {
   
   private void OnFire() {
     var bullet = _gameState.CreateUnit<Projectile>();
-    bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 10f;
+    bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 1f;
     bullet.Pos = Player.GetShootPoint();
   }
 

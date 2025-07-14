@@ -2,12 +2,19 @@
 
 namespace AsciiBlitz.Core.Map.Objects;
 
-public class Projectile: MapUnitObject {
+public class Projectile: MapUnitObject, ICollidable {
   public override MapObjectType Type => MapObjectType.Projectile;
   public Vec2 Speed = Vec2.Zero;
   public float MaxTravelDistance = 5f;
 
+  public RectFloat Bounds {
+    get => new RectFloat(Pos.X, Pos.Y, 1f, 1f);
+  }
+
+  public bool IsActive { get; private set; } = true;
+
   private float _travelDistance = 0;
+
 
   public override void Update(float deltaTime) {
     if (!Speed.IsZero) {
@@ -18,8 +25,12 @@ public class Projectile: MapUnitObject {
       }
     }
   }
+  
+  public void OnCollision(TileObject? tile) {
+    Destroy();
+  }
 
-  public void MoveBy(Vec2 offset) {
+  private void MoveBy(Vec2 offset) {
     Pos += offset;
     _travelDistance += offset.Length;
   }

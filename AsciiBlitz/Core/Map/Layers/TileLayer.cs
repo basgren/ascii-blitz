@@ -6,20 +6,21 @@ namespace AsciiBlitz.Core.Map.Layers;
 public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, order) {
   private TileObject?[,] _tiles;
   private List<TileObject>? _allObjects;
+  private int _width;
+  private int _height;
 
   public override void Resize(int width, int height) {
     _tiles = new TileObject?[width, height];
+    _width = width;
+    _height = height;
   }
 
   public override List<TileObject> GetObjects() {
     if (_allObjects == null) {
       _allObjects = new List<TileObject>();
-
-      int width = _tiles.GetLength(0);
-      int height = _tiles.GetLength(1);
       
-      for (var x = 0; x < width; x++) {
-        for (var y = 0; y < height; y++) {
+      for (var x = 0; x < _width; x++) {
+        for (var y = 0; y < _height; y++) {
           var tile = _tiles[x, y];
 
           if (tile != null) {
@@ -59,6 +60,18 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
   
   public TileObject? GetTileAt(int x, int y) {
     return _tiles[x, y];
+  }
+  
+  public bool TryGetTileAt(int x, int y, out TileObject? tile) {
+    tile = null;
+
+    if (x < 0 || y < 0 || x >= _width || y >= _height) {
+      return false;
+    }
+    
+    tile = _tiles[x, y];
+    
+    return tile != null;
   }
   
   public TileObject? GetTileAt(Vec2Int pos) {

@@ -69,4 +69,9 @@ public class GameState {
   public IReadOnlyList<MapUnitObject> GetObjects() {
     return _objects;
   }
+  
+  public IReadOnlyList<T> GetObjectsOfType<T>()
+  {
+    return _objects.OfType<T>().ToList();
+  }
 }

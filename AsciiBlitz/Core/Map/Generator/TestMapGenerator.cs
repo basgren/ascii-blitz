@@ -20,11 +20,11 @@ public class TestMapGenerator : IMapGenerator {
     map.SetSize(_size.X, _size.Y);
 
     TileLayer backLayer = map.GetLayer<TileLayer>(GameMap.LayerGroundId);
-    Rect(backLayer, 1, 1, map.Width - 1, map.Height - 1, MapObjectType.Grass, true);
+    Rect(backLayer, 1, map.Height / 2, map.Width - 1, map.Height - 1, MapObjectType.Grass, true);
     
     TileLayer layer = map.GetLayer<TileLayer>(GameMap.LayerSolidsId);
     Rect(layer, 0, 0, map.Width, map.Height, MapObjectType.Wall);
-    Rect(layer, 2, map.Height / 2, map.Width - 2, map.Height / 2, MapObjectType.Wall);
+    Rect(layer, 2, map.Height / 2, map.Width - 2, map.Height / 2 + 1, MapObjectType.Wall);
     
     return map;
   }

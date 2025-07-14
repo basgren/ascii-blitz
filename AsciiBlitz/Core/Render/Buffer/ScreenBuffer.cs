@@ -70,7 +70,8 @@ public class ScreenBuffer {
         }
 
         if (cell.Value.Color != lastFg || cell.Value.BgColor != lastBg) {
-          sb.Append($"\x1b[38;5;{cell.Value.Color};48;5;{cell.Value.BgColor}m");
+          sb.Append(AnsiColor.GetCode(cell.Value.Color, cell.Value.BgColor));
+          // sb.Append($"\x1b[38;5;{cell.Value.Color};48;5;{cell.Value.BgColor}m");
           lastFg = cell.Value.Color;
           lastBg = cell.Value.BgColor;
         }
@@ -78,7 +79,7 @@ public class ScreenBuffer {
         sb.Append(cell.Value.Char);
       }
 
-      sb.Append("\x1b[0m");
+      sb.Append(AnsiColor.Reset);
       Console.Write(sb.ToString());
 
       for (int x = 0; x < Width; x++) {

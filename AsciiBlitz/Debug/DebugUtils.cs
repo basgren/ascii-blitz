@@ -1,5 +1,8 @@
 ﻿using System.Text;
 
+using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Types;
+
 namespace AsciiBlitz.Debug;
 
 public class DebugUtils {
@@ -25,5 +28,15 @@ public class DebugUtils {
     }
     
     Console.Write("\x1b[0m\n"); // Escape
+  }
+
+  public static void LogPos(MapUnitObject obj, int x = 0, int y = 0) {
+    Console.SetCursorPosition(x, y);
+    Console.Write($"Pos: {obj.Pos.X}, {obj.Pos.Y}");
+  }
+
+  public static void LogHealth(IHasDamageable obj, int x = 0, int y = 0) {
+    Console.SetCursorPosition(x, y);
+    Console.Write($"Health: {obj.Damageable.Health}, dead: {obj.Damageable.IsDead}         ");    
   }
 }

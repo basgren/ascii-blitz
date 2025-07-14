@@ -6,6 +6,7 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Types;
+using AsciiBlitz.Debug;
 
 namespace AsciiBlitz;
 
@@ -21,7 +22,6 @@ public class Game {
   public void Run() {
     Console.Clear();
     Console.CursorVisible = false;
-    Console.WriteLine("ASCII Blitz Game");
     InitInput();
 
 
@@ -35,6 +35,9 @@ public class Game {
     _gameState.Init();
     
     Player.Pos = new Vec2(1, 1);
+    
+    var enemy = _gameState.CreateUnit<MapTank>();
+    enemy.Pos = new Vec2(1, 3);
     
     // Test rendering - when needed to show generated map.
     // GameMapRenderer mapRenderer = new GameMapRenderer();
@@ -55,6 +58,9 @@ public class Game {
       
       ProcessFrame(timeFromGameStart, deltaTimeSec);
       
+      DebugUtils.LogPos(Player);
+      DebugUtils.LogHealth(enemy);
+      
       var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
       
       // Frame rate limiting
@@ -68,18 +74,29 @@ public class Game {
   }
 
   private void ProcessFrame(float timeFromStart, float deltaTime) {
+    var allObjects = _gameState.GetObjects().ToList();
     // Important to make a copy using ToList, as some objects may be destroyed. Should not
-    // have performance issues with small number of objects.
-    foreach (var obj in _gameState.GetObjects().ToList()) {
+    // have performance issues with a small number of objects.
+    foreach (var obj in allObjects) {
       obj.Update(deltaTime);
     }
       
     _input.Update();
-
-    var collidables = _gameState.GetObjectsOfType<ICollidable>();
+ 
+    // Make a copy of list by using `ToList()` as some objects may be destroyed during check, but
+    // still we want to check all collisions.  
+    var collidables = _gameState.GetObjectsOfType<ICollidable>().ToList();
     var layer = _gameState.GetMap().GetLayer<TileLayer>(GameMap.LayerSolidsId);
     
     CollisionSystem.CheckCollisionsWithTiles(collidables, layer);
+    CollisionSystem.PostCollisionCheck(collidables);
+    
+    // Destroy dead objects
+    foreach (var obj in allObjects) {
+      if (obj is IHasDamageable { Damageable.IsDead: true }) {
+        obj.Destroy();
+      }
+    }
       
     _mapRenderer.Render(_gameState.GetMap(), timeFromStart);
   }
@@ -113,6 +130,7 @@ public class Game {
     var bullet = _gameState.CreateUnit<Projectile>();
     bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 3f;
     bullet.Pos = Player.GetShootPoint();
+    DebugUtils.LogPos(bullet, 0, 1);
   }
 
   private void OnQuit() {

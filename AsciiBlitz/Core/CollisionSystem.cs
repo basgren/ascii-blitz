@@ -5,30 +5,7 @@ using AsciiBlitz.Core.Types;
 namespace AsciiBlitz.Core;
 
 public static class CollisionSystem {
-  /// <summary>
-  /// Invoked after all moving objects have updated their coordinates.
-  /// </summary>
-  /// <param name="objects"></param>
-  public static void PostCollisionCheck(List<ICollidable> objects) {
-    for (int i = 0; i < objects.Count; i++) {
-      var a = objects[i];
-
-      if (!a.IsActive) {
-        continue;
-      }
-
-      for (int j = i + 1; j < objects.Count; j++) {
-        var b = objects[j];
-        if (!b.IsActive) continue;
-
-        if (a.Bounds.Intersects(b.Bounds)) {
-          ProcessCollision(a, b);
-          ProcessCollision(b, a);
-        }
-      }
-    }
-  }
-
+  
   public static void CheckCollisionsWithTiles(IReadOnlyList<ICollidable> objects, TileLayer tileLayer) {
     foreach (var collidable in objects) {
       if (!collidable.IsActive) {
@@ -68,11 +45,39 @@ public static class CollisionSystem {
       }
     }
   }
+  
+  /// <summary>
+  /// Invoked after all moving objects have updated their coordinates.
+  /// </summary>
+  /// <param name="collidables"></param>
+  public static void PostCollisionCheck(IReadOnlyList<ICollidable> collidables) {
+    for (int i = 0; i < collidables.Count; i++) {
+      var collidableA = collidables[i];
+
+      if (!collidableA.IsActive) {
+        continue;
+      }
+
+      for (int j = i + 1; j < collidables.Count; j++) {
+        var collidableB = collidables[j];
+        
+        if (!collidableB.IsActive) {
+          continue;
+        }
+
+        if (collidableA.Bounds.Intersects(collidableB.Bounds)) {
+          ProcessCollision(collidableA, collidableB);
+          ProcessCollision(collidableB, collidableA);
+        }
+      }
+    }
+  }
 
   private static void ProcessCollision(ICollidable source, ICollidable target) {
     if (source is IHasDamager damager && target is IHasDamageable damageable) {
       damageable.Damageable.ApplyDamage(damager.Damager.Damage);
-      // todo add event to Damager
     }
+    
+    source.OnCollision(target);
   }
 }

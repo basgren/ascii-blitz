@@ -9,7 +9,8 @@ public class Projectile: MapUnitObject, ICollidable, IHasDamager {
   public IDamager Damager { get; } = new BaseDamager(1f);
 
   public RectFloat Bounds {
-    get => new RectFloat(Pos.X, Pos.Y, 1f, 1f);
+    // TODO: take size from associated sprite
+    get => new RectFloat(Pos.X, Pos.Y, 1f / 3, 1f / 3);
   }
 
   public bool IsActive { get; private set; } = true;
@@ -28,6 +29,11 @@ public class Projectile: MapUnitObject, ICollidable, IHasDamager {
   }
   
   public void OnCollision(TileObject? tile) {
+    Destroy();
+  }
+
+  public void OnCollision(ICollidable? tile) {
+    // TODO: do we need 2 OnCollision handlers? Think later - maybe unite handling of Tiles and Objects
     Destroy();
   }
 

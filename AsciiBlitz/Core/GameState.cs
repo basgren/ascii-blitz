@@ -15,7 +15,7 @@ public class GameState {
   // TODO: think about init order - currently we have to add map first, then init Player.
 
   public void Init() {
-    Player = CreateObject<MapTank>(GameMap.LayerObjectsId);
+    Player = CreateUnit<MapTank>();
   }
 
   public GameMap GetMap() {

@@ -7,7 +7,9 @@ public static class ConsoleUtils {
   public static void SetConsoleSize(int width, int height) {
     // Set window size using escape sequence.
     Console.Write($"\x1b[8;{height};{width}t");
-    
+    Console.SetBufferSize(width, height);
+    Console.SetWindowSize(width, height);
+
     // Also store in var as in linux Console.WindowHeight/Width is not synchronized.
     Width = width;
     Height = height;

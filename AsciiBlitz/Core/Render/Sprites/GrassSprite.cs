@@ -27,12 +27,12 @@ public class GrassSprite : Sprite<GrassTile> {
   }
 
   private static readonly string[] _grassChars = [
-    "WVYwvi   ",
-    "wv,.'  ",
-    "v.,.'  ",
-    ",.`    ",
-    "#.`    ",
-    "#.       ",
+    "WVYwv ",
+    "wwvv,.' ",
+    "v.,.' ",
+    ",.`   ",
+    "#.`   ",
+    "#.      ",
   ];
 
   protected override char[,] GetChars(GrassTile gameObject, double timeSeconds) {

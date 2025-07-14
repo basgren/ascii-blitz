@@ -2,10 +2,11 @@
 
 namespace AsciiBlitz.Core.Map.Objects;
 
-public class Projectile: MapUnitObject, ICollidable {
+public class Projectile: MapUnitObject, ICollidable, IHasDamager {
   public override MapObjectType Type => MapObjectType.Projectile;
   public Vec2 Speed = Vec2.Zero;
   public float MaxTravelDistance = 5f;
+  public IDamager Damager { get; } = new BaseDamager(1f);
 
   public RectFloat Bounds {
     get => new RectFloat(Pos.X, Pos.Y, 1f, 1f);

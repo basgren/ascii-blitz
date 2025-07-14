@@ -3,6 +3,7 @@
 public enum MapObjectType {
   Empty,
   Wall,
+  WeakWall,
   Tank,
   Grass,
   Projectile,

@@ -111,7 +111,7 @@ public class Game {
   
   private void OnFire() {
     var bullet = _gameState.CreateUnit<Projectile>();
-    bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 1f;
+    bullet.Speed = VecUtils.DirToVec2(Player.Dir) * 3f;
     bullet.Pos = Player.GetShootPoint();
   }
 

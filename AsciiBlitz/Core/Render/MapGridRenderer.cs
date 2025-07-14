@@ -25,6 +25,7 @@ public class MapGridRenderer {
     _spriteMapping = new Dictionary<MapObjectType, Sprite> {
       { MapObjectType.Empty, new EmptySprite() },
       { MapObjectType.Wall, new WallSprite() },
+      { MapObjectType.WeakWall, new WeakWallSprite() },
       { MapObjectType.Tank, new TankSprite() },
       { MapObjectType.Grass, new GrassSprite() },
       { MapObjectType.Projectile, new ProjectileSprite() },

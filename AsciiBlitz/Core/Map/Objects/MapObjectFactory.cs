@@ -7,6 +7,7 @@ public class MapObjectFactory {
     return type switch {
       MapObjectType.Empty => new EmptyTile(pos),
       MapObjectType.Wall => new WallTile(pos),
+      MapObjectType.WeakWall => new WeakWallTile(pos),
       MapObjectType.Grass => new GrassTile(pos),
       _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };

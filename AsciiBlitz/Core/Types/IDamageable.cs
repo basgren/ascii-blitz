@@ -1,7 +1,7 @@
 ﻿
 namespace AsciiBlitz.Core.Types;
 
-public interface Damageable {
+public interface IDamageable {
   float Health { get; }
   float MaxHealth { get; }
   void ApplyDamage(float amount);
@@ -9,10 +9,10 @@ public interface Damageable {
 }
 
 public interface IHasDamageable {
-  Damageable Damageable { get; }
+  IDamageable Damageable { get; }
 }
 
-public class BaseDamageable : Damageable {
+public class BaseDamageable : IDamageable {
   private float _health;
   private float _maxHealth;
 

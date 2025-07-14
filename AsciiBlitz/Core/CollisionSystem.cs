@@ -47,18 +47,23 @@ public static class CollisionSystem {
             continue;
           }
 
-          Console.SetCursorPosition(2, 33);
-          Console.Write($"Collision! {tile}");
-
-          collidable.OnCollision(tile);
-
+          // First apply damage, as OnCollision may destroy object.
           // We assume that every tile is collidable. All non-collidable tiles should be added to another layers.
-          // if (obj is IHasDamager damager && tile is IHasDamageable damageable) {
-          //   // damageable.Damageable.ApplyDamage(damager.Damager.Damage);
-          //
-          //   if (obj is Bullet bullet)
-          //     bullet.Destroy();
-          // }
+          if (collidable is IHasDamager damager && tile is IHasDamageable damageable) {
+            damageable.Damageable.ApplyDamage(damager.Damager.Damage);
+
+            if (damageable.Damageable.IsDead) {
+              tileLayer.Remove(tile);
+            }
+            
+            // Console.SetCursorPosition(2, 33);
+            // Console.Write($"Applied damage {damager.Damager.Damage}");
+          }
+          
+          // Console.SetCursorPosition(2, 34);
+          // Console.Write($"Collision! {tile}");
+          
+          collidable.OnCollision(tile);
         }
       }
     }

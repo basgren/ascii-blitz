@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Types;
+﻿namespace AsciiBlitz.Types;
 
 public enum Direction {
   Up,

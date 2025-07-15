@@ -1,8 +1,11 @@
-﻿using AsciiBlitz.Core.Types;
+﻿using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Objects.Components;
+using AsciiBlitz.Core.Types;
+using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core.Map.Objects;
+namespace AsciiBlitz.Game.Objects;
 
-public class MapTank() : MapUnitObject(), ICollidable, IHasDamageable {
+public class Tank() : UnitObject(), ICollidable, IDamageable {
   public override MapObjectType Type => MapObjectType.Tank;
 
   public Vec2 GetShootPoint() {
@@ -23,7 +26,7 @@ public class MapTank() : MapUnitObject(), ICollidable, IHasDamageable {
     return Pos + offs;
   }
 
-  public IDamageable Damageable { get; } = new BaseDamageable(3);
+  public IDamageableComponent Damageable { get; } = new BaseDamageableComponent(3);
   public RectFloat Bounds => new RectFloat(Pos.X, Pos.Y, 1f, 1f);
 
   public bool IsActive { get; } = true;

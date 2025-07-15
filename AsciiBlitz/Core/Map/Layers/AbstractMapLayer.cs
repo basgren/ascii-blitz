@@ -1,4 +1,4 @@
-﻿using AsciiBlitz.Core.Map.Objects;
+﻿using AsciiBlitz.Core.Objects;
 
 namespace AsciiBlitz.Core.Map.Layers;
 
@@ -13,21 +13,21 @@ public abstract class AbstractMapLayer(int id, int order) {
   public abstract void Remove(GameObject obj);
 }
 
-public abstract class AbstractMapLayer<T>(int id, int order) : AbstractMapLayer(id, order) 
+public abstract class AbstractMapLayer<T>(int id, int order) : AbstractMapLayer(id, order)
   where T : GameObject {
   public int Id { get; } = id;
   public int Order { get; } = order;
-  
+
   /// <summary>
   /// Returns all objects on the layer that should be rendered.
   /// </summary>
   /// <returns></returns>
   public abstract IReadOnlyList<T> GetObjects();
-  
+
   public abstract void Add(T obj);
-  
+
   public abstract void Remove(T obj);
-  
+
   // Implement base class methods by delegating to type-safe versions
   public sealed override IReadOnlyList<GameObject> GetAllObjects() {
     // Seems there are some issues with polymorphic methods - we can't declare both
@@ -37,15 +37,16 @@ public abstract class AbstractMapLayer<T>(int id, int order) : AbstractMapLayer(
     // And in general in consumers it's better to use `GetObjects()` method on a specific layer type.
     return GetObjects().Cast<GameObject>().ToList();
   }
-    
+
   public override void Add(GameObject obj) {
     if (obj is T typedObj) {
       Add(typedObj);
-    } else {
+    }
+    else {
       throw new ArgumentException($"Cannot add {obj.GetType().Name} to {typeof(T).Name} layer");
     }
   }
-    
+
   public override void Remove(GameObject obj) {
     if (obj is T typedObj) {
       Remove(typedObj);

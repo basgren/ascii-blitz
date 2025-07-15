@@ -1,9 +1,9 @@
-﻿using AsciiBlitz.Core.Map.Objects;
-using AsciiBlitz.Core.Types;
+﻿using AsciiBlitz.Core.Render.Sprites;
+using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core.Render.Sprites;
+namespace AsciiBlitz.Game.Objects;
 
-public class TankSprite : Sprite<MapTank> {
+public class TankSprite : Sprite<Tank> {
   private static readonly string[] SpriteDown = [
     "#v#",
     "#@#",
@@ -55,7 +55,7 @@ public class TankSprite : Sprite<MapTank> {
   // 
   public TankSprite() : base(SpriteDown) { }
 
-  protected override char[,] GetChars(MapTank tank, double timeSeconds) {
+  protected override char[,] GetChars(Tank tank, double timeSeconds) {
     string[] initString = tank.Dir switch {
       Direction.Up => SpriteUp,
       Direction.Down => SpriteDown,
@@ -69,7 +69,7 @@ public class TankSprite : Sprite<MapTank> {
     return Chars;
   }
 
-  protected override char[,]? GetColors(MapTank tank, double timeSeconds) {
+  protected override char[,]? GetColors(Tank tank, double timeSeconds) {
     string[] initString = tank.Dir switch {
       Direction.Up => SpriteUpColor,
       Direction.Down => SpriteDownColor,

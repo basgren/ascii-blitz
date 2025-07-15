@@ -1,6 +1,8 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Types;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map.Generator;
 

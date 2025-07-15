@@ -1,9 +1,9 @@
-﻿using AsciiBlitz.Core.Map.Objects;
-using AsciiBlitz.Core.Types;
+﻿using AsciiBlitz.Core.Render.Sprites;
+using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core.Render.Sprites;
+namespace AsciiBlitz.Game.Tiles;
 
-public class GrassSprite : Sprite<GrassTile> {
+public class GrassTileSprite : Sprite<GrassTile> {
   private static readonly string[] SpriteLines = [
     ",,,",
     ",,,",
@@ -22,7 +22,7 @@ public class GrassSprite : Sprite<GrassTile> {
     "xxx"
   ];
 
-  public GrassSprite() : base(SpriteLines) {
+  public GrassTileSprite() : base(SpriteLines) {
     InitColors(SpriteColors);
   }
 

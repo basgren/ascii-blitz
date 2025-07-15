@@ -1,8 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using AsciiBlitz.Core.Render.Sprites;
 
-using AsciiBlitz.Core.Map.Objects;
-
-namespace AsciiBlitz.Core.Render.Sprites;
+namespace AsciiBlitz.Game.Tiles;
 
 public class WeakWallSprite : Sprite<WeakWallTile> {
   private static readonly string[] SpriteLines = [

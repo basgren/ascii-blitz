@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Map.Objects;
+﻿namespace AsciiBlitz.Core.Objects;
 
 public enum MapObjectType {
   Empty,
@@ -14,6 +14,9 @@ public abstract class GameObject {
   public readonly int Id = _nextId++;
   
   public abstract MapObjectType Type { get; }
+  
+  public event Action<GameObject>? OnDestroyed;
+  public void Destroy() => OnDestroyed?.Invoke(this);
 
   public virtual void Visited() {
   }

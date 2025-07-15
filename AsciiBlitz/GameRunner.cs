@@ -4,19 +4,23 @@ using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Generator;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Types;
 using AsciiBlitz.Debug;
+using AsciiBlitz.Game.Objects;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz;
 
-public class Game {
+public class GameRunner {
   private IGameInput _input = new ConsoleInput();
 
   private bool _gameRunning = true;
   private readonly GameState _gameState = new();
   
-  private MapTank Player => _gameState.Player;
+  private Tank Player => _gameState.Player;
   private MapGridRenderer _mapRenderer = new();
 
   public void Run() {
@@ -36,7 +40,7 @@ public class Game {
     
     Player.Pos = new Vec2(1, 1);
     
-    var enemy = _gameState.CreateUnit<MapTank>();
+    var enemy = _gameState.CreateUnit<Tank>();
     enemy.Pos = new Vec2(1, 3);
     
     // Test rendering - when needed to show generated map.
@@ -93,7 +97,7 @@ public class Game {
     
     // Destroy dead objects
     foreach (var obj in allObjects) {
-      if (obj is IHasDamageable { Damageable.IsDead: true }) {
+      if (obj is IDamageable { Damageable.IsDead: true }) {
         obj.Destroy();
       }
     }
@@ -158,7 +162,7 @@ public class Game {
         break;
     }
 
-    MapTank player = _gameState.Player;
+    Tank player = _gameState.Player;
     player.Dir = dir;
 
     if (!offs.IsZero && _gameState.GetMap().CanMove(player.Pos, offs)) {

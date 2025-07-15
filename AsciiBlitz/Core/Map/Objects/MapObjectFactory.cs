@@ -1,4 +1,8 @@
-﻿using AsciiBlitz.Core.Types;
+﻿using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Types;
+using AsciiBlitz.Game.Objects;
+using AsciiBlitz.Game.Tiles;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map.Objects;
 
@@ -13,9 +17,9 @@ public class MapObjectFactory {
     };
   }
   
-  public MapUnitObject Object(MapObjectType type) {
+  public UnitObject Object(MapObjectType type) {
     return type switch {
-      MapObjectType.Tank => new MapTank(),
+      MapObjectType.Tank => new Tank(),
       _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };
   }

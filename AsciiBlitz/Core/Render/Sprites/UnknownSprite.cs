@@ -1,4 +1,4 @@
-﻿using AsciiBlitz.Core.Map.Objects;
+﻿using AsciiBlitz.Core.Objects;
 
 namespace AsciiBlitz.Core.Render.Sprites;
 

@@ -1,6 +1,6 @@
 ﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
-using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Objects;
 
 namespace AsciiBlitz.Core.Render;
 

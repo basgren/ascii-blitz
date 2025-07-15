@@ -3,9 +3,13 @@
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Map.Objects;
+using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
 using AsciiBlitz.Core.Types;
+using AsciiBlitz.Game.Objects;
+using AsciiBlitz.Game.Tiles;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Render;
 
@@ -23,11 +27,11 @@ public class MapGridRenderer {
 
   public MapGridRenderer() {
     _spriteMapping = new Dictionary<MapObjectType, Sprite> {
-      { MapObjectType.Empty, new EmptySprite() },
-      { MapObjectType.Wall, new WallSprite() },
+      { MapObjectType.Empty, new EmptyTileSprite() },
+      { MapObjectType.Wall, new WallTileSprite() },
       { MapObjectType.WeakWall, new WeakWallSprite() },
       { MapObjectType.Tank, new TankSprite() },
-      { MapObjectType.Grass, new GrassSprite() },
+      { MapObjectType.Grass, new GrassTileSprite() },
       { MapObjectType.Projectile, new ProjectileSprite() },
     };
 
@@ -114,7 +118,7 @@ public class MapGridRenderer {
     };
   }
 
-  private void RenderObject(MapUnitObject obj, double timeSeconds) {
+  private void RenderObject(UnitObject obj, double timeSeconds) {
     var sprite = GetSpriteForMapObject(obj);
     RenderSprite(sprite, obj, obj.Pos, timeSeconds);
   }

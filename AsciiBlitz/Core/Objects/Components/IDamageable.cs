@@ -1,18 +1,17 @@
-﻿
-namespace AsciiBlitz.Core.Types;
+﻿namespace AsciiBlitz.Core.Objects.Components;
 
 public interface IDamageable {
+  IDamageableComponent Damageable { get; }
+}
+
+public interface IDamageableComponent {
   float Health { get; }
   float MaxHealth { get; }
   void ApplyDamage(float amount);
   bool IsDead { get; }
 }
 
-public interface IHasDamageable {
-  IDamageable Damageable { get; }
-}
-
-public class BaseDamageable : IDamageable {
+public class BaseDamageableComponent : IDamageableComponent {
   private float _health;
   private float _maxHealth;
 
@@ -20,7 +19,7 @@ public class BaseDamageable : IDamageable {
   public float MaxHealth => _maxHealth;
   public bool IsDead => _health <= 0;
 
-  public BaseDamageable(float health) {
+  public BaseDamageableComponent(float health) {
     _health = health;
     _maxHealth = health;
   }

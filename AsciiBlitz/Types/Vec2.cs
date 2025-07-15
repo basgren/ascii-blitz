@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Types;
+﻿namespace AsciiBlitz.Types;
 
 public record struct Vec2(float X, float Y) {
   public static Vec2 Zero => new(0, 0);

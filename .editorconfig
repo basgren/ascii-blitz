@@ -14,3 +14,4 @@ dotnet_separate_import_directive_groups = true
 resharper_csharp_indent_size = 2
 resharper_csharp_insert_final_newline = true
 resharper_csharp_remove_blank_lines_near_braces_in_code = false
+resharper_trailing_comma_in_multiline_lists = true

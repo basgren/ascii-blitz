@@ -1,6 +1,6 @@
-﻿using AsciiBlitz.Core.Map.Objects;
+﻿using AsciiBlitz.Core.Render.Sprites;
 
-namespace AsciiBlitz.Core.Render.Sprites;
+namespace AsciiBlitz.Game.Objects;
 
 public class ProjectileSprite() : Sprite<Projectile>(SpriteLines) {
   public override int Width => 1;

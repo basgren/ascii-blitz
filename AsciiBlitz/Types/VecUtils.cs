@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Types;
+﻿namespace AsciiBlitz.Types;
 
 public static class VecUtils {
   public static Vec2 DirToVec2(Direction dir) {

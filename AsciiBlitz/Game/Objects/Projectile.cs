@@ -1,12 +1,15 @@
-﻿using AsciiBlitz.Core.Types;
+﻿using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Objects.Components;
+using AsciiBlitz.Core.Types;
+using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core.Map.Objects;
+namespace AsciiBlitz.Game.Objects;
 
-public class Projectile: MapUnitObject, ICollidable, IHasDamager {
+public class Projectile: UnitObject, ICollidable, IDamager {
   public override MapObjectType Type => MapObjectType.Projectile;
   public Vec2 Speed = Vec2.Zero;
   public float MaxTravelDistance = 5f;
-  public IDamager Damager { get; } = new BaseDamager(1f);
+  public IDamagerComponent Damager { get; } = new BaseDamagerComponent(1f);
 
   public RectFloat Bounds {
     // TODO: take size from associated sprite

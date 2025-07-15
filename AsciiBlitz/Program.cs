@@ -10,5 +10,5 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 // DebugUtils.PrintAInAllColors(1);
 // Console.ReadKey();
 
-Game game = new Game();
-game.Run();
+GameRunner gameRunner = new GameRunner();
+gameRunner.Run();

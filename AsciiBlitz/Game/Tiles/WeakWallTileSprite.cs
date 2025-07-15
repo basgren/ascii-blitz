@@ -3,7 +3,7 @@ using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WeakWallTileSprite : Sprite2 {
+public class WeakWallTileSprite : Sprite {
   private static readonly string[] SpriteLines = [
     "ППП",
     "ШШШ",

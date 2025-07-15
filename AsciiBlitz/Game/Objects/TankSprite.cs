@@ -1,62 +1,72 @@
-﻿using AsciiBlitz.Core.Render.Sprites;
+﻿using AsciiBlitz.Core.Render;
+using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Types;
+
+using static AsciiBlitz.Core.Render.AnsiColor;
 
 namespace AsciiBlitz.Game.Objects;
 
-public class TankSprite : Sprite<Tank> {
+public class TankSprite() : Sprite(3, 3) {
   private static readonly string[] SpriteDown = [
     "#v#",
     "#@#",
-    "#║#"
+    "#║#",
   ];
 
-  private static readonly string[] SpriteDownColor = [
-    "wGw",
-    "wGw",
-    "wGw"
-  ];
+  private static readonly int[,] SpriteDownColors = {
+    { White, Green, White },
+    { White, Green, White },
+    { White, Green, White },
+  };
   
   private static readonly string[] SpriteUp = [
     "#║#",
     "#@#",
-    "#^#"
+    "#^#",
   ];
   
   private static readonly string[] SpriteUpColor = [
     "wGw",
     "wGw",
-    "wGw"
+    "wGw",
   ];
+  
+  private static readonly int[,] SpriteUpColors = {
+    { White, Green, White },
+    { White, Green, White },
+    { White, Green, White },
+  };
   
   private static readonly string[] SpriteLeft = [
     "###",
     "═@<",
-    "###"
+    "###",
   ];
   
-  private static readonly string[] SpriteLeftColor = [
-    "www",
-    "GGG",
-    "www"
-  ];
+  private static readonly int[,] SpriteLeftColors = {
+    { White, White, White },
+    { Green, Green, Green },
+    { White, White, White },
+  };
        
   private static readonly string[] SpriteRight = [
     "###",
     ">@═",
-    "###"
+    "###",
   ];
   
-  private static readonly string[] SpriteRightColor = [
-    "www",
-    "GGG",
-    "www"
-  ];
-    
-  // 
-  public TankSprite() : base(SpriteDown) { }
+  private static readonly int[,] SpriteRightColors = {
+    { White, White, White },
+    { Green, Green, Green },
+    { White, White, White },
+  };
 
-  protected override char[,] GetChars(Tank tank, double timeSeconds) {
-    string[] initString = tank.Dir switch {
+  public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
+    if (context.GameObject is not Tank tank) {
+      return;
+    }
+    
+    string[] charInfo = tank.Dir switch {
       Direction.Up => SpriteUp,
       Direction.Down => SpriteDown,
       Direction.Left => SpriteLeft,
@@ -64,22 +74,15 @@ public class TankSprite : Sprite<Tank> {
       _ => SpriteDown
     };
     
-    InitChars(initString);
-    
-    return Chars;
-  }
-
-  protected override char[,]? GetColors(Tank tank, double timeSeconds) {
-    string[] initString = tank.Dir switch {
-      Direction.Up => SpriteUpColor,
-      Direction.Down => SpriteDownColor,
-      Direction.Left => SpriteLeftColor,
-      Direction.Right => SpriteRightColor,
+    int[,] colorInfo = tank.Dir switch {
+      Direction.Up => SpriteUpColors,
+      Direction.Down => SpriteDownColors,
+      Direction.Left => SpriteLeftColors,
+      Direction.Right => SpriteRightColors,
       _ => throw new ArgumentOutOfRangeException()
     };
-    
-    InitColors(initString);
-    
-    return Colors;
+
+    cell.Char = charInfo[context.CharPos.Y][context.CharPos.X];
+    cell.Color = colorInfo[context.CharPos.Y, context.CharPos.X];
   }
 }

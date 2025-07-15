@@ -1,5 +1,6 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
+using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Types;
 using AsciiBlitz.Types;
 
@@ -10,7 +11,8 @@ public class Projectile: UnitObject, ICollidable, IDamager {
   public Vec2 Speed = Vec2.Zero;
   public float MaxTravelDistance = 5f;
   public IDamagerComponent Damager { get; } = new BaseDamagerComponent(1f);
-
+  public override Sprite Sprite => SpriteRepo.Get<ProjectileSprite>();
+  
   public RectFloat Bounds {
     // TODO: take size from associated sprite
     get => new RectFloat(Pos.X, Pos.Y, 1f / 3, 1f / 3);

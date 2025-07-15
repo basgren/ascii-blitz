@@ -15,7 +15,7 @@ public abstract class GameObject {
   private static int _nextId = 1;
   public readonly int Id = _nextId++;
   
-  public virtual Sprite2? Sprite => null;
+  public virtual Sprite? Sprite => null;
   
   // public abstract MapObjectType Type { get; }
   

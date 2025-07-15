@@ -1,11 +1,12 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
+using AsciiBlitz.Core.Render;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Game.Objects;
 
 public class Tank : UnitObject, ICollidable, IDamageable {
-  // public override MapObjectType Type => MapObjectType.Tank;
+  public override Sprite Sprite => SpriteRepo.Get<TankSprite>();
 
   public Vec2 GetShootPoint() {
     // TODO: actuially we should spawn bullet farther from tank barrel, but we should take into account that

@@ -10,13 +10,13 @@ public readonly struct SpriteContext(GameObject? gameObject, double gameTime, Ve
   public Vec2Int CharPos { get; } = charPos;
 }
 
-public abstract class Sprite2 {
+public abstract class Sprite {
   public int Width { get; }
   public int Height { get; }
 
   protected readonly ScreenCell[,] Cells;
 
-  protected Sprite2(int width, int height) {
+  protected Sprite(int width, int height) {
     Width = width;
     Height = height;
     Cells = new ScreenCell[width, height];

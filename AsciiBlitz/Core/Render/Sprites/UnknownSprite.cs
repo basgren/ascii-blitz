@@ -1,13 +1,7 @@
-﻿using AsciiBlitz.Core.Objects;
+﻿namespace AsciiBlitz.Core.Render.Sprites;
 
-namespace AsciiBlitz.Core.Render.Sprites;
-
-public class UnknownSprite : Sprite<GameObject> {
-  private static readonly string[] SpriteLines = {
-    "???",
-    "???",
-    "???"
-  };
-    
-  public UnknownSprite() : base(SpriteLines) { }
-}
+public class UnknownSprite() : StaticSprite([
+  "???",
+  "???",
+  "???",
+]);

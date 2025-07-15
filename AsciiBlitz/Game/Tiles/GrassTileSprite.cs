@@ -3,7 +3,7 @@ using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class GrassTileSprite : Sprite2 {
+public class GrassTileSprite : Sprite {
   public GrassTileSprite() : base(3, 3) {
   }
 

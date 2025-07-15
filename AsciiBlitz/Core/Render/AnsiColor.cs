@@ -19,6 +19,9 @@ public static class AnsiColor {
   public const int BrightCyan = 14;
   public const int BrightWhite = 15;
 
+  private static readonly Dictionary<(int fg, int bg), string> FgbgCache = new();
+  private static readonly Dictionary<int, string> FgCache = new();
+  
   /// <summary>
   /// Returns color index from provided intensities of color components. Each intensity can be from 0 to 5.
   /// </summary>
@@ -26,7 +29,7 @@ public static class AnsiColor {
   /// <param name="g">0..5</param>
   /// <param name="b">0..5</param>
   /// <returns></returns>
-  public static int RgbToAnsiIndex(int r, int g, int b) {
+  public static int Rgb(int r, int g, int b) {
     return 16 + (36 * r) + (6 * g) + b;
   }
 
@@ -38,9 +41,6 @@ public static class AnsiColor {
   public static int Grayscale(int level) {
     return 232 + Math.Clamp(level, 0, 23);
   }
-  
-  private static readonly Dictionary<(int fg, int bg), string> _fgbgCache = new();
-  private static readonly Dictionary<int, string> _fgCache = new();
 
   /// <summary>
   /// Returns ANSI escape sequence for setting both foreground and background colors.
@@ -52,12 +52,12 @@ public static class AnsiColor {
   {
     var key = (fg, bg);
 
-    if (_fgbgCache.TryGetValue(key, out var code)) {
+    if (FgbgCache.TryGetValue(key, out var code)) {
       return code;      
     }
 
     code = $"\x1b[38;5;{fg};48;5;{bg}m";
-    _fgbgCache[key] = code;
+    FgbgCache[key] = code;
 
     return code;
   }
@@ -69,12 +69,12 @@ public static class AnsiColor {
   /// <returns></returns>
   public static string GetFgCode(int fg)
   {
-    if (_fgCache.TryGetValue(fg, out var code)) {
+    if (FgCache.TryGetValue(fg, out var code)) {
       return code;      
     }
 
     code = $"\x1b[38;5;{fg}m";
-    _fgCache[fg] = code;
+    FgCache[fg] = code;
 
     return code;
   }

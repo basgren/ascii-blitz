@@ -3,9 +3,6 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
-using AsciiBlitz.Game.Objects;
-using AsciiBlitz.Game.Tiles;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Render;
 
@@ -16,33 +13,26 @@ public class MapGridRenderer {
   // private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
   private readonly UnknownSprite _unknownSprite;
   
-  private int consoleWidth = ConsoleUtils.Width;
-  private int consoleHeight = ConsoleUtils.Height;
+  private int _consoleWidth = ConsoleUtils.Width;
+  private int _consoleHeight = ConsoleUtils.Height;
 
   private ScreenBuffer _buffer = new();
 
   public MapGridRenderer() {
-    // _spriteMapping = new Dictionary<MapObjectType, Sprite> {
-    //   { MapObjectType.Empty, new EmptyTileSprite() },
-    //   { MapObjectType.Wall, new WallTileSprite() },
-    //   { MapObjectType.WeakWall, new WeakWallSprite() },
-    //   { MapObjectType.Tank, new TankSprite() },
-    //   { MapObjectType.Grass, new GrassTileSprite() },
-    //   { MapObjectType.Projectile, new ProjectileSprite() },
-    // };
-
     _unknownSprite = new UnknownSprite();
     _buffer.SetSize(Console.WindowWidth, Console.WindowHeight);
   }
 
   public void Render(GameMap map, double timeFromStartSec) {
+    _buffer.Clear();
+
     // Get console size to check available space
-    consoleWidth = ConsoleUtils.Width;
-    consoleHeight = ConsoleUtils.Height;
+    _consoleWidth = ConsoleUtils.Width;
+    _consoleHeight = ConsoleUtils.Height;
 
     // Calculate how many map cells we can fit (each cell is 3x3)
-    int maxMapWidth = consoleWidth / 3;
-    int maxMapHeight = consoleHeight / 3;
+    int maxMapWidth = _consoleWidth / 3;
+    int maxMapHeight = _consoleHeight / 3;
 
     // Determine the actual render area
     int renderWidth = Math.Min(map.Width, maxMapWidth);
@@ -53,29 +43,7 @@ public class MapGridRenderer {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
         GameObject? gameObject = GetMapTile(map, mapX, mapY);
 
-        if (gameObject is WeakWallTile) {
-          var a = 1;
-        }
-
-        var sprite = gameObject == null
-          ? SpriteRepo.Get<EmptyTileSprite>()
-          : gameObject.Sprite;
-
-        if (sprite == null) {
-         continue; 
-        }
-        
-        ScreenCell[,] cells = sprite.UpdateAll(gameObject, timeFromStartSec);
-
-        for (int spriteY = 0; spriteY < sprite.Height; spriteY++) {
-          // Render 3 characters for each map cell
-          for (int spriteX = 0; spriteX < sprite.Width; spriteX++) {
-            var x = mapX * CellWidth + spriteX;
-            var y = mapY * CellHeight + spriteY;
-            
-            _buffer.Set(x, y, cells[spriteX, spriteY]);
-          }
-        }
+        RenderGameObjectSprite(gameObject, mapX * CellWidth, mapY * CellHeight, timeFromStartSec);
       }
     }
     
@@ -88,7 +56,10 @@ public class MapGridRenderer {
 
       if (layer is ObjectLayer objLayer) {
         foreach (var obj in objLayer.GetObjects()) {
-          RenderObject(obj, timeFromStartSec);
+          int x = (int)(obj.Pos.X * CellWidth);
+          int y = (int)(obj.Pos.Y * CellHeight);
+
+          RenderGameObjectSprite(obj, x, y, timeFromStartSec);
         }
       }
     }
@@ -96,60 +67,22 @@ public class MapGridRenderer {
     _buffer.RenderChangesOnly();
   }
 
-  private int GetCharColor(char color) {
-    return color switch {
-      'l' => 0,
-      'L' => 8,
-      'r' => 1,
-      'R' => 9,
-      'g' => 2,
-      'G' => 10,
-      'y' => 3,
-      'Y' => 11,
-      'b' => 4,
-      'B' => 12,
-      'p' => 5,
-      'P' => 13,
-      'c' => 6,
-      'C' => 14,
-      'w' => 7,
-      'W' => 15,
-      'x' => 8,
-      _ => 0 // Default to no color
-    };
-  }
+  private void RenderGameObjectSprite(GameObject? gameObject, int screenX, int screenY, double gameTimeSec) {
+    var sprite = gameObject?.Sprite;
 
-  private void RenderObject(UnitObject obj, double timeSeconds) {
-    // var sprite = GetSpriteForMapObject(obj);
-    // RenderSprite(sprite, obj, obj.Pos, timeSeconds);
-  }
+    if (sprite == null) {
+      return; 
+    }
+    
+    ScreenCell[,] cells = sprite.UpdateAll(gameObject, gameTimeSec);
 
-  private void RenderSprite(Sprite sprite, GameObject obj, Vec2 pos, double timeSeconds) {
-    var spriteData = sprite.GetChars(obj, timeSeconds);
-    var colors = sprite.GetColors(obj, timeSeconds);
-    
-    // Here we round to grid cell, as smooth movement requires more work with collision detections, etc.
-    // Vec2Int posInt = MapUtils.PosToGrid(pos);
-    
-    // int startX = posInt.X * CellWidth;
-    // int startY = posInt.Y * CellHeight;
-    
-    int startX = (int)(pos.X * CellWidth);
-    int startY = (int)(pos.Y * CellHeight);
-    
     for (int spriteY = 0; spriteY < sprite.Height; spriteY++) {
       // Render 3 characters for each map cell
       for (int spriteX = 0; spriteX < sprite.Width; spriteX++) {
-        var x = startX + spriteX;
-        var y = startY + spriteY;
-        if (x >= consoleWidth || y >= consoleHeight) {
-          continue;
-        }
-
-        char? c = colors?[spriteX, spriteY];
-        int color = c == null ? 7 : GetCharColor(c.Value);
-        
-        _buffer.Set(x, y, spriteData[spriteX, spriteY], color, 0);
+        var x = screenX + spriteX;
+        var y = screenY + spriteY;
+            
+        _buffer.Set(x, y, cells[spriteX, spriteY]);
       }
     }
   }
@@ -172,13 +105,4 @@ public class MapGridRenderer {
 
     return null;
   }
-
-  // private Sprite GetSpriteForMapObject(GameObject gameObject) {
-  //   if (_spriteMapping.TryGetValue(gameObject.Type, out var sprite)) {
-  //     return sprite;
-  //   }
-  //
-  //   // Return unknown sprite for unmapped objects
-  //   return _unknownSprite;
-  // }
 }

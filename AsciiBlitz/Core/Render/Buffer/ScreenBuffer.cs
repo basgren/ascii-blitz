@@ -39,6 +39,12 @@ public class ScreenBuffer {
       _current[y, x] = new ScreenCell(symbol, fg, bg);
     }
   }
+  
+  public void Set(int x, int y, ScreenCell cell) {
+    if (x >= 0 && x < Width && y >= 0 && y < Height) {
+      _current[y, x] = cell;
+    }
+  }
 
   public void RenderChangesOnly() {
     for (int y = 0; y < Height; y++) {

@@ -1,9 +1,11 @@
-﻿using AsciiBlitz.Core.Map.Objects;
-using AsciiBlitz.Core.Types;
-using AsciiBlitz.Types;
+﻿using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Objects;
 
-public abstract class TileObject(Vec2Int pos) : GameObject {
-  public readonly Vec2Int Pos = pos;
+public abstract class TileObject : GameObject {
+  public Vec2Int Pos { get; private set; } = Vec2Int.Zero;
+
+  public void SetPos(Vec2Int pos) {
+    Pos = pos;
+  }
 }

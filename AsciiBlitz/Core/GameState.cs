@@ -1,8 +1,6 @@
 ﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
-using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Objects;
-using AsciiBlitz.Core.Types;
 using AsciiBlitz.Game.Objects;
 
 namespace AsciiBlitz.Core;

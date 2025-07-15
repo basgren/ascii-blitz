@@ -1,15 +1,9 @@
 ﻿namespace AsciiBlitz.Core.Render.Buffer;
 
-public struct ScreenCell {
-  public char Char;
-  public int Color; // 0–255 ANSI
-  public int BgColor;
-
-  public ScreenCell(char @char, int fg, int bg) {
-    Char = @char;
-    Color = fg;
-    BgColor = bg;
-  }
+public struct ScreenCell(char c, int color, int bgColor) : IEquatable<ScreenCell> {
+  public char Char = c;
+  public int Color = color;
+  public int BgColor = bgColor;
 
   public bool Equals(ScreenCell other) {
     return Char == other.Char &&

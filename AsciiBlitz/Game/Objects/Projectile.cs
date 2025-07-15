@@ -6,7 +6,7 @@ using AsciiBlitz.Types;
 namespace AsciiBlitz.Game.Objects;
 
 public class Projectile: UnitObject, ICollidable, IDamager {
-  public override MapObjectType Type => MapObjectType.Projectile;
+  // public override MapObjectType Type => MapObjectType.Projectile;
   public Vec2 Speed = Vec2.Zero;
   public float MaxTravelDistance = 5f;
   public IDamagerComponent Damager { get; } = new BaseDamagerComponent(1f);

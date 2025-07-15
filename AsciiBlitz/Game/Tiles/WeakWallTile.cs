@@ -1,11 +1,10 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
-using AsciiBlitz.Core.Types;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WeakWallTile(Vec2Int pos) : TileObject(pos), IDamageable {
-  public override MapObjectType Type => MapObjectType.WeakWall;
+public class WeakWallTile : TileObject, IDamageable {
   public IDamageableComponent Damageable { get; } = new BaseDamageableComponent(5);
+  public override Sprite2 Sprite => SpriteRepo.Get<WeakWallTileSprite2>();
 }

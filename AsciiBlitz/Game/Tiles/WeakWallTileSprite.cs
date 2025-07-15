@@ -2,7 +2,7 @@
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WeakWallSprite : Sprite<WeakWallTile> {
+public class WeakWallTileSprite : Sprite<WeakWallTile> {
   private static readonly string[] SpriteLines = [
     "ППП",
     "ШШШ",
@@ -11,7 +11,7 @@ public class WeakWallSprite : Sprite<WeakWallTile> {
 
   private static readonly string DamageChars = "wvпш%";
     
-  public WeakWallSprite() : base(SpriteLines) { }
+  public WeakWallTileSprite() : base(SpriteLines) { }
 
   protected override char[,] GetChars(WeakWallTile mapObject, double timeSeconds) {
     float healthPercent = mapObject.Damageable.Health / mapObject.Damageable.MaxHealth;

@@ -1,8 +1,8 @@
 ﻿using AsciiBlitz.Core.Objects;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WallTile(Vec2Int pos) : TileObject(pos) {
-  public override MapObjectType Type => MapObjectType.Wall;
+public class WallTile : TileObject {
+  public override Sprite2 Sprite => SpriteRepo.Get<WallTileSprite2>();
 }

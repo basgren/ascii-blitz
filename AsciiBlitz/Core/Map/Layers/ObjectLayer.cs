@@ -1,5 +1,4 @@
-﻿using AsciiBlitz.Core.Map.Objects;
-using AsciiBlitz.Core.Objects;
+﻿using AsciiBlitz.Core.Objects;
 
 namespace AsciiBlitz.Core.Map.Layers;
 

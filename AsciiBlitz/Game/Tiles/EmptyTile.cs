@@ -1,8 +1,8 @@
 ﻿using AsciiBlitz.Core.Objects;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class EmptyTile(Vec2Int pos) : TileObject(pos) {
-  public override MapObjectType Type => MapObjectType.Empty;
+public class EmptyTile : TileObject {
+  public override Sprite2 Sprite => SpriteRepo.Get<EmptyTileSprite2>();
 }

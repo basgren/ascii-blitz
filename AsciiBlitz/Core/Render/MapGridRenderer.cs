@@ -1,12 +1,8 @@
-﻿using System.Drawing;
-
-using AsciiBlitz.Core.Map;
+﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
-using AsciiBlitz.Core.Map.Objects;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
-using AsciiBlitz.Core.Types;
 using AsciiBlitz.Game.Objects;
 using AsciiBlitz.Game.Tiles;
 using AsciiBlitz.Types;
@@ -17,7 +13,7 @@ public class MapGridRenderer {
   private const int CellWidth = 3;
   private const int CellHeight = 3;
 
-  private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
+  // private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
   private readonly UnknownSprite _unknownSprite;
   
   private int consoleWidth = ConsoleUtils.Width;
@@ -26,14 +22,14 @@ public class MapGridRenderer {
   private ScreenBuffer _buffer = new();
 
   public MapGridRenderer() {
-    _spriteMapping = new Dictionary<MapObjectType, Sprite> {
-      { MapObjectType.Empty, new EmptyTileSprite() },
-      { MapObjectType.Wall, new WallTileSprite() },
-      { MapObjectType.WeakWall, new WeakWallSprite() },
-      { MapObjectType.Tank, new TankSprite() },
-      { MapObjectType.Grass, new GrassTileSprite() },
-      { MapObjectType.Projectile, new ProjectileSprite() },
-    };
+    // _spriteMapping = new Dictionary<MapObjectType, Sprite> {
+    //   { MapObjectType.Empty, new EmptyTileSprite() },
+    //   { MapObjectType.Wall, new WallTileSprite() },
+    //   { MapObjectType.WeakWall, new WeakWallSprite() },
+    //   { MapObjectType.Tank, new TankSprite() },
+    //   { MapObjectType.Grass, new GrassTileSprite() },
+    //   { MapObjectType.Projectile, new ProjectileSprite() },
+    // };
 
     _unknownSprite = new UnknownSprite();
     _buffer.SetSize(Console.WindowWidth, Console.WindowHeight);
@@ -55,24 +51,29 @@ public class MapGridRenderer {
     // Render the map
     for (int mapY = 0; mapY < renderHeight; mapY++) {
       for (int mapX = 0; mapX < renderWidth; mapX++) {
-        GameObject gameObject = GetMapTile(map, mapX, mapY) ?? new EmptyTile(new Vec2Int(mapX, mapY));
-        var sprite = GetSpriteForMapObject(gameObject);
-        var spriteData = sprite.GetChars(gameObject, timeFromStartSec);
-        var colors = sprite.GetColors(gameObject, timeFromStartSec);
+        GameObject? gameObject = GetMapTile(map, mapX, mapY);
 
-        for (int spriteY = 0; spriteY < CellHeight; spriteY++) {
+        if (gameObject is WeakWallTile) {
+          var a = 1;
+        }
+
+        var sprite = gameObject == null
+          ? SpriteRepo.Get<EmptyTileSprite2>()
+          : gameObject.Sprite;
+
+        if (sprite == null) {
+         continue; 
+        }
+        
+        ScreenCell[,] cells = sprite.UpdateAll(gameObject, timeFromStartSec);
+
+        for (int spriteY = 0; spriteY < sprite.Height; spriteY++) {
           // Render 3 characters for each map cell
-          for (int spriteX = 0; spriteX < CellWidth; spriteX++) {
+          for (int spriteX = 0; spriteX < sprite.Width; spriteX++) {
             var x = mapX * CellWidth + spriteX;
             var y = mapY * CellHeight + spriteY;
-            if (x >= consoleWidth || y >= consoleHeight) {
-              continue;
-            }
-
-            char? c = colors?[spriteX, spriteY];
-            int color = c == null ? 7 : GetCharColor(c.Value);
             
-            _buffer.Set(x, y, spriteData[spriteX, spriteY], color, 0);
+            _buffer.Set(x, y, cells[spriteX, spriteY]);
           }
         }
       }
@@ -119,8 +120,8 @@ public class MapGridRenderer {
   }
 
   private void RenderObject(UnitObject obj, double timeSeconds) {
-    var sprite = GetSpriteForMapObject(obj);
-    RenderSprite(sprite, obj, obj.Pos, timeSeconds);
+    // var sprite = GetSpriteForMapObject(obj);
+    // RenderSprite(sprite, obj, obj.Pos, timeSeconds);
   }
 
   private void RenderSprite(Sprite sprite, GameObject obj, Vec2 pos, double timeSeconds) {
@@ -165,19 +166,19 @@ public class MapGridRenderer {
 
         if (tile != null) {
           return tile;
-        }        
+        }
       }
     }
 
     return null;
   }
 
-  private Sprite GetSpriteForMapObject(GameObject gameObject) {
-    if (_spriteMapping.TryGetValue(gameObject.Type, out var sprite)) {
-      return sprite;
-    }
-
-    // Return unknown sprite for unmapped objects
-    return _unknownSprite;
-  }
+  // private Sprite GetSpriteForMapObject(GameObject gameObject) {
+  //   if (_spriteMapping.TryGetValue(gameObject.Type, out var sprite)) {
+  //     return sprite;
+  //   }
+  //
+  //   // Return unknown sprite for unmapped objects
+  //   return _unknownSprite;
+  // }
 }

@@ -58,7 +58,7 @@ public class MapGridRenderer {
         }
 
         var sprite = gameObject == null
-          ? SpriteRepo.Get<EmptyTileSprite2>()
+          ? SpriteRepo.Get<EmptyTileSprite>()
           : gameObject.Sprite;
 
         if (sprite == null) {

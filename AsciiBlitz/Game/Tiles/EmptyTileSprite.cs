@@ -1,13 +1,9 @@
-﻿using AsciiBlitz.Core.Render.Sprites;
+﻿using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class EmptyTileSprite : Sprite<EmptyTile> {
-  private static readonly string[] SpriteLines = [
-    "   ",
-    "   ",
-    "   "
-  ];
-    
-  public EmptyTileSprite() : base(SpriteLines) { }
-}
+public class EmptyTileSprite() : StaticSprite([
+  "   ",
+  "   ",
+  "   ",
+]);

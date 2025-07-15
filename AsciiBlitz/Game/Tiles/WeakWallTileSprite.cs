@@ -1,38 +1,36 @@
-﻿using AsciiBlitz.Core.Render.Sprites;
+﻿using AsciiBlitz.Core.Render;
+using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WeakWallTileSprite : Sprite<WeakWallTile> {
+public class WeakWallTileSprite : Sprite2 {
   private static readonly string[] SpriteLines = [
     "ППП",
     "ШШШ",
-    "ППП"
+    "ППП",
   ];
 
   private static readonly string DamageChars = "wvпш%";
     
-  public WeakWallTileSprite() : base(SpriteLines) { }
+  public WeakWallTileSprite() : base(3, 3) { }
 
-  protected override char[,] GetChars(WeakWallTile mapObject, double timeSeconds) {
-    float healthPercent = mapObject.Damageable.Health / mapObject.Damageable.MaxHealth;
-    
-    int width = Chars.GetLength(0);
-    int height = Chars.GetLength(1);
-
-    for (int x = 0; x < width; x++) {
-      for (int y = 0; y < height; y++) {
-        int value = mapObject.Pos.X * 3 + mapObject.Pos.Y * 100 + x + (y * width);
-        bool isPartDamaged = Rand(value) >= healthPercent;
-
-        char c = isPartDamaged
-          ? DamageChars[RandInt(value, DamageChars.Length)]
-          : SpriteLines[y][x];
-
-        Chars[x, y] = c;
-      }
+  public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
+    if (context.GameObject is not WeakWallTile weakWallTile) {
+      return;
     }
     
-    return Chars;
+    float healthPercent = weakWallTile.Damageable.Health / weakWallTile.Damageable.MaxHealth;
+    var pos = context.CharPos;
+    
+    // value is based on world position of wall tile to have different damage random for different tiles.
+    int value = weakWallTile.Pos.X * 3 + weakWallTile.Pos.Y * 100 + pos.X + (pos.Y * Width);
+    bool isPartDamaged = Rand(value) >= healthPercent;
+
+    char c = isPartDamaged
+      ? DamageChars[RandInt(value, DamageChars.Length)]
+      : SpriteLines[pos.Y][pos.X];
+
+    cell.Char = c;
   }
   
   private double Rand(int value) {

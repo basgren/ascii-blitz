@@ -1,13 +1,9 @@
-﻿using AsciiBlitz.Core.Render.Sprites;
+﻿using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WallTileSprite : Sprite<WallTile> {
-  private static readonly string[] SpriteLines = [
-    "███",
-    "███",
-    "███"
-  ];
-    
-  public WallTileSprite() : base(SpriteLines) { }
-}
+public class WallTileSprite() : StaticSprite([
+  "███",
+  "███",
+  "███",
+]);

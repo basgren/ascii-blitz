@@ -4,5 +4,5 @@ using AsciiBlitz.Core.Render;
 namespace AsciiBlitz.Game.Tiles;
 
 public class WallTile : TileObject {
-  public override Sprite2 Sprite => SpriteRepo.Get<WallTileSprite2>();
+  public override Sprite2 Sprite => SpriteRepo.Get<WallTileSprite>();
 }

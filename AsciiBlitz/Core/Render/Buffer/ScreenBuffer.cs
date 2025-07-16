@@ -6,90 +6,50 @@ public class ScreenBuffer {
   public int Width { get; private set; }
   public int Height { get; private set; }
 
-  private ScreenCell?[,] _current;
-  private ScreenCell?[,] _previous;
+  public ScreenCell?[,] Surface { get; private set; }
 
-  public ScreenBuffer() {
+  public ScreenBuffer(int width, int height) {
     Console.OutputEncoding = Encoding.UTF8;
-
-    Width = 10;
-    Height = 10;
-
-    SetSize(Width, Height);
+    SetSize(width, height);
   }
 
   public void SetSize(int width, int height) {
     Width = width;
     Height = height;
-
-    _current = new ScreenCell?[height, width];
-    _previous = new ScreenCell?[height, width];
+    Surface = new ScreenCell?[height, width];
   }
 
   public void Clear() {
     for (int y = 0; y < Height; y++) {
       for (int x = 0; x < Width; x++) {
-        _current[y, x] = null;
+        Surface[y, x] = null;        
       }
     }
   }
 
   public void Set(int x, int y, char symbol, int fg, int bg) {
     if (x >= 0 && x < Width && y >= 0 && y < Height) {
-      _current[y, x] = new ScreenCell(symbol, fg, bg);
+      Surface[y, x] = new ScreenCell(symbol, fg, bg);
     }
   }
-  
+
   public void Set(int x, int y, ScreenCell cell) {
     if (x >= 0 && x < Width && y >= 0 && y < Height) {
-      _current[y, x] = cell;
+      Surface[y, x] = cell;
     }
   }
 
-  public void RenderChangesOnly() {
-    for (int y = 0; y < Height; y++) {
-      bool changed = false;
+  public void DrawFrom(ScreenBuffer source, int offsetX, int offsetY) {
+    int maxY = Math.Min(source.Height, Height - offsetY);
+    int maxX = Math.Min(source.Width, Width - offsetX);
 
-      for (int x = 0; x < Width; x++) {
-        if (_current[y, x] != _previous[y, x]) {
-          changed = true;
-          break;
+    for (int y = 0; y < maxY; y++) {
+      for (int x = 0; x < maxX; x++) {
+        var cell = source.Surface[y, x];
+        
+        if (cell != null) {
+          Set(x + offsetX, y + offsetY, cell.Value);
         }
-      }
-
-      if (!changed) {
-        continue;
-      }
-
-      Console.SetCursorPosition(0, y);
-
-      var sb = new StringBuilder();
-      int? lastFg = null;
-      int? lastBg = null;
-
-      for (int x = 0; x < Width; x++) {
-        var cell = _current[y, x];
-
-        if (cell == null) {
-          sb.Append(' ');
-          continue;
-        }
-
-        if (cell.Value.Color != lastFg || cell.Value.BgColor != lastBg) {
-          sb.Append(AnsiColor.GetCode(cell.Value.Color, cell.Value.BgColor));
-          // sb.Append($"\x1b[38;5;{cell.Value.Color};48;5;{cell.Value.BgColor}m");
-          lastFg = cell.Value.Color;
-          lastBg = cell.Value.BgColor;
-        }
-
-        sb.Append(cell.Value.Char);
-      }
-
-      sb.Append(AnsiColor.Reset);
-      Console.Write(sb.ToString());
-
-      for (int x = 0; x < Width; x++) {
-        _previous[y, x] = _current[y, x];
       }
     }
   }

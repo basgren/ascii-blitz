@@ -13,26 +13,18 @@ public class MapGridRenderer {
   // private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
   private readonly UnknownSprite _unknownSprite;
   
-  private int _consoleWidth = ConsoleUtils.Width;
-  private int _consoleHeight = ConsoleUtils.Height;
-
-  private ScreenBuffer _buffer = new();
+  private BufferedConsoleRenderer _renderer = new();
 
   public MapGridRenderer() {
     _unknownSprite = new UnknownSprite();
-    _buffer.SetSize(Console.WindowWidth, Console.WindowHeight);
+    
+    _renderer.Resize(ConsoleUtils.Width, ConsoleUtils.Height);
   }
 
   public void Render(GameMap map, double timeFromStartSec) {
-    _buffer.Clear();
-
-    // Get console size to check available space
-    _consoleWidth = ConsoleUtils.Width;
-    _consoleHeight = ConsoleUtils.Height;
-
     // Calculate how many map cells we can fit (each cell is 3x3)
-    int maxMapWidth = _consoleWidth / 3;
-    int maxMapHeight = _consoleHeight / 3;
+    int maxMapWidth = _renderer.Buffer.Width / CellWidth;
+    int maxMapHeight = _renderer.Buffer.Height / CellHeight;
 
     // Determine the actual render area
     int renderWidth = Math.Min(map.Width, maxMapWidth);
@@ -64,7 +56,7 @@ public class MapGridRenderer {
       }
     }
     
-    _buffer.RenderChangesOnly();
+    _renderer.Render();
   }
 
   private void RenderGameObjectSprite(GameObject? gameObject, int screenX, int screenY, double gameTimeSec) {
@@ -81,8 +73,8 @@ public class MapGridRenderer {
       for (int spriteX = 0; spriteX < sprite.Width; spriteX++) {
         var x = screenX + spriteX;
         var y = screenY + spriteY;
-            
-        _buffer.Set(x, y, cells[spriteX, spriteY]);
+
+        _renderer.Buffer.Set(x, y, cells[spriteX, spriteY]);
       }
     }
   }

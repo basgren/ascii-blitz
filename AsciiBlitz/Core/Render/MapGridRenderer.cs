@@ -21,7 +21,7 @@ public class MapGridRenderer {
     _renderer.Resize(ConsoleUtils.Width, ConsoleUtils.Height);
   }
 
-  public void Render(GameMap map, double timeFromStartSec) {
+  public void Render(IGameMap map, double timeFromStartSec) {
     // Calculate how many map cells we can fit (each cell is 3x3)
     int maxMapWidth = _renderer.Buffer.Width / CellWidth;
     int maxMapHeight = _renderer.Buffer.Height / CellHeight;
@@ -79,7 +79,7 @@ public class MapGridRenderer {
     }
   }
 
-  private TileObject? GetMapTile(GameMap map, int x, int y) {
+  private TileObject? GetMapTile(IGameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
     var layers = map.GetOrderedLayers();
 

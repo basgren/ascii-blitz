@@ -1,11 +1,18 @@
-﻿using AsciiBlitz.Core.Map;
+﻿using AsciiBlitz.Core.Input;
+using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Game.Objects;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core;
 
-public class GameState {
+public interface IGameState {
+  T CreateUnit<T>() where T : UnitObject, new();
+  IGameMap GetMap();
+}
+
+public class GameState : IGameState {
   public Tank Player { get; private set; }
 
   private GameMap _map = new();
@@ -14,11 +21,12 @@ public class GameState {
 
   // TODO: think about init order - currently we have to add map first, then init Player.
 
-  public void Init() {
+  public void Init(IGameInput input) {
     Player = CreateUnit<Tank>();
+    Player.Controller = new ConsoleInputTankController(input);
   }
 
-  public GameMap GetMap() {
+  public IGameMap GetMap() {
     return _map;
   }
 
@@ -33,6 +41,7 @@ public class GameState {
   public T CreateObject<T>(int layerId) where T : UnitObject, new() {
     ObjectLayer layer = _map.GetLayer<ObjectLayer>(layerId);
     T obj = new T();
+    obj.GameState = this;
 
     obj.OnDestroyed += DestroyObject;
 

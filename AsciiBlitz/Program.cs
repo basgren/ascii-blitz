@@ -1,8 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using AsciiBlitz;
-using AsciiBlitz.Core;
-using AsciiBlitz.Debug;
+﻿using AsciiBlitz;
 
 ConsoleUtils.SetConsoleSize(120, 40);
 Console.OutputEncoding = System.Text.Encoding.UTF8;

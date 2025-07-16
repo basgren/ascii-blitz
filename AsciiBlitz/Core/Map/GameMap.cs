@@ -1,10 +1,15 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
-using AsciiBlitz.Core.Types;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map;
 
-public class GameMap {
+public interface IGameMap {
+  int Width { get; }
+  int Height { get; }
+  T GetLayer<T>(int id) where T : AbstractMapLayer;
+  IReadOnlyList<AbstractMapLayer> GetOrderedLayers();
+}
+
+public class GameMap : IGameMap {
   public const int LayerGroundId = 1;
   public const int LayerSolidsId = 2;
   public const int LayerObjectsId = 3;
@@ -68,14 +73,6 @@ public class GameMap {
     }
 
     return typedLayer;
-  }
-
-  // TODO: move collision detection to more appropriate place.
-  public bool CanMove(Vec2 playerPos, Vec2 offs) {
-    TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
-    Vec2 newPos = playerPos + offs;
-    
-    return !layer.HasTileAt(newPos);
   }
 
   private void ClearCache() {

@@ -10,4 +10,11 @@ public static class VecUtils {
       _ => Vec2.Zero
     };
   }
+
+  public static Vec2 Mix(Vec2 a, Vec2 b, float t) {
+    return new Vec2(
+      a.X * (1 - t) + b.X * t,
+      a.Y * (1 - t) + b.Y * t
+    );
+  }
 }

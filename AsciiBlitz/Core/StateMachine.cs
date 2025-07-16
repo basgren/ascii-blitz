@@ -1,58 +1,81 @@
 ﻿namespace AsciiBlitz.Core;
 
-public abstract class StateMachine<TState> where TState : Enum {
-  private struct DelayedTransitionData {
-    public TState TargetState;
-    public float Delay;
-    public Action<TState>? OnComplete;
-  }
-  
-  public event Action<TState, TState>? OnBeforeStateChange;
-  public event Action<TState, TState>? OnAfterStateChange;
+/// <summary>
+/// Base class for a finite state machine (FSM) with delayed transitions.
+/// </summary>
+public abstract class StateMachine<TState>(TState defaultState) where TState : Enum {
+  /// <summary>
+  /// Struct describing a delayed state transition.
+  /// </summary>
+  private record struct DelayedTransitionData
+  (
+    TState TargetState,
+    float Delay,
+    float TotalDelay,
+    Action<TState>? OnComplete);
 
-  public TState CurrentState => _currentState;
-  public float TimeInCurrentState => _timeInState;
-
-  private TState _currentState;
+  private TState _state = defaultState;
   private readonly Dictionary<TState, HashSet<TState>> _transitions = new();
-
   private float _timeInState;
-
   private DelayedTransitionData? _pendingTransition;
 
-  protected StateMachine(TState defaultState) {
-    _currentState = defaultState;
-    _timeInState = 0f;
-    _pendingTransition = null;
+  /// <summary>
+  /// Invoked before a state transition occurs.
+  /// </summary>
+  public event Action<TState, TState>? OnBeforeStateChange;
+
+  /// <summary>
+  /// Invoked after a state transition completes.
+  /// </summary>
+  public event Action<TState, TState>? OnAfterStateChange;
+
+  /// <summary>
+  /// The currently active state.
+  /// </summary>
+  public TState State => _state;
+
+  /// <summary>
+  /// Time spent in the current state.
+  /// </summary>
+  public float TimeInCurrentState => _timeInState;
+
+  /// <summary>
+  /// State progress: returns 1.0 if no delayed transition is pending, otherwise returns fraction of delay elapsed.
+  /// </summary>
+  public float StateProgress {
+    get {
+      if (_pendingTransition is { TotalDelay: > 0f } pending) {
+        float elapsed = pending.TotalDelay - pending.Delay;
+        return Math.Clamp(elapsed / pending.TotalDelay, 0f, 1f);
+      }
+
+      return 1f;
+    }
   }
 
+  /// <summary>
+  /// Updates internal timers and executes any delayed transition.
+  /// </summary>
   public virtual void Update(float deltaTime) {
     _timeInState += deltaTime;
 
-    if (!_pendingTransition.HasValue) {
-      return;
-    }
+    if (_pendingTransition is { } pending) {
+      var newDelay = pending.Delay - deltaTime;
 
-    _pendingTransition = _pendingTransition.Value with {
-      Delay = _pendingTransition.Value.Delay - deltaTime
-    };
-
-    if (_pendingTransition.Value.Delay <= 0f) {
-      var transition = _pendingTransition.Value;
-      var from = _currentState;
-      
-      _pendingTransition = null;
-      Go(transition.TargetState);
-      transition.OnComplete?.Invoke(from);
+      if (newDelay <= 0f) {
+        _pendingTransition = null;
+        var from = _state;
+        Go(pending.TargetState);
+        pending.OnComplete?.Invoke(from);
+      } else {
+        _pendingTransition = pending with { Delay = newDelay };
+      }
     }
   }
 
-  public void Initialize(TState initialState) {
-    _currentState = initialState;
-    _timeInState = 0f;
-    _pendingTransition = null;
-  }
-
+  /// <summary>
+  /// Registers a valid transition between two states.
+  /// </summary>
   public void RegisterTransition(TState fromState, TState toState) {
     if (!_transitions.TryGetValue(fromState, out var set)) {
       set = new HashSet<TState>();
@@ -62,38 +85,52 @@ public abstract class StateMachine<TState> where TState : Enum {
     set.Add(toState);
   }
 
+  /// <summary>
+  /// Registers multiple valid transitions from a single source state.
+  /// </summary>
   public void RegisterTransitions(TState fromState, params TState[] toStates) {
     foreach (var toState in toStates) {
       RegisterTransition(fromState, toState);
     }
   }
 
+  /// <summary>
+  /// Checks if the FSM can transition to the given state from the current state.
+  /// </summary>
   public bool CanGo(TState newState) {
-    return _transitions.TryGetValue(_currentState, out var allowedStates) && allowedStates.Contains(newState);
+    return _transitions.TryGetValue(_state, out var allowedStates)
+           && allowedStates.Contains(newState);
   }
 
+  /// <summary>
+  /// Transitions to a new state immediately, if allowed.
+  /// </summary>
   public bool Go(TState newState) {
-    if (!CanGo(newState))
+    if (!CanGo(newState)) {
       return false;
+    }
 
-    OnBeforeStateChange?.Invoke(_currentState, newState);
-    var oldState = _currentState;
-    _currentState = newState;
+    OnBeforeStateChange?.Invoke(_state, newState);
+
+    var oldState = _state;
+    _state = newState;
     _timeInState = 0f;
     _pendingTransition = null;
-    OnAfterStateChange?.Invoke(oldState, newState);
 
+    OnAfterStateChange?.Invoke(oldState, newState);
     return true;
   }
 
+  /// <summary>
+  /// Schedules a transition to a new state after a delay.
+  /// </summary>
   public void GoDelayed(TState newState, float delaySeconds, Action<TState>? onComplete = null) {
     if (_pendingTransition.HasValue) {
-      // TODO: should we auto ignore pending state when switching to another one?
-      throw new InvalidOperationException("A delayed transition is already pending.");      
+      throw new InvalidOperationException("A delayed transition is already pending.");
     }
-    
+
     if (delaySeconds <= 0f) {
-      var from = _currentState;
+      var from = _state;
       Go(newState);
       onComplete?.Invoke(from);
       return;
@@ -103,13 +140,17 @@ public abstract class StateMachine<TState> where TState : Enum {
       return;
     }
 
-    _pendingTransition = new DelayedTransitionData {
-      TargetState = newState,
-      Delay = delaySeconds,
-      OnComplete = onComplete,
-    };
+    _pendingTransition = new DelayedTransitionData(
+      TargetState: newState,
+      Delay: delaySeconds,
+      TotalDelay: delaySeconds,
+      OnComplete: onComplete
+    );
   }
 
+  /// <summary>
+  /// Cancels any currently scheduled delayed transition.
+  /// </summary>
   public void CancelDelayed() {
     _pendingTransition = null;
   }

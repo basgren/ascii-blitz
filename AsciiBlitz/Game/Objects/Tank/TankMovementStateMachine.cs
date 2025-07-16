@@ -1,6 +1,6 @@
 ﻿using AsciiBlitz.Core;
 
-namespace AsciiBlitz.Game.Objects;
+namespace AsciiBlitz.Game.Objects.Tank;
 
 public enum TankMovementState {
   Idle,

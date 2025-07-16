@@ -6,7 +6,7 @@ using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Game.Objects;
+namespace AsciiBlitz.Game.Objects.Tank;
 
 public interface ITankController {
   public ITankUnitCommand? GetNextCommand(Tank unit);
@@ -27,6 +27,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public ITankController? Controller { get; set; }
   
   public override Sprite Sprite => SpriteRepo.Get<TankSprite>();
+  public TankMovementState MovementState => state.State;
 
   private TankMovementStateMachine state = new(TankMovementState.Idle);
   private TankAttrs _attrs = new();

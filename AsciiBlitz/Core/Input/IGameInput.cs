@@ -2,4 +2,5 @@
 
 public interface IGameInput {
   ConsoleKey? GetKey();
+  void Consume();
 }

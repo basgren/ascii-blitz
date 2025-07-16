@@ -2,8 +2,7 @@
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
-using AsciiBlitz.Game.Objects;
-using AsciiBlitz.Types;
+using AsciiBlitz.Game.Objects.Tank;
 
 namespace AsciiBlitz.Core;
 
@@ -23,7 +22,7 @@ public class GameState : IGameState {
 
   public void Init(IGameInput input) {
     Player = CreateUnit<Tank>();
-    Player.Controller = new ConsoleInputTankController(input);
+    Player.Controller = new TankConsoleInputController(input);
   }
 
   public IGameMap GetMap() {

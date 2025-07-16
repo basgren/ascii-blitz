@@ -33,7 +33,7 @@ public class DebugUtils {
 
   public static void LogPos(UnitObject obj, int x = 0, int y = 0) {
     Console.SetCursorPosition(x, y);
-    Console.Write($"Pos: {obj.Pos.X}, {obj.Pos.Y}");
+    Console.Write($"Pos: {obj.Pos.X}, {obj.Pos.Y}          ");
   }
 
   public static void LogHealth(IDamageable obj, int x = 0, int y = 0) {

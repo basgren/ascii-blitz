@@ -1,4 +1,4 @@
-﻿using AsciiBlitz.Game.Objects;
+﻿using AsciiBlitz.Game.Objects.Tank;
 
 namespace AsciiBlitz.Core.Commands;
 

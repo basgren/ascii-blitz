@@ -6,7 +6,7 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Debug;
-using AsciiBlitz.Game.Objects;
+using AsciiBlitz.Game.Objects.Tank;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz;
@@ -17,7 +17,7 @@ public class GameRunner {
   
   private Tank Player => _gameState.Player;
   private readonly MapGridRenderer _mapRenderer = new();
-  private readonly ConsoleInput _input = new();
+  private readonly BufferedConsoleInput _input = new();
 
   public void Run() {
     Console.Clear();
@@ -35,6 +35,7 @@ public class GameRunner {
     Player.Pos = new Vec2(1, 1);
     
     var enemy = _gameState.CreateUnit<Tank>();
+    enemy.Controller = new TankPatrolController(_gameState.GetMap());
     enemy.Pos = new Vec2(1, 3);
     
     // Test rendering - when needed to show generated map.
@@ -57,7 +58,6 @@ public class GameRunner {
       ProcessFrame(timeFromGameStart, deltaTimeSec);
       
       DebugUtils.LogPos(Player);
-      DebugUtils.LogHealth(enemy);
       
       var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
       

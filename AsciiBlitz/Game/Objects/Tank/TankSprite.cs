@@ -4,7 +4,7 @@ using AsciiBlitz.Types;
 
 using static AsciiBlitz.Core.Render.AnsiColor;
 
-namespace AsciiBlitz.Game.Objects;
+namespace AsciiBlitz.Game.Objects.Tank;
 
 public class TankSprite() : Sprite(3, 3) {
   private static readonly string[] SpriteDown = [

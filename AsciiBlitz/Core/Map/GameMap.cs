@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map;
 
@@ -7,6 +8,7 @@ public interface IGameMap {
   int Height { get; }
   T GetLayer<T>(int id) where T : AbstractMapLayer;
   IReadOnlyList<AbstractMapLayer> GetOrderedLayers();
+  bool IsMovable(Vec2 pos);
 }
 
 public class GameMap : IGameMap {
@@ -62,7 +64,12 @@ public class GameMap : IGameMap {
     
     return _orderedLayers;
   }
-  
+
+  public bool IsMovable(Vec2 pos) {
+    TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
+    return !layer.HasTileAt(pos);
+  }
+
   public T GetLayer<T>(int id) where T : AbstractMapLayer {
     if (!_layers.TryGetValue(id, out var layer)) {
       throw new KeyNotFoundException($"Layer with ID {id} was not found.");      

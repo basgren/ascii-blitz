@@ -22,4 +22,8 @@ public record struct Vec2(float X, float Y) {
   
   public float Length => MathF.Sqrt(X * X + Y * Y);
   public bool IsZero => X == 0 && Y == 0;
+
+  public override string ToString() {
+    return $"[{X}, {Y}]";
+  }
 }

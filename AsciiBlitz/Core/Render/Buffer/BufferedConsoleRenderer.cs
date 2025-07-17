@@ -1,14 +1,23 @@
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace AsciiBlitz.Core.Render.Buffer;
 
+/// <summary>
+/// Tightly linked with Console. Renders contents of the buffer right on the screen. 
+/// </summary>
 public class BufferedConsoleRenderer {
   private ScreenBuffer _front = new(1, 1);
   private ScreenBuffer _back = new(1, 1);
 
   public ScreenBuffer Buffer => _front;
 
-  public void Resize(int width, int height) {
+  public BufferedConsoleRenderer() {
+    Console.OutputEncoding = Encoding.UTF8;
+  }
+
+  public void SetSize(int width, int height) {
+    SetConsoleSize(width, height);
     _front.SetSize(width, height);
     _back.SetSize(width, height);
   }
@@ -30,9 +39,9 @@ public class BufferedConsoleRenderer {
       }
 
       if (!changed) {
-        continue;        
+        continue;
       }
-      
+
       Console.SetCursorPosition(0, y);
 
       var sb = new StringBuilder();
@@ -63,5 +72,16 @@ public class BufferedConsoleRenderer {
     // Swap buffers
     (_front, _back) = (_back, _front);
     _front.Clear();
+  }
+
+  private static void SetConsoleSize(int width, int height) {
+    // Set window size using escape sequence.
+    Console.Write($"\x1b[8;{height};{width}t");
+
+    // To prevent exception in Linux.
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+      Console.SetBufferSize(width, height);
+      Console.SetWindowSize(width, height);
+    }
   }
 }

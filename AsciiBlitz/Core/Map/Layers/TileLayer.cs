@@ -59,6 +59,10 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
   }
   
   public TileObject? GetTileAt(int x, int y) {
+    if (x < 0 || x >= _width || y < 0 || y >= _height) {
+      return null;
+    }
+    
     return _tiles[x, y];
   }
   

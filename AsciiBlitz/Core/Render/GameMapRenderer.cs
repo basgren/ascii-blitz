@@ -1,14 +1,15 @@
 ﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Core.Render;
 
 public class GameMapRenderer {
-  public void Render(GameMap map) {
+  public void Render(ScreenBuffer target,GameMap map) {
     // Get console size to check available space
-    int consoleWidth = ConsoleUtils.Width;
-    int consoleHeight = ConsoleUtils.Height;
+    int consoleWidth = target.Width;
+    int consoleHeight = target.Height;
     
     // Determine the actual render area (consider map size vs console size)
     int renderWidth = Math.Min(map.Width, consoleWidth);

@@ -14,4 +14,8 @@ public record struct Vec2Int(int X, int Y) {
   public static Vec2Int operator -(Vec2Int a, Vec2Int b) {
     return new Vec2Int(a.X - b.X, a.Y - b.Y);
   }
+
+  public override string ToString() {
+    return $"[{X}, {Y}]";
+  }
 }

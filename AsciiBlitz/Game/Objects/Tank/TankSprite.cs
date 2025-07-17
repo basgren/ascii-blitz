@@ -60,7 +60,7 @@ public class TankSprite() : Sprite(3, 3) {
     { Green, Green, Green },
     { White, White, White },
   };
-
+  
   public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
     if (context.GameObject is not Tank tank) {
       return;

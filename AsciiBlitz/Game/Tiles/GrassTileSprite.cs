@@ -1,5 +1,6 @@
 ﻿using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
+using AsciiBlitz.Debug;
 
 namespace AsciiBlitz.Game.Tiles;
 

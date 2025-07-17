@@ -1,15 +1,12 @@
-﻿using System.Text;
-
-namespace AsciiBlitz.Core.Render.Buffer;
+﻿namespace AsciiBlitz.Core.Render.Buffer;
 
 public class ScreenBuffer {
   public int Width { get; private set; }
   public int Height { get; private set; }
 
-  public ScreenCell?[,] Surface { get; private set; }
+  public ScreenCell?[,] Surface { get; private set; } = new ScreenCell?[0, 0];
 
   public ScreenBuffer(int width, int height) {
-    Console.OutputEncoding = Encoding.UTF8;
     SetSize(width, height);
   }
 

@@ -5,7 +5,9 @@ using AsciiBlitz.Core.Map.Generator;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
+using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Debug;
+using AsciiBlitz.Game;
 using AsciiBlitz.Game.Objects.Tank;
 using AsciiBlitz.Types;
 
@@ -16,17 +18,21 @@ public class GameRunner {
   private readonly GameState _gameState = new();
   
   private Tank Player => _gameState.Player;
+
+  private readonly BufferedConsoleRenderer _consoleRenderer = new();
   private readonly MapGridRenderer _mapRenderer = new();
   private readonly BufferedConsoleInput _input = new();
+  private readonly GameScreen _screen = new();
 
   public void Run() {
     Console.Clear();
     Console.CursorVisible = false;
+    _consoleRenderer.SetSize(120, 29);
 
     IMapGenerator mapGen = new TestMapGenerator();
 
     var map = mapGen
-      .SetSize(40, 10)
+      .SetSize(40, 13)
       .Build();
 
     _gameState.SetMap(map);
@@ -56,8 +62,6 @@ public class GameRunner {
       var timeFromGameStart = (float)(frameStartTime - gameStartTime).TotalSeconds;
       
       ProcessFrame(timeFromGameStart, deltaTimeSec);
-      
-      DebugUtils.LogPos(Player);
       
       var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
       
@@ -102,8 +106,9 @@ public class GameRunner {
         obj.Destroy();
       }
     }
-      
-    _mapRenderer.Render(_gameState.GetMap(), timeFromStart);
+
+    _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, timeFromStart);
+    _consoleRenderer.Render();
   }
 
   private void OnQuit() {

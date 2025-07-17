@@ -14,13 +14,13 @@ public interface ITankController {
 
 public class TankAttrs {
   // How long it takes to turn 90deg
-  public readonly float TurnTime = 0.75f;
+  public readonly float TurnTime = 0.5f;
   
   // How long it takes to move forward by 1 tile
-  public readonly float MoveForwardTime = 0.75f;
+  public readonly float MoveForwardTime = 0.5f;
   
   // How long it takes to move backward by 1 tile. Should be more than forward, but less than 2 turns + move forward.
-  public readonly float MoveBackwardTime = 0.75f * 1.5f;
+  public readonly float MoveBackwardTime = 0.5f * 1.5f;
 }
 
 public class Tank : UnitObject, ICollidable, IDamageable {
@@ -64,7 +64,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
 
   public void Fire() {
     var bullet = GameState.CreateUnit<Projectile>();
-    bullet.Speed = VecUtils.DirToVec2(Dir) * 3f;
+    bullet.Speed = Dir.ToVec2() * 3f;
     bullet.Pos = GetShootPoint();
   }
 

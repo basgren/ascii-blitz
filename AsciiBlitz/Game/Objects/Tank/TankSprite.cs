@@ -31,7 +31,7 @@ public class TankSprite() : Sprite(5, 3) {
     "#####",
   ];
 
-  private static readonly int TracksColor = Grayscale(12);
+  private static readonly int TracksGrayscaleId = 12;
   private static readonly int TracksBgColor = Grayscale(5);
   private static readonly int HullColor = Rgb(0, 4,0);
   private static readonly int HullBgColor = Rgb(0, 1,0);
@@ -66,8 +66,16 @@ public class TankSprite() : Sprite(5, 3) {
         cell.BgColor = EnemyHullBgColor;
       }
     } else {
+      var rand = new Random();
+      if (tank.MovementState != TankMovementState.Idle) {
+        int sign = tank.Dir is Direction.Right or Direction.Up ? 1 : -1;
+        int offset = (int)(Math.Sin((sign * x + y + context.GameTime) * 30 ) * 4f);
+        cell.Color = Grayscale(TracksGrayscaleId + offset);
+      } else {
+        cell.Color = Grayscale(TracksGrayscaleId);        
+      }
+      
       cell.BgColor = TracksBgColor;
-      cell.Color = TracksColor;
     }
   }
 

@@ -11,7 +11,7 @@ public class TankPatrolController(IGameMap map) : ITankController {
   private IGameMap _map = map;
 
   public ITankUnitCommand? GetNextCommand(Tank unit) {
-    if (unit.MovementState != TankMovementState.Idle) {
+    if (unit.MovementState.State != TankMovementState.Idle) {
       return null;
     }
 

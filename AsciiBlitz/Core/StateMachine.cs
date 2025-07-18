@@ -1,9 +1,15 @@
 ﻿namespace AsciiBlitz.Core;
 
+public interface IReadonlyStateMachine<TState> where TState : Enum {
+  TState State { get; }
+  float TimeInCurrentState { get; }
+  float Progress { get; }
+}
+
 /// <summary>
 /// Base class for a finite state machine (FSM) with delayed transitions.
 /// </summary>
-public abstract class StateMachine<TState>(TState defaultState) where TState : Enum {
+public abstract class StateMachine<TState>(TState defaultState) : IReadonlyStateMachine<TState> where TState : Enum {
   /// <summary>
   /// Struct describing a delayed state transition.
   /// </summary>
@@ -42,7 +48,7 @@ public abstract class StateMachine<TState>(TState defaultState) where TState : E
   /// <summary>
   /// State progress: returns 1.0 if no delayed transition is pending, otherwise returns fraction of delay elapsed.
   /// </summary>
-  public float StateProgress {
+  public float Progress {
     get {
       if (_pendingTransition is { TotalDelay: > 0f } pending) {
         float elapsed = pending.TotalDelay - pending.Delay;

@@ -5,15 +5,17 @@ namespace AsciiBlitz.Game.Objects.Tank;
 
 public class TankConsoleInputController : ITankController {
   private IGameInput _input;
-  
+
   public TankConsoleInputController(IGameInput gameInput) {
     _input = gameInput;
   }
-  
+
   public ITankUnitCommand? GetNextCommand(Tank unit) {
     ConsoleKey? key = _input.GetKey();
 
-    if (key == null || unit.MovementState != TankMovementState.Idle) {
+    if (key == null
+        || (unit.MovementState.State != TankMovementState.Idle && unit.WeaponState.State != TankWeaponState.Idle)
+       ) {
       return null;
     }
 
@@ -30,7 +32,7 @@ public class TankConsoleInputController : ITankController {
       // Reset buffer, so the same key won't be retrieved in the next update.
       _input.Consume();
     }
-    
+
     return command;
   }
 }

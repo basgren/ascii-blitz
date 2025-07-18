@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Core.Commands;
+﻿using AsciiBlitz.Core;
+using AsciiBlitz.Core.Commands;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
@@ -21,15 +22,20 @@ public class TankAttrs {
   
   // How long it takes to move backward by 1 tile. Should be more than forward, but less than 2 turns + move forward.
   public readonly float MoveBackwardTime = 0.5f * 1.5f;
+  
+  public readonly float WeaponShotTime = 0.05f; // Just for effect of shootin in menu.
+  public readonly float WeaponReloadTime = 1.5f;
 }
 
 public class Tank : UnitObject, ICollidable, IDamageable {
   public ITankController? Controller { get; set; }
   
   public override Sprite Sprite => SpriteRepo.Get<TankSprite>();
-  public TankMovementState MovementState => state.State;
+  public IReadonlyStateMachine<TankMovementState> MovementState => state;
+  public IReadonlyStateMachine<TankWeaponState> WeaponState => weaponState;
 
   private TankMovementStateMachine state = new(TankMovementState.Idle);
+  private TankWeaponStateMachine weaponState = new(TankWeaponState.Idle);
   private TankAttrs _attrs = new();
   
   // The next cell that tank will move to. Updated only during state = Moving. This also can be used
@@ -43,9 +49,10 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public override void Update(float deltaTime) {
     base.Update(deltaTime);
     state.Update(deltaTime);
+    weaponState.Update(deltaTime);
 
     if (state.State == TankMovementState.Moving) {
-      Pos = VecUtils.Mix(PrevPos, TargetPos, state.StateProgress);
+      Pos = VecUtils.Mix(PrevPos, TargetPos, state.Progress);
     }
     
     var command = Controller?.GetNextCommand(this);
@@ -66,9 +73,16 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   }
 
   public void Fire() {
-    var bullet = GameState.CreateUnit<Projectile>();
-    bullet.Speed = Dir.ToVec2() * 3f;
-    bullet.Pos = GetShootPoint(bullet);
+    if (weaponState.CanGo(TankWeaponState.Shooting)) {
+      weaponState.Go(TankWeaponState.Shooting);
+      var bullet = GameState.CreateUnit<Projectile>();
+      bullet.Speed = Dir.ToVec2() * 3f;
+      bullet.Pos = GetShootPoint(bullet);
+      
+      weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {
+        weaponState.GoDelayed(TankWeaponState.Idle, _attrs.WeaponReloadTime);
+      });
+    }
   }
 
   public void Turn(bool counterclockwise = false) {

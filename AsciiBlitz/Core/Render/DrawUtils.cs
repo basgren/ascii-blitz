@@ -39,7 +39,7 @@ public class DrawUtils {
     return this;
   }
 
-  public DrawUtils SetColor(int fg, int bg) {
+  public DrawUtils SetColor(int fg, int bg = 0) {
     _fgColor = fg;
     _bgColor = bg;
     return this;
@@ -86,6 +86,11 @@ public class DrawUtils {
     _target.Set(x, yMax, style.BottomLeft, _fgColor, _bgColor);
     _target.Set(xMax, yMax, style.BottomRight, _fgColor, _bgColor);
 
+    return this;
+  }
+
+  public DrawUtils Clear() {
+    _target.Clear();
     return this;
   }
 }

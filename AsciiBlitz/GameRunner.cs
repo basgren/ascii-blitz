@@ -50,7 +50,7 @@ public class GameRunner {
     // Console.ReadKey();
     
     // Main game loop - 30 FPS
-    const int targetFps = 30;
+    const int targetFps = 50;
     const int frameTimeMs = 1000 / targetFps;
 
     // Move to game state?

@@ -12,6 +12,7 @@ public class GameScreen {
 
   private ScreenBuffer _gameViewport = new(0, 0);
   private ScreenBuffer _menu = new(0, 0);
+  private ScreenBuffer _bulletViewport = new(15, 3);
 
   private int _screenWidth;
   private int _screenHeight;
@@ -25,15 +26,11 @@ public class GameScreen {
     InitSurfaces(target);
 
     _mapRenderer
-      .SetCameraCenterWorldCoords(player.Pos)  
+      .SetCameraCenterWorldCoords(player.Pos)
       .Render(_gameViewport, map, timeFromStartSec);
 
-    _draw
-      .SetTarget(_menu)
-      .DrawTextLines(1, 0, HeaderLines)
-      .DrawText(0, 10, $"X: {player.Pos.X}")
-      .DrawText(0, 11, $"Y: {player.Pos.Y}");
-    
+    DrawInfoPanel(player);
+
     _draw
       .SetTarget(target)
       .DrawBorder(0, 0, _gameViewport.Width + 2, _gameViewport.Height + 2, DrawUtils.Rounded)
@@ -41,6 +38,54 @@ public class GameScreen {
 
     target.DrawFrom(_gameViewport, 1, 1);
     target.DrawFrom(_menu, _screenWidth - MenuWidth - Gap, 1);
+  }
+
+  private void DrawInfoPanel(Tank player) {
+    _draw
+      .SetTarget(_menu)
+      .DrawTextLines(1, 0, HeaderLines);
+
+    int weapX = 2;
+    int weapY = 7;
+    int weapWidth = 15;
+
+    _draw
+      .DrawText(weapX + 5, weapY, "Weapon")
+      .SetColor(
+        player.WeaponState.State == TankWeaponState.Idle
+          ? AnsiColor.Green
+          : AnsiColor.Grayscale(10)
+      )
+      .DrawBorder(weapX, weapY + 1, weapWidth + 2, 5, DrawUtils.HeavyLine)
+      .ResetColor();
+
+    int baseBulletX = 2;
+
+    int bulletX = player.WeaponState.State switch {
+      TankWeaponState.Shooting => baseBulletX + (int)(player.WeaponState.Progress * 15),
+      TankWeaponState.Reloading => -20 + (int)(player.WeaponState.Progress * 20) + baseBulletX,
+      _ => baseBulletX,
+    };
+
+    int bulletColor = player.WeaponState.State switch {
+      TankWeaponState.Shooting => AnsiColor.BrightRed,
+      TankWeaponState.Reloading => AnsiColor.Grayscale(10),
+      _ => AnsiColor.BrightWhite,
+    };
+    
+    _draw
+      .SetTarget(_bulletViewport)
+      .Clear()
+      .SetColor(bulletColor)
+      .DrawTextLines(bulletX, 0, BulletLines)
+      .ResetColor();
+
+    _menu.DrawFrom(_bulletViewport, weapX + 1, weapY + 2);
+
+    _draw
+      .SetTarget(_menu)
+      .DrawText(1, _menu.Height - 2, $"X: {player.Pos.X}")
+      .DrawText(1, _menu.Height - 1, $"Y: {player.Pos.Y}");
   }
 
   private void InitSurfaces(ScreenBuffer target) {
@@ -55,7 +100,7 @@ public class GameScreen {
 
     _gameViewport.SetSize(target.Width - MenuWidth - Gap * 4, target.Height - Gap * 2);
     // _gameViewport.SetSize(40, 20);
-    
+
     _menu.SetSize(MenuWidth, target.Height - Gap * 2);
   }
 
@@ -66,5 +111,11 @@ public class GameScreen {
     "| __  | |_| |_ ___ ",
     "| __ -| | |  _|- _|",
     "|_____|_|_|_| |___|",
+  ];
+
+  private static readonly string[] BulletLines = [
+    @"/=====__",
+    @"|########>",
+    @"\====="""""
   ];
 }

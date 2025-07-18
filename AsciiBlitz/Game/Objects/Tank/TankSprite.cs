@@ -67,7 +67,7 @@ public class TankSprite() : Sprite(5, 3) {
       }
     } else {
       var rand = new Random();
-      if (tank.MovementState != TankMovementState.Idle) {
+      if (tank.MovementState.State != TankMovementState.Idle) {
         int sign = tank.Dir is Direction.Right or Direction.Up ? 1 : -1;
         int offset = (int)(Math.Sin((sign * x + y + context.GameTime) * 30 ) * 4f);
         cell.Color = Grayscale(TracksGrayscaleId + offset);

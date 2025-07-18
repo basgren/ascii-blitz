@@ -21,6 +21,8 @@ public class BufferedConsoleRenderer {
     _front.SetSize(width, height);
     _back.SetSize(width, height);
   }
+  
+  private readonly ScreenCell _emptyCell = new(' ', AnsiColor.White, AnsiColor.Black);
 
   public void Render() {
     var curr = _front.Surface;
@@ -52,8 +54,7 @@ public class BufferedConsoleRenderer {
         var cell = curr[y, x];
 
         if (cell == null) {
-          sb.Append(' ');
-          continue;
+          cell = _emptyCell;
         }
 
         if (cell.Value.Color != lastFg || cell.Value.BgColor != lastBg) {

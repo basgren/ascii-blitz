@@ -13,7 +13,7 @@ public abstract class StaticSprite : Sprite {
     }
   }
 
-  public override void UpdateCell(in SpriteContext ctx, ref ScreenCell cell) {
+  public override void UpdateCell(in CharContext ctx, ref ScreenCell cell) {
     // Do nothing
   }
 }

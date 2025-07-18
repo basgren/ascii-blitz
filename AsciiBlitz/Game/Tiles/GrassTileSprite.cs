@@ -5,7 +5,7 @@ using AsciiBlitz.Debug;
 namespace AsciiBlitz.Game.Tiles;
 
 public class GrassTileSprite : Sprite {
-  public GrassTileSprite() : base(3, 3) {
+  public GrassTileSprite() : base(5, 3) {
   }
 
   private static readonly string[] _grassChars = [
@@ -17,13 +17,14 @@ public class GrassTileSprite : Sprite {
     "#.      ",
   ];
 
-  public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
+  public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     if (context.GameObject is not GrassTile grassTile) {
       return;
     }
 
     var samples = _grassChars[Math.Min(grassTile.GrassDamageLevel, _grassChars.Length - 1)];
-    int index = RandInt((context.CharPos.X + context.CharPos.Y * Height) * grassTile.Id, samples.Length - 1);
+    int id = (grassTile.Pos.Y * Height + context.CharPos.Y) * grassTile.Pos.X * Width * context.CharPos.X;
+    int index = RandInt(id, samples.Length - 1);
 
     cell.Char = samples[index];
 
@@ -31,10 +32,15 @@ public class GrassTileSprite : Sprite {
     if (grassTile.GrassDamageLevel >= 4) {
       cell.Color = AnsiColor.Grayscale(8);
     } else {
-      var value = Math.Cos(context.GameTime * (context.CharPos.X + context.CharPos.Y * Width) / 10
-                           + grassTile.Id) * 0.5 + 0.5;
+      var value = Math.Cos(context.GameTime / 3 + id) * 0.5 + 0.5;
 
-      cell.Color = value < 0.5 ? AnsiColor.Green : AnsiColor.BrightGreen;
+      if (value < 0.3) {
+        cell.Color = AnsiColor.Rgb(0, 2, 0);
+      } else if (value < 0.6) {
+        cell.Color = AnsiColor.Rgb(0, 3, 0);
+      } else {
+        cell.Color = AnsiColor.Rgb(0, 4, 0);
+      }
     }
   }
 

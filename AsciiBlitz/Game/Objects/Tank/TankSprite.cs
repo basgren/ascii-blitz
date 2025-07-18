@@ -6,65 +6,46 @@ using static AsciiBlitz.Core.Render.AnsiColor;
 
 namespace AsciiBlitz.Game.Objects.Tank;
 
-public class TankSprite() : Sprite(3, 3) {
+public class TankSprite() : Sprite(5, 3) {
   private static readonly string[] SpriteDown = [
-    "#v#",
-    "#@#",
-    "#║#",
+    "#---#",
+    "#(@)#",
+    "#=║=#",
   ];
 
-  private static readonly int[,] SpriteDownColors = {
-    { White, Green, White },
-    { White, Green, White },
-    { White, Green, White },
-  };
-  
   private static readonly string[] SpriteUp = [
-    "#║#",
-    "#@#",
-    "#^#",
+    "#=║=#",
+    "#(@)#",
+    "#---#",
   ];
-  
-  private static readonly string[] SpriteUpColor = [
-    "wGw",
-    "wGw",
-    "wGw",
-  ];
-  
-  private static readonly int[,] SpriteUpColors = {
-    { White, Green, White },
-    { White, Green, White },
-    { White, Green, White },
-  };
   
   private static readonly string[] SpriteLeft = [
-    "###",
-    "═@<",
-    "###",
+    "#####",
+    "═(@)|",
+    "#####",
   ];
   
-  private static readonly int[,] SpriteLeftColors = {
-    { White, White, White },
-    { Green, Green, Green },
-    { White, White, White },
-  };
-       
   private static readonly string[] SpriteRight = [
-    "###",
-    ">@═",
-    "###",
+    "#####",
+    "|(@)=",
+    "#####",
   ];
+
+  private static readonly int TracksColor = Grayscale(12);
+  private static readonly int TracksBgColor = Grayscale(5);
+  private static readonly int HullColor = Rgb(0, 4,0);
+  private static readonly int HullBgColor = Rgb(0, 1,0);
   
-  private static readonly int[,] SpriteRightColors = {
-    { White, White, White },
-    { Green, Green, Green },
-    { White, White, White },
-  };
-  
-  public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
+  private static readonly int EnemyHullColor = Rgb(4,0, 0);
+  private static readonly int EnemyHullBgColor = Rgb(1, 0, 0);
+
+  public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     if (context.GameObject is not Tank tank) {
       return;
     }
+    
+    var x = context.CharPos.X;
+    var y = context.CharPos.Y;
     
     string[] charInfo = tank.Dir switch {
       Direction.Up => SpriteUp,
@@ -74,15 +55,27 @@ public class TankSprite() : Sprite(3, 3) {
       _ => SpriteDown
     };
     
-    int[,] colorInfo = tank.Dir switch {
-      Direction.Up => SpriteUpColors,
-      Direction.Down => SpriteDownColors,
-      Direction.Left => SpriteLeftColors,
-      Direction.Right => SpriteRightColors,
-      _ => throw new ArgumentOutOfRangeException()
-    };
+    cell.Char = charInfo[y][x];
 
-    cell.Char = charInfo[context.CharPos.Y][context.CharPos.X];
-    cell.Color = colorInfo[context.CharPos.Y, context.CharPos.X];
+    if (isHullChar(x, y, tank.Dir)) {
+      if (tank.IsPlayer) {
+        cell.Color = HullColor;
+        cell.BgColor = HullBgColor;
+      } else {
+        cell.Color = EnemyHullColor;
+        cell.BgColor = EnemyHullBgColor;
+      }
+    } else {
+      cell.BgColor = TracksBgColor;
+      cell.Color = TracksColor;
+    }
+  }
+
+  private bool isHullChar(int x, int y, Direction dir) {
+    if (dir is Direction.Down or Direction.Up) {
+      return x != 0 && x != Width - 1;
+    }
+    
+    return y != 0 && y != Height - 1;
   }
 }

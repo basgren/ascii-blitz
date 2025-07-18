@@ -5,16 +5,16 @@ namespace AsciiBlitz.Game.Tiles;
 
 public class WeakWallTileSprite : Sprite {
   private static readonly string[] SpriteLines = [
-    "ППП",
-    "ШШШ",
-    "ППП",
+    "ППППП",
+    "ШШШШШ",
+    "ППППП",
   ];
 
   private static readonly string DamageChars = "wvпш%";
     
-  public WeakWallTileSprite() : base(3, 3) { }
+  public WeakWallTileSprite() : base(5, 3) { }
 
-  public override void UpdateCell(in SpriteContext context, ref ScreenCell cell) {
+  public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     if (context.GameObject is not WeakWallTile weakWallTile) {
       return;
     }

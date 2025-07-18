@@ -3,7 +3,7 @@
 namespace AsciiBlitz.Game.Tiles;
 
 public class EmptyTileSprite() : StaticSprite([
-  "   ",
-  "   ",
-  "   ",
+  "     ",
+  "     ",
+  "     ",
 ]);

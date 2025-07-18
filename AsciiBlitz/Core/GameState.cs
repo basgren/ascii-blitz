@@ -23,6 +23,7 @@ public class GameState : IGameState {
   public void Init(IGameInput input) {
     Player = CreateUnit<Tank>();
     Player.Controller = new TankConsoleInputController(input);
+    Player.IsPlayer = true;
   }
 
   public IGameMap GetMap() {

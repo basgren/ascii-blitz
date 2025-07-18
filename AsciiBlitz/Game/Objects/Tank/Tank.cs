@@ -36,6 +36,9 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   // to check for cell availability for other units.
   public Vec2 TargetPos { get; private set; } = Vec2.Zero;
   public Vec2 PrevPos { get; private set; } = Vec2.Zero;
+  
+  // todo: implement by inheritance.
+  public bool IsPlayer = false;
 
   public override void Update(float deltaTime) {
     base.Update(deltaTime);
@@ -65,7 +68,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public void Fire() {
     var bullet = GameState.CreateUnit<Projectile>();
     bullet.Speed = Dir.ToVec2() * 3f;
-    bullet.Pos = GetShootPoint();
+    bullet.Pos = GetShootPoint(bullet);
   }
 
   public void Turn(bool counterclockwise = false) {
@@ -113,42 +116,20 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   private void EndMove() {
     Pos = TargetPos;
   }
-  
-  private void TryMove(Direction dir) {
-    Vec2 offs = dir.ToVec2();
-
-    if (CanMove(Pos + offs)) {
-      var newPos = Pos + offs;
-      var oldGridPos = MapUtils.PosToGrid(Pos);
-      var newGridPos = MapUtils.PosToGrid(newPos);
-      
-      Pos = newPos;
-
-      // TODO: implement grass damage in separate system.
-      // if (oldGridPos != newGridPos) {
-      //   GameObject? obj = GameState.GetMap().GetLayer<TileLayer>(GameMap.LayerGroundId).GetTileAt(Pos);
-      //   obj?.Visited();        
-      // }
-    }
-  }
 
   private bool CanMove(Vec2 cellPos) {
     TileLayer layer = GameState.GetMap().GetLayer<TileLayer>(GameMap.LayerSolidsId);
     return !layer.HasTileAt(cellPos);
   }
 
-  private Vec2 GetShootPoint() {
-    // TODO: actually we should spawn bullet farther from tank barrel, but we should take into account that
-    //   bullet is 1x1 char size in final view. but it means it has actual width = 1 / 3 and height = 1 / 3,
-    //   as all objects are multiplied by 3 when displayed. In general we should take collision rect and use
-    //   it here in calculations.
-    int viewScale = 3; // temporary solution
+  private Vec2 GetShootPoint(UnitObject projectile) {
+    var halfSize = projectile.Size / 2;
 
     Vec2 offs = Dir switch {
-      Direction.Up => new Vec2(0.5f, -1f / viewScale),
-      Direction.Down => new Vec2(0.5f, 1),
-      Direction.Left => new Vec2(-1f / viewScale, 0.5f),
-      Direction.Right => new Vec2(1, 0.5f),
+      Direction.Up => new Vec2(0.5f - halfSize.X, -halfSize.Y * 2),
+      Direction.Down => new Vec2(0.5f - halfSize.X, 1),
+      Direction.Left => new Vec2(-halfSize.X * 2f, 0.5f - halfSize.Y),
+      Direction.Right => new Vec2(1, 0.5f - halfSize.Y),
       _ => throw new ArgumentOutOfRangeException()
     };
 

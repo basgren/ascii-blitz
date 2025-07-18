@@ -9,7 +9,7 @@ using AsciiBlitz.Types;
 namespace AsciiBlitz.Core.Render;
 
 public class MapGridRenderer {
-  private const float ScaleX = 3f; // 1 cell on a map will be 3 chars wide on the screen
+  private const float ScaleX = 5f; // 1 cell on a map will be 3 chars wide on the screen
   private const float ScaleY = 3f; // 1 cell on a map will be 3 chars high on the screen
 
   // private readonly Dictionary<MapObjectType, Sprite> _spriteMapping;
@@ -77,8 +77,9 @@ public class MapGridRenderer {
 
       if (layer is ObjectLayer objLayer) {
         foreach (UnitObject obj in objLayer.GetObjects()) {
-          int x = (int)(obj.Pos.X * ScaleX - viewportOffset.X);
-          int y = (int)(obj.Pos.Y * ScaleY - viewportOffset.Y);
+          // Important to round to prevent shaking of tank during viewport panning  
+          int x = (int)Math.Round((obj.Pos.X * ScaleX) - viewportOffset.X);
+          int y = (int)Math.Round((obj.Pos.Y * ScaleY) - viewportOffset.Y);
           int spriteWidth = obj.Sprite?.Width ?? 0;
           int spriteHeight = obj.Sprite?.Height ?? 0;
 

@@ -4,7 +4,7 @@ using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Render;
 
-public readonly struct SpriteContext(GameObject? gameObject, double gameTime, Vec2Int charPos) {
+public readonly struct CharContext(GameObject? gameObject, double gameTime, Vec2Int charPos) {
   public GameObject? GameObject { get; } = gameObject;
   public double GameTime { get; } = gameTime;
   public Vec2Int CharPos { get; } = charPos;
@@ -23,12 +23,12 @@ public abstract class Sprite {
     SetColor(7);
   }
 
-  public abstract void UpdateCell(in SpriteContext context, ref ScreenCell cell);
+  public abstract void UpdateCell(in CharContext context, ref ScreenCell cell);
   
   public ScreenCell[,] UpdateAll(GameObject? obj, double gameTime) {
     for (int y = 0; y < Height; y++) {
       for (int x = 0; x < Width; x++) {
-        var ctx = new SpriteContext(obj, gameTime, new Vec2Int(x, y));
+        var ctx = new CharContext(obj, gameTime, new Vec2Int(x, y));
         UpdateCell(in ctx, ref Cells[x, y]);
       }
     }

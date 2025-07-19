@@ -22,14 +22,14 @@ public class GameScreen {
     _draw = new DrawUtils(_menu);
   }
 
-  public void Render(ScreenBuffer target, IGameMap map, Tank player, double timeFromStartSec) {
+  public void Render(ScreenBuffer target, IGameMap map, Tank player, double timeFromStartSec, float[] frameTimes) {
     InitSurfaces(target);
 
     _mapRenderer
       .SetCameraCenterWorldCoords(player.Pos)
       .Render(_gameViewport, map, timeFromStartSec);
 
-    DrawInfoPanel(player);
+    DrawInfoPanel(player, frameTimes);
 
     _draw
       .SetTarget(target)
@@ -40,7 +40,7 @@ public class GameScreen {
     target.DrawFrom(_menu, _screenWidth - MenuWidth - Gap, 1);
   }
 
-  private void DrawInfoPanel(Tank player) {
+  private void DrawInfoPanel(Tank player, float[] frameTimes) {
     _draw
       .SetTarget(_menu)
       .DrawTextLines(1, 0, HeaderLines);
@@ -96,6 +96,7 @@ public class GameScreen {
       .SetTarget(_menu)
       .DrawTextLines(1, dbgMenuY, menuLines)
       .SetColor(AnsiColor.Grayscale(8))
+      .DrawText(1, _menu.Height - 2, $"FTavg: {frameTimes.Average().ToString("F2")}ms")
       .DrawText(1, _menu.Height - 1, $"Pos: {player.Pos.X.ToString("F2")}; {player.Pos.Y.ToString("F2")}")
       .ResetColor();
   }

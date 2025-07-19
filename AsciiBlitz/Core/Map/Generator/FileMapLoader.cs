@@ -51,8 +51,11 @@ public class FileMapGenerator : IMapGenerator {
           case '%':
             solids.Add(TileFactory.Create<WeakWallTile>(gridPos));
             break;
-          case 'w':
+          case 'g':
             ground.Add(TileFactory.Create<GrassTile>(gridPos));
+            break;
+          case 'w':
+            ground.Add(TileFactory.Create<WheatTile>(gridPos));
             break;
           case 'P':
             map.PlayerSpawnPoint = pos;

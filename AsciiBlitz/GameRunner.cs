@@ -27,21 +27,27 @@ public class GameRunner {
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
 
-    InitTestMap();
+    // InitTestMap();
+    GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
+    _gameState.GoToMap(map, _input);
     
     // Test rendering - when needed to show generated map.
     // MiniMapRenderer mapRenderer = new MiniMapRenderer();
     // mapRenderer.Render(_consoleRenderer.Buffer, _gameState.GetMap());
     // Console.ReadKey();
     
-    // Main game loop - 50 FPS
-    const int targetFps = 50;
+    // Main game loop - 60 FPS
+    const int targetFps = 60;
     const int frameTimeMs = 1000 / targetFps;
 
     // Move to game state?
     var gameStartTime = DateTime.Now;
     var deltaTimeSec = 0.0f;
 
+    float frameProcessingTime = 0;
+    float[] frameTimes = new float[30];
+    int frameTimesIndex = 0;
+    
     while (_gameRunning) {
       _gameState.RemoveMarkedForDestruction();
       
@@ -49,9 +55,11 @@ public class GameRunner {
       var timeFromGameStart = (float)(frameStartTime - gameStartTime).TotalSeconds;
 
       ProcessInput();
-      ProcessFrame(timeFromGameStart, deltaTimeSec);
+      ProcessFrame(timeFromGameStart, deltaTimeSec, frameTimes);
       
-      var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
+      frameProcessingTime = (float)(DateTime.Now - frameStartTime).TotalMilliseconds;
+      frameTimes[frameTimesIndex] = frameProcessingTime;
+      frameTimesIndex = (frameTimesIndex + 1) % frameTimes.Length;
       
       // Frame rate limiting
       if (frameProcessingTime < frameTimeMs) {
@@ -90,7 +98,7 @@ public class GameRunner {
     }
   }
 
-  private void ProcessFrame(float timeFromStart, float deltaTime) {
+  private void ProcessFrame(float timeFromStart, float deltaTime, float[] frameTimesMs) {
     var allObjects = _gameState.GetObjects();
 
     foreach (var obj in allObjects) {
@@ -110,7 +118,7 @@ public class GameRunner {
       }
     }
 
-    _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, timeFromStart);
+    _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, timeFromStart, frameTimesMs);
     _consoleRenderer.Render();
   }
 

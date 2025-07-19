@@ -76,7 +76,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
     if (weaponState.CanGo(TankWeaponState.Shooting)) {
       weaponState.Go(TankWeaponState.Shooting);
       var bullet = GameState.CreateUnit<Projectile>();
-      bullet.Speed = Dir.ToVec2() * 3f;
+      bullet.Speed = Dir.ToVec2() * 4f;
       bullet.Pos = GetShootPoint(bullet);
       
       weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {

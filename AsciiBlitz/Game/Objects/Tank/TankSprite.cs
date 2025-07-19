@@ -66,10 +66,9 @@ public class TankSprite() : Sprite(5, 3) {
         cell.BgColor = EnemyHullBgColor;
       }
     } else {
-      var rand = new Random();
       if (tank.MovementState.State != TankMovementState.Idle) {
-        int sign = tank.Dir is Direction.Right or Direction.Up ? 1 : -1;
-        int offset = (int)(Math.Sin((sign * x + y + context.GameTime) * 30 ) * 4f);
+        int sign = tank.Dir is Direction.Right or Direction.Down ? -1 : 1;
+        int offset = (int)(Math.Sin((sign * (x + y) + context.GameTime * 10)) * 3f);
         cell.Color = Grayscale(TracksGrayscaleId + offset);
       } else {
         cell.Color = Grayscale(TracksGrayscaleId);        

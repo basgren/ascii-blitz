@@ -26,4 +26,11 @@ public record struct Vec2(float X, float Y) {
   public override string ToString() {
     return $"[{X}, {Y}]";
   }
+
+  public float Distance(Vec2 pivotPoint) {
+    float dx = X - pivotPoint.X;
+    float dy = Y - pivotPoint.Y;
+
+    return MathF.Sqrt(dx * dx + dy * dy);
+  }
 }

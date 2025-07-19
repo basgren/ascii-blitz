@@ -1,21 +1,21 @@
 ﻿###########################################
 #                                         #
-#  wwwwww   %%%%%%   ######   ###  ###    #
-#  wwwwww   %%%%%%   ######   #  T   #    #
-#  wwwwww   %%%%%%   ######               #
-#  wwwwww   %%%%%%   ######       P       #
-#  wwwwww   %%%%%%   ######   #      #    #
-#  wwwwww   %%%%%%   ######   ###  ###    #
+#  gggggg   %%%%%%   ######   ###  ###    #
+#  gggggg   %%%%%%   ######   #  T   #    #
+#  gggggg   %%%%%%   ######               #
+#  gggggg   %%%%%%   ######       P       #
+#  gggggg   %%%%%%   ######   #      #    #
+#  gggggg   %%%%%%   ######   ###  ###    #
 #                                         #
-#                                         #
+#             P                           #
 #  %%%%%%%%   wwwwwwwwwwwwwwwwwwwwwwww    #
 #  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
 #  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
 #  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %   T  %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %%%%%%%%   wwwwwwwwwwwwwwwwwwwwwwww    #
+#  %      %   gggggggggggggggggggggggg    #
+#  %   T  %   gggggggggggggggggggggggg    #
+#  %      %   gggggggggggggggggggggggg    #
+#  %%%%%%%%   gggggggggggggggggggggggg    #
 #                                         #
 #                                         #
 ###########################################

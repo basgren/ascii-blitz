@@ -26,8 +26,5 @@ public class BaseDamageableComponent : IDamageableComponent {
 
   public void ApplyDamage(float amount) {
     _health = Math.Clamp(_health - amount, 0, _maxHealth);
-    
-    Console.SetCursorPosition(0, 1);
-    Console.WriteLine($"Damage {amount} to {this}");
   }
 }

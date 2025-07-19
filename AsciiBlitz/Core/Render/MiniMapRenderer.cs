@@ -5,8 +5,8 @@ using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Core.Render;
 
-public class GameMapRenderer {
-  public void Render(ScreenBuffer target,GameMap map) {
+public class MiniMapRenderer {
+  public void Render(ScreenBuffer target, IGameMap map) {
     // Get console size to check available space
     int consoleWidth = target.Width;
     int consoleHeight = target.Height;
@@ -28,7 +28,7 @@ public class GameMapRenderer {
     }
   }
   
-  private char GetCharForPosition(GameMap map, int x, int y) {
+  private char GetCharForPosition(IGameMap map, int x, int y) {
     // Check layers from highest index to lowest (back to front)
     var layers = map.GetOrderedLayers();
     

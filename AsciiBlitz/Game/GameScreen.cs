@@ -8,7 +8,7 @@ namespace AsciiBlitz.Game;
 public class GameScreen {
   private const int MenuWidth = 21;
   private const int Gap = 1;
-  private readonly MapGridRenderer _mapRenderer = new();
+  private readonly GameViewportRenderer _mapRenderer = new();
 
   private ScreenBuffer _gameViewport = new(0, 0);
   private ScreenBuffer _menu = new(0, 0);
@@ -72,7 +72,7 @@ public class GameScreen {
       TankWeaponState.Reloading => AnsiColor.Grayscale(10),
       _ => AnsiColor.BrightWhite,
     };
-    
+
     _draw
       .SetTarget(_bulletViewport)
       .Clear()
@@ -82,10 +82,22 @@ public class GameScreen {
 
     _menu.DrawFrom(_bulletViewport, weapX + 1, weapY + 2);
 
+    string[] menuLines = [
+      "\u2190\u2192 Turn   \u2191\u2193 Move",
+      "   [space] Fire",
+      "",
+      "1 - Test map",
+      "Esc - Quit",
+    ];
+    
+    var dbgMenuY = _menu.Height - menuLines.Length - 2;
+    
     _draw
       .SetTarget(_menu)
-      .DrawText(1, _menu.Height - 2, $"X: {player.Pos.X}")
-      .DrawText(1, _menu.Height - 1, $"Y: {player.Pos.Y}");
+      .DrawTextLines(1, dbgMenuY, menuLines)
+      .SetColor(AnsiColor.Grayscale(8))
+      .DrawText(1, _menu.Height - 1, $"Pos: {player.Pos.X.ToString("F2")}; {player.Pos.Y.ToString("F2")}")
+      .ResetColor();
   }
 
   private void InitSurfaces(ScreenBuffer target) {

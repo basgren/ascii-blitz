@@ -6,10 +6,8 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
-using AsciiBlitz.Debug;
 using AsciiBlitz.Game;
 using AsciiBlitz.Game.Objects.Tank;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz;
 
@@ -20,7 +18,7 @@ public class GameRunner {
   private Tank Player => _gameState.Player;
 
   private readonly BufferedConsoleRenderer _consoleRenderer = new();
-  private readonly MapGridRenderer _mapRenderer = new();
+  private readonly GameViewportRenderer _mapRenderer = new();
   private readonly BufferedConsoleInput _input = new();
   private readonly GameScreen _screen = new();
 
@@ -29,27 +27,14 @@ public class GameRunner {
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
 
-    IMapGenerator mapGen = new TestMapGenerator();
-
-    var map = mapGen
-      .SetSize(40, 13)
-      .Build();
-
-    _gameState.SetMap(map);
-    _gameState.Init(_input);
-    
-    Player.Pos = new Vec2(1, 1);
-    
-    var enemy = _gameState.CreateUnit<Tank>();
-    enemy.Controller = new TankPatrolController(_gameState.GetMap());
-    enemy.Pos = new Vec2(1, 3);
+    InitTestMap();
     
     // Test rendering - when needed to show generated map.
-    // GameMapRenderer mapRenderer = new GameMapRenderer();
-    // mapRenderer.Render(map);
+    // MiniMapRenderer mapRenderer = new MiniMapRenderer();
+    // mapRenderer.Render(_consoleRenderer.Buffer, _gameState.GetMap());
     // Console.ReadKey();
     
-    // Main game loop - 30 FPS
+    // Main game loop - 50 FPS
     const int targetFps = 50;
     const int frameTimeMs = 1000 / targetFps;
 
@@ -58,9 +43,12 @@ public class GameRunner {
     var deltaTimeSec = 0.0f;
 
     while (_gameRunning) {
+      _gameState.RemoveMarkedForDestruction();
+      
       var frameStartTime = DateTime.Now;
       var timeFromGameStart = (float)(frameStartTime - gameStartTime).TotalSeconds;
-      
+
+      ProcessInput();
       ProcessFrame(timeFromGameStart, deltaTimeSec);
       
       var frameProcessingTime = (float)(frameStartTime - DateTime.Now).TotalMilliseconds;
@@ -75,26 +63,41 @@ public class GameRunner {
     }
   }
 
-  private void ProcessFrame(float timeFromStart, float deltaTime) {
+  private void InitTestMap() {
+    IMapGenerator mapGen = new TestMapGenerator();
+
+    var map = mapGen
+      .SetSize(40, 13)
+      .Build();
+
+    _gameState.GoToMap(map, _input);
+  }
+
+  private void ProcessInput() {
     _input.Update();
     
     var key = _input.GetKey();
 
-    if (key == ConsoleKey.Escape) {
-      OnQuit();
+    switch (key) {
+      case ConsoleKey.Escape:
+        OnQuit();
+        break;
+      
+      case ConsoleKey.D1:
+        GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
+        _gameState.GoToMap(map, _input);
+        break;
     }
-    
-    // Important to make a copy using ToList, as some objects may be destroyed. Should not
-    // have performance issues with a small number of objects.
-    var allObjects = _gameState.GetObjects().ToList();
+  }
+
+  private void ProcessFrame(float timeFromStart, float deltaTime) {
+    var allObjects = _gameState.GetObjects();
 
     foreach (var obj in allObjects) {
       obj.Update(deltaTime);
     }
- 
-    // Make a copy of list by using `ToList()` as some objects may be destroyed during check, but
-    // still we want to check all collisions.  
-    var collidables = _gameState.GetObjectsOfType<ICollidable>().ToList();
+
+    var collidables = _gameState.GetObjectsOfType<ICollidable>();
     var layer = _gameState.GetMap().GetLayer<TileLayer>(GameMap.LayerSolidsId);
     
     CollisionSystem.CheckCollisionsWithTiles(collidables, layer);

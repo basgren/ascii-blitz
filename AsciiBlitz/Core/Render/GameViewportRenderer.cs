@@ -3,12 +3,11 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
-using AsciiBlitz.Debug;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Render;
 
-public class MapGridRenderer {
+public class GameViewportRenderer {
   private const float ScaleX = 5f; // 1 cell on a map will be 3 chars wide on the screen
   private const float ScaleY = 3f; // 1 cell on a map will be 3 chars high on the screen
 
@@ -17,7 +16,7 @@ public class MapGridRenderer {
 
   private Vec2 _cameraCenterWorld = Vec2.Zero;
 
-  public MapGridRenderer SetCameraCenterWorldCoords(Vec2 cameraCenter) {
+  public GameViewportRenderer SetCameraCenterWorldCoords(Vec2 cameraCenter) {
     _cameraCenterWorld = cameraCenter;
     return this;
   }

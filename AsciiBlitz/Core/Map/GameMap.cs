@@ -9,6 +9,8 @@ public interface IGameMap {
   T GetLayer<T>(int id) where T : AbstractMapLayer;
   IReadOnlyList<AbstractMapLayer> GetOrderedLayers();
   bool IsMovable(Vec2 pos);
+  Vec2 PlayerSpawnPoint { get; }
+  IReadOnlyList<Vec2> EnemySpawnPoints { get; }
 }
 
 public class GameMap : IGameMap {
@@ -20,11 +22,14 @@ public class GameMap : IGameMap {
   public int Height => _height;
   public int LayerCount => _layers.Count;
 
+  public Vec2 PlayerSpawnPoint { get; set; } = new(1, 1);
+  public IReadOnlyList<Vec2> EnemySpawnPoints => _enemySpawnPoints;
+
   private readonly Dictionary<int, AbstractMapLayer> _layers;
   private List<AbstractMapLayer>? _orderedLayers = null;
   private int _width;
   private int _height;
-  private ObjectLayer? _unitLayer;
+  private readonly List<Vec2> _enemySpawnPoints = new();
 
   public GameMap() {
     _layers = new Dictionary<int, AbstractMapLayer>();
@@ -84,5 +89,9 @@ public class GameMap : IGameMap {
 
   private void ClearCache() {
     _orderedLayers = null;
+  }
+
+  public void AddEnemySpawnPoint(Vec2 pos) {
+    _enemySpawnPoints.Add(pos);    
   }
 }

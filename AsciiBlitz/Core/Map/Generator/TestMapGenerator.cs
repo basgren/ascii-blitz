@@ -6,9 +6,7 @@ using AsciiBlitz.Types;
 namespace AsciiBlitz.Core.Map.Generator;
 
 public class TestMapGenerator : IMapGenerator {
-  Vec2Int _size = new Vec2Int(5, 5);
-
-  // private readonly MapObjectFactory _factory = new();
+  Vec2Int _size = new(5, 5);
 
   public IMapGenerator SetSize(int width, int height) {
     _size = new Vec2Int(width, height);
@@ -28,6 +26,9 @@ public class TestMapGenerator : IMapGenerator {
     Rect<WallTile>(solid, 2, map.Height / 2, map.Width - 2, map.Height / 2 + 1);
     Rect<WeakWallTile>(solid, 2, map.Height / 2, map.Width / 2, map.Height / 2 + 1);
 
+    map.PlayerSpawnPoint = new Vec2(1, 1);
+    map.AddEnemySpawnPoint(new Vec2(1, 3));
+    
     return map;
   }
 

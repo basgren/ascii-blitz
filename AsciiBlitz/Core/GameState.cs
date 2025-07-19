@@ -3,6 +3,7 @@ using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Game.Objects.Tank;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core;
 
@@ -17,17 +18,27 @@ public class GameState : IGameState {
   private GameMap _map = new();
   private readonly List<UnitObject> _objects = new();
   private readonly Dictionary<GameObject, int> _objectLayerMap = new();
+  private HashSet<UnitObject> _markedForDestruction = new();
 
   // TODO: think about init order - currently we have to add map first, then init Player.
 
-  public void Init(IGameInput input) {
-    Player = CreateUnit<Tank>();
-    Player.Controller = new TankConsoleInputController(input);
-    Player.IsPlayer = true;
-  }
-
   public IGameMap GetMap() {
     return _map;
+  }
+  
+  public void GoToMap(GameMap map, BufferedConsoleInput input) {
+    DestroyAll();
+    SetMap(map);
+    InitPlayer(input);
+    InitEnemies(map.EnemySpawnPoints);
+  }
+
+  private void InitEnemies(IReadOnlyList<Vec2> spawnPoints) {
+    foreach (var point in spawnPoints) {
+      var enemy = CreateUnit<Tank>();
+      enemy.Controller = new TankPatrolController(GetMap());
+      enemy.Pos = point;
+    }
   }
 
   public void SetMap(GameMap map) {
@@ -53,34 +64,54 @@ public class GameState : IGameState {
     return obj;
   }
 
+  private void DestroyAll() {
+    foreach (var obj in _objects) {
+      DestroyObject(obj);
+    }
+  }
+  
   public void DestroyObject(GameObject obj) {
     if (_objectLayerMap.TryGetValue(obj, out int layerId)) {
       var layer = _map.GetLayer<ObjectLayer>(layerId);
 
       if (obj is UnitObject unit) {
         layer.Remove(unit);
-        RemoveObject(unit);
+        _markedForDestruction.Add(unit);
       }
 
       _objectLayerMap.Remove(obj);
       obj.OnDestroyed -= DestroyObject;
     }
   }
-
-  private void AddObject(UnitObject obj) {
-    _objects.Add(obj);
-  }
-
-  private void RemoveObject(UnitObject obj) {
-    _objects.Remove(obj);
-  }
-
+  
   public IReadOnlyList<UnitObject> GetObjects() {
-    return _objects;
+    return _objects.Where((obj) => !_markedForDestruction.Contains(obj)).ToList();
   }
   
   public IReadOnlyList<T> GetObjectsOfType<T>()
   {
     return _objects.OfType<T>().ToList();
+  }
+
+  private void AddObject(UnitObject obj) {
+    _objects.Add(obj);
+  }
+
+  /**
+   * Must be called in the very beginning of game cycle.
+   */
+  public void RemoveMarkedForDestruction() {
+    foreach (var obj in _markedForDestruction) {
+      _objects.Remove(obj);      
+    }
+    
+    _markedForDestruction.Clear();
+  }
+  
+  private void InitPlayer(IGameInput input) {
+    Player = CreateUnit<Tank>();
+    Player.Controller = new TankConsoleInputController(input);
+    Player.IsPlayer = true;
+    Player.Pos = GetMap().PlayerSpawnPoint;
   }
 }

@@ -1,5 +1,6 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
+using AsciiBlitz.Game.Tiles;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Render;
@@ -20,6 +21,14 @@ public abstract class Sprite {
     Width = width;
     Height = height;
     Cells = new ScreenCell[width, height];
+    
+    // Init with spaces by default
+    for (int y = 0; y < Height; y++) {
+      for (int x = 0; x < Width; x++) {
+        Cells[x, y].Char = ' ';
+      }
+    }
+    
     SetColor(7);
   }
 

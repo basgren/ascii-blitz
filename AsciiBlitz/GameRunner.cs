@@ -25,7 +25,15 @@ public class GameRunner {
     _consoleRenderer.SetSize(120, 29);
 
     // InitTestMap();
-    GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
+    
+    string[] maze = MazeGenerator.GenerateValidMaze(20, 15, 10, 1);
+    MazeGenerator.DrawColoredMaze(maze);
+    
+    Console.ReadKey();
+    
+    GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
+    
+    // GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
     _gameState.GoToMap(map, _input);
 
     // Test rendering - when needed to show generated map.

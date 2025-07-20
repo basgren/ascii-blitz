@@ -28,6 +28,10 @@ public class FileMapGenerator : IMapGenerator {
       .Where(line => !string.IsNullOrWhiteSpace(line))
       .ToArray();
 
+    return BuildFromStrings(lines);
+  }
+  
+  public GameMap BuildFromStrings(string[] lines) {
     int height = lines.Length;
     int width = lines.Max(line => line.Length);
 
@@ -45,22 +49,28 @@ public class FileMapGenerator : IMapGenerator {
         var gridPos = MapUtils.PosToGrid(pos);
 
         switch (c) {
-          case '#':
+          case MapSymbols.Wall:
             solids.Add(TileFactory.Create<WallTile>(gridPos));
             break;
-          case '%':
+          case MapSymbols.Destructible:
             solids.Add(TileFactory.Create<WeakWallTile>(gridPos));
             break;
-          case 'g':
+          case MapSymbols.River:
+            solids.Add(TileFactory.Create<RiverTile>(gridPos));
+            break;
+          case MapSymbols.Grass:
             ground.Add(TileFactory.Create<GrassTile>(gridPos));
             break;
-          case 'w':
+          case MapSymbols.Wheat:
             ground.Add(TileFactory.Create<WheatTile>(gridPos));
             break;
-          case 'P':
+          case MapSymbols.Bridge:
+            ground.Add(TileFactory.Create<BridgeTile>(gridPos));
+            break;
+          case MapSymbols.Player:
             map.PlayerSpawnPoint = pos;
             break;
-          case 'T':
+          case MapSymbols.Enemy:
             map.AddEnemySpawnPoint(pos);
             break;
           default:
@@ -70,6 +80,6 @@ public class FileMapGenerator : IMapGenerator {
       }
     }
 
-    return map;
+    return map; 
   }
 }

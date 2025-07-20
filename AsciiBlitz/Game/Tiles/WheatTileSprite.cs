@@ -11,7 +11,7 @@ public class WheatTileSprite : Sprite {
   }
 
   // private static readonly string Chars = "\\|/";
-  private static readonly string Chars = "\\||";
+  private static readonly string Chars = "\\!!";
 
   private static int[] _colors = [
     AnsiColor.Rgb(4, 4, 0),
@@ -34,7 +34,7 @@ public class WheatTileSprite : Sprite {
     float fy = 0.14f;
     int sway = (int)MathF.Round(-MathF.Sin((float)context.GameTime / 3 + fragPos.X * fx + fragPos.Y * fy)) + 1;
 
-    cell.Char = '|';
+    cell.Char = '!'; 
 
     if (wheatTile.GrassDamageLevel >= 4) {
       cell.Color = AnsiColor.Grayscale(8);

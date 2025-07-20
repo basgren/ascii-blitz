@@ -2,20 +2,19 @@ using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Types;
-using AsciiBlitz.Game.Objects;
 
 namespace AsciiBlitz.Core;
 
 public static class CollisionSystem {
   
-  public static void CheckCollisionsWithTiles(IReadOnlyList<ICollidable> objects, TileLayer tileLayer) {
-    foreach (var collidable in objects) {
-      if (!collidable.IsActive) {
+  public static void CheckCollisionsWithTiles(IReadOnlyList<GameObject> objects, TileLayer tileLayer) {
+    foreach (var obj in objects) {
+      if (!(obj is ICollidable collidable)) {
         continue;
       }
-
-      if (collidable is Projectile) {
-        int a = 2;
+      
+      if (!collidable.IsActive) {
+        continue;
       }
 
       var bounds = collidable.Bounds;
@@ -27,6 +26,10 @@ public static class CollisionSystem {
       for (int x = minX; x <= maxX; x++) {
         for (int y = minY; y <= maxY; y++) {
           if (!tileLayer.TryGetTileAt(x, y, out TileObject? tile)) {
+            continue;
+          }
+
+          if (tile != null && !tile.CollidesWith(obj)) {
             continue;
           }
 
@@ -50,18 +53,14 @@ public static class CollisionSystem {
   /// Invoked after all moving objects have updated their coordinates.
   /// </summary>
   /// <param name="collidables"></param>
-  public static void PostCollisionCheck(IReadOnlyList<ICollidable> collidables) {
+  public static void PostCollisionCheck(IReadOnlyList<GameObject> collidables) {
     for (int i = 0; i < collidables.Count; i++) {
-      var collidableA = collidables[i];
-
-      if (!collidableA.IsActive) {
+      if (!(collidables[i] is ICollidable { IsActive: true } collidableA)) {
         continue;
       }
 
       for (int j = i + 1; j < collidables.Count; j++) {
-        var collidableB = collidables[j];
-        
-        if (!collidableB.IsActive) {
+        if (!(collidables[j] is ICollidable { IsActive: true } collidableB)) {
           continue;
         }
 

@@ -96,7 +96,7 @@ public class GameScreen {
       .SetTarget(_menu)
       .DrawTextLines(1, dbgMenuY, menuLines)
       .SetColor(AnsiColor.Grayscale(8))
-      .DrawText(1, _menu.Height - 3, $"FTavg: {(frame.AverageDeltaTime * 1000):F2}ms")
+      .DrawText(1, _menu.Height - 3, $"FProc: {(frame.FrameProcessingTime * 1000):F2}ms")
       .DrawText(1, _menu.Height - 2, $"FPS: {frame.FPS:F2}")
       .DrawText(1, _menu.Height - 1, $"Pos: {player.Pos.X:F2}; {player.Pos.Y:F2}")
       .ResetColor();

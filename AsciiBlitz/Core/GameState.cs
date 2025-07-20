@@ -25,7 +25,7 @@ public class GameState : IGameState {
   public IGameMap GetMap() {
     return _map;
   }
-  
+
   public void GoToMap(GameMap map, BufferedConsoleInput input) {
     DestroyAll();
     SetMap(map);
@@ -69,7 +69,7 @@ public class GameState : IGameState {
       DestroyObject(obj);
     }
   }
-  
+
   public void DestroyObject(GameObject obj) {
     if (_objectLayerMap.TryGetValue(obj, out int layerId)) {
       var layer = _map.GetLayer<ObjectLayer>(layerId);
@@ -83,14 +83,15 @@ public class GameState : IGameState {
       obj.OnDestroyed -= DestroyObject;
     }
   }
-  
+
   public IReadOnlyList<UnitObject> GetObjects() {
     return _objects.Where((obj) => !_markedForDestruction.Contains(obj)).ToList();
   }
-  
-  public IReadOnlyList<T> GetObjectsOfType<T>()
-  {
-    return _objects.OfType<T>().ToList();
+
+  public IReadOnlyList<GameObject> GetObjectsOfType<T>() {
+    return _objects
+      .Where((obj) => obj is T && !_markedForDestruction.Contains(obj))
+      .ToList();
   }
 
   private void AddObject(UnitObject obj) {
@@ -102,12 +103,12 @@ public class GameState : IGameState {
    */
   public void RemoveMarkedForDestruction() {
     foreach (var obj in _markedForDestruction) {
-      _objects.Remove(obj);      
+      _objects.Remove(obj);
     }
-    
+
     _markedForDestruction.Clear();
   }
-  
+
   private void InitPlayer(IGameInput input) {
     Player = CreateUnit<Tank>();
     Player.Controller = new TankConsoleInputController(input);

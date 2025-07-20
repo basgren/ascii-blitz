@@ -25,9 +25,8 @@ public class GameRunner {
     _consoleRenderer.SetSize(120, 29);
     
     string[] maze = MazeGenerator.GenerateValidMaze(20, 10, 10, 1);
-    // MazeGenerator.DrawColoredMaze(maze);
-    //
-    // Console.ReadKey();
+//    MazeGenerator.DrawColoredMaze(maze);
+//    Console.ReadKey();
     
     GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
     
@@ -94,6 +93,9 @@ public class GameRunner {
 
     CollisionSystem.CheckCollisionsWithTiles(collidables, layer);
     CollisionSystem.PostCollisionCheck(collidables);
+
+    _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, frameContext);
+    _consoleRenderer.Render();
     
     // Destroy dead objects
     foreach (var obj in allObjects) {
@@ -101,9 +103,6 @@ public class GameRunner {
         obj.Destroy();
       }
     }
-
-    _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, frameContext);
-    _consoleRenderer.Render();
   }
 
   private void OnQuit() {

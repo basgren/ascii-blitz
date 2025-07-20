@@ -8,4 +8,8 @@ public abstract class TileObject : GameObject {
   public void SetPos(Vec2Int pos) {
     Pos = pos;
   }
+
+  public virtual bool CollidesWith(GameObject obj) {
+    return true;
+  }
 }

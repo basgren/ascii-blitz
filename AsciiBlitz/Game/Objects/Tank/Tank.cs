@@ -24,7 +24,7 @@ public class TankAttrs {
   public readonly float MoveBackwardTime = 0.5f * 1.5f;
   
   public readonly float WeaponShotTime = 0.05f; // Just for effect of shootin in menu.
-  public readonly float WeaponReloadTime = 1.5f;
+  public readonly float WeaponReloadTime = 1f;
 }
 
 public class Tank : UnitObject, ICollidable, IDamageable {

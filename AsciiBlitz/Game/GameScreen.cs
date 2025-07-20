@@ -22,14 +22,14 @@ public class GameScreen {
     _draw = new DrawUtils(_menu);
   }
 
-  public void Render(ScreenBuffer target, IGameMap map, Tank player, double timeFromStartSec, float[] frameTimes) {
+  public void Render(ScreenBuffer target, IGameMap map, Tank player, IFrameContext frame) {
     InitSurfaces(target);
 
     _mapRenderer
       .SetCameraCenterWorldCoords(player.Pos)
-      .Render(_gameViewport, map, timeFromStartSec);
+      .Render(_gameViewport, map, frame.ElapsedTime);
 
-    DrawInfoPanel(player, frameTimes);
+    DrawInfoPanel(player, frame);
 
     _draw
       .SetTarget(target)
@@ -40,7 +40,7 @@ public class GameScreen {
     target.DrawFrom(_menu, _screenWidth - MenuWidth - Gap, 1);
   }
 
-  private void DrawInfoPanel(Tank player, float[] frameTimes) {
+  private void DrawInfoPanel(Tank player, IFrameContext frame) {
     _draw
       .SetTarget(_menu)
       .DrawTextLines(1, 0, HeaderLines);
@@ -90,14 +90,15 @@ public class GameScreen {
       "Esc - Quit",
     ];
     
-    var dbgMenuY = _menu.Height - menuLines.Length - 2;
+    var dbgMenuY = _menu.Height - menuLines.Length - 3;
     
     _draw
       .SetTarget(_menu)
       .DrawTextLines(1, dbgMenuY, menuLines)
       .SetColor(AnsiColor.Grayscale(8))
-      .DrawText(1, _menu.Height - 2, $"FTavg: {frameTimes.Average().ToString("F2")}ms")
-      .DrawText(1, _menu.Height - 1, $"Pos: {player.Pos.X.ToString("F2")}; {player.Pos.Y.ToString("F2")}")
+      .DrawText(1, _menu.Height - 3, $"FTavg: {(frame.AverageDeltaTime * 1000):F2}ms")
+      .DrawText(1, _menu.Height - 2, $"FPS: {frame.FPS:F2}")
+      .DrawText(1, _menu.Height - 1, $"Pos: {player.Pos.X:F2}; {player.Pos.Y:F2}")
       .ResetColor();
   }
 

@@ -98,7 +98,7 @@ public class GameState : IGameState {
   }
 
   /**
-   * Must be called in the very beginning of game cycle.
+   * Must be called in the very beginning of the game cycle.
    */
   public void RemoveMarkedForDestruction() {
     foreach (var obj in _markedForDestruction) {

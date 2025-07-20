@@ -43,14 +43,4 @@ public class WheatTileSprite : Sprite {
       cell.BgColor = AnsiColor.Rgb(1, 1, 0);
     }
   }
-
-  private double Rand(int value) {
-    double v = 12345f * (Math.Sin(value * 45678f) * 0.5f + 0.5f);
-
-    return v - Math.Truncate(v);
-  }
-
-  private int RandInt(int value, int max) {
-    return (int)Math.Floor(Rand(value) * max);
-  }
 }

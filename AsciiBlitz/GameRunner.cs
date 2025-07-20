@@ -27,9 +27,9 @@ public class GameRunner {
     // InitTestMap();
     
     string[] maze = MazeGenerator.GenerateValidMaze(20, 10, 10, 1);
-    MazeGenerator.DrawColoredMaze(maze);
-    
-    Console.ReadKey();
+    // MazeGenerator.DrawColoredMaze(maze);
+    //
+    // Console.ReadKey();
     
     GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
     

@@ -94,6 +94,13 @@ public class GameRunner {
 
     CollisionSystem.CheckCollisionsWithTiles(collidables, layer);
     CollisionSystem.PostCollisionCheck(collidables);
+    
+    // Destroy dead objects
+    foreach (var obj in allObjects) {
+      if (obj is IDamageable { Damageable.IsDead: true }) {
+        obj.Destroy();
+      }
+    }
 
     _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, frameContext);
     _consoleRenderer.Render();

@@ -30,7 +30,7 @@ public static class CollisionSystem {
             continue;
           }
 
-          // First apply damage, as OnCollision may destroy object.
+          // First, apply damage, as OnCollision may destroy object.
           // We assume that every tile is collidable. All non-collidable tiles should be added to another layers.
           if (collidable is IDamager damager && tile is IDamageable damageable) {
             damageable.Damageable.ApplyDamage(damager.Damager.Damage);
@@ -38,13 +38,7 @@ public static class CollisionSystem {
             if (damageable.Damageable.IsDead) {
               tileLayer.Remove(tile);
             }
-            
-            // Console.SetCursorPosition(2, 33);
-            // Console.Write($"Applied damage {damager.Damager.Damage}");
           }
-          
-          // Console.SetCursorPosition(2, 34);
-          // Console.Write($"Collision! {tile}");
           
           collidable.OnCollision(tile);
         }

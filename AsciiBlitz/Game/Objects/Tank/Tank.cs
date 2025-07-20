@@ -31,36 +31,49 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public ITankController? Controller { get; set; }
   
   public override Sprite Sprite => SpriteRepo.Get<TankSprite>();
-  public IReadonlyStateMachine<TankMovementState> MovementState => state;
-  public IReadonlyStateMachine<TankWeaponState> WeaponState => weaponState;
+  public IReadonlyStateMachine<TankMovementState> MovementState => _state;
+  public IReadonlyStateMachine<TankWeaponState> WeaponState => _weaponState;
+  public IReadonlyStateMachine<TankDamageState> DamageState => _damageState;
 
-  private TankMovementStateMachine state = new(TankMovementState.Idle);
-  private TankWeaponStateMachine weaponState = new(TankWeaponState.Idle);
-  private TankAttrs _attrs = new();
+  private readonly TankMovementStateMachine _state = new(TankMovementState.Idle);
+  private readonly TankWeaponStateMachine _weaponState = new(TankWeaponState.Idle);
+  private readonly TankDamageStateMachine _damageState = new(TankDamageState.Normal);
+  private readonly TankAttrs _attrs = new();
   
-  // The next cell that tank will move to. Updated only during state = Moving. This also can be used
-  // to check for cell availability for other units.
+  public IDamageableComponent Damageable { get; }
+  
+  // The next cell that tank will move to. Updated only during state = Moving.
   public Vec2 TargetPos { get; private set; } = Vec2.Zero;
   public Vec2 PrevPos { get; private set; } = Vec2.Zero;
   
   // todo: implement by inheritance.
   public bool IsPlayer = false;
 
+  public Tank() {
+    Damageable = new BaseDamageableComponent(3, OnHit);
+  }
+  
   public override void Update(float deltaTime) {
     base.Update(deltaTime);
-    state.Update(deltaTime);
-    weaponState.Update(deltaTime);
+    _state.Update(deltaTime);
+    _weaponState.Update(deltaTime);
+    _damageState.Update(deltaTime);
 
-    if (state.State == TankMovementState.Moving) {
-      Pos = VecUtils.Mix(PrevPos, TargetPos, state.Progress);
+    if (_state.State == TankMovementState.Moving) {
+      Pos = VecUtils.Mix(PrevPos, TargetPos, _state.Progress);
     }
     
     var command = Controller?.GetNextCommand(this);
     command?.Execute(this);
   }
 
-  public IDamageableComponent Damageable { get; } = new BaseDamageableComponent(3);
-  public RectFloat Bounds => new RectFloat(Pos.X, Pos.Y, 1f, 1f);
+  private void OnHit(float damage) {
+    if (_damageState.Go(TankDamageState.Hit)) {
+      _damageState.GoDelayed(TankDamageState.Normal, 0.15f);
+    }
+  }
+
+  public RectFloat Bounds => new(Pos.X, Pos.Y, 1f, 1f);
 
   public bool IsActive { get; } = true;
 
@@ -73,22 +86,20 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   }
 
   public void Fire() {
-    if (weaponState.CanGo(TankWeaponState.Shooting)) {
-      weaponState.Go(TankWeaponState.Shooting);
+    if (_weaponState.Go(TankWeaponState.Shooting)) {
       var bullet = GameState.CreateUnit<Projectile>();
       bullet.Speed = Dir.ToVec2() * 4f;
       bullet.Pos = GetShootPoint(bullet);
       
-      weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {
-        weaponState.GoDelayed(TankWeaponState.Idle, _attrs.WeaponReloadTime);
+      _weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {
+        _weaponState.GoDelayed(TankWeaponState.Idle, _attrs.WeaponReloadTime);
       });
     }
   }
 
   public void Turn(bool counterclockwise = false) {
-    if (state.CanGo(TankMovementState.Turning)) {
-      state.Go(TankMovementState.Turning);
-      state.GoDelayed(TankMovementState.Idle, _attrs.TurnTime, _ => {
+    if (_state.Go(TankMovementState.Turning)) {
+      _state.GoDelayed(TankMovementState.Idle, _attrs.TurnTime, _ => {
         // Change tank movement direction only after turning is "finished".
         Dir = counterclockwise ? Dir.TurnCcw() : Dir.TurnCw();
       });
@@ -96,20 +107,20 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   }
 
   public void MoveForward() {
-    if (state.CanGo(TankMovementState.Moving) && TryStartMove(Dir)) {
-      state.Go(TankMovementState.Moving);
+    if (_state.CanGo(TankMovementState.Moving) && TryStartMove(Dir)) {
+      _state.Go(TankMovementState.Moving);
     
-      state.GoDelayed(TankMovementState.Idle, _attrs.MoveForwardTime, _ => {
+      _state.GoDelayed(TankMovementState.Idle, _attrs.MoveForwardTime, _ => {
         EndMove();
       });        
     }
   }
   
   public void MoveBackward() {
-    if (state.CanGo(TankMovementState.Moving) && TryStartMove(Dir.Opposite())) {
-      state.Go(TankMovementState.Moving);
+    if (_state.CanGo(TankMovementState.Moving) && TryStartMove(Dir.Opposite())) {
+      _state.Go(TankMovementState.Moving);
 
-      state.GoDelayed(TankMovementState.Idle, _attrs.MoveBackwardTime, _ => {
+      _state.GoDelayed(TankMovementState.Idle, _attrs.MoveBackwardTime, _ => {
         EndMove();
       });
     }

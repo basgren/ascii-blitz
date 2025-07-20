@@ -23,8 +23,6 @@ public class GameRunner {
     Console.Clear();
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
-
-    // InitTestMap();
     
     string[] maze = MazeGenerator.GenerateValidMaze(20, 10, 10, 1);
     // MazeGenerator.DrawColoredMaze(maze);

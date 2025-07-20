@@ -10,14 +10,9 @@ public class WheatTileSprite : Sprite {
   public WheatTileSprite() : base(5, 3) {
   }
 
-  // private static readonly string Chars = "\\|/";
-  private static readonly string Chars = "\\!!";
-
   private static int[] _colors = [
     AnsiColor.Rgb(4, 4, 0),
     AnsiColor.Rgb(5, 5, 0),
-    AnsiColor.Rgb(5, 5, 0),
-    // AnsiColor.Rgb(3, 3, 0),
   ];
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
@@ -31,16 +26,12 @@ public class WheatTileSprite : Sprite {
     );
 
     float fx = 0.12f;
-    float fy = 0.14f;
-    int sway = (int)MathF.Round(-MathF.Sin((float)context.GameTime / 3 + fragPos.X * fx + fragPos.Y * fy)) + 1;
+    float fy = 0.15f;
+    float phase = MathF.Sin((float)context.GameTime / 2 + fragPos.X * fx + fragPos.Y * fy);
+    int sway = (int)Math.Abs(Math.Round(-phase % _colors.Length));
 
     cell.Char = '!'; 
-
-    if (wheatTile.GrassDamageLevel >= 4) {
-      cell.Color = AnsiColor.Grayscale(8);
-    } else {
-      cell.Color = _colors[sway];
-      cell.BgColor = AnsiColor.Rgb(1, 1, 0);
-    }
+    cell.Color = _colors[sway];
+    cell.BgColor = AnsiColor.Rgb(2, 2, 0);
   }
 }

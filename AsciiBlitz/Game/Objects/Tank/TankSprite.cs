@@ -56,8 +56,10 @@ public class TankSprite() : Sprite(5, 3) {
     };
     
     cell.Char = charInfo[y][x];
+    
+    var isHit = tank.DamageState.State == TankDamageState.Hit;
 
-    if (isHullChar(x, y, tank.Dir)) {
+    if (IsHullChar(x, y, tank.Dir)) {
       if (tank.IsPlayer) {
         cell.Color = HullColor;
         cell.BgColor = HullBgColor;
@@ -76,9 +78,19 @@ public class TankSprite() : Sprite(5, 3) {
       
       cell.BgColor = TracksBgColor;
     }
+    
+    if (isHit) {
+      cell.BgColor = Grayscale((int)(6 + 17 * (1 - tank.DamageState.Progress)));
+    }
+    
+    // Debug health. Uncomment to show HP on tank tower
+    if (x == 2 && y == 1) {
+      int health = (int)tank.Damageable.Health;
+      cell.Char = (char)('0' + health);
+    }
   }
 
-  private bool isHullChar(int x, int y, Direction dir) {
+  private bool IsHullChar(int x, int y, Direction dir) {
     if (dir is Direction.Down or Direction.Up) {
       return x != 0 && x != Width - 1;
     }

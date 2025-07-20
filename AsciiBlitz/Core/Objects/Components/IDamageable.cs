@@ -11,20 +11,16 @@ public interface IDamageableComponent {
   bool IsDead { get; }
 }
 
-public class BaseDamageableComponent : IDamageableComponent {
-  private float _health;
-  private float _maxHealth;
-
+public class BaseDamageableComponent(float health, Action<float>? onDamage = null) : IDamageableComponent {
   public float Health => _health;
   public float MaxHealth => _maxHealth;
   public bool IsDead => _health <= 0;
-
-  public BaseDamageableComponent(float health) {
-    _health = health;
-    _maxHealth = health;
-  }
+  
+  private float _health = health;
+  private float _maxHealth = health;
 
   public void ApplyDamage(float amount) {
     _health = Math.Clamp(_health - amount, 0, _maxHealth);
+    onDamage?.Invoke(amount);
   }
 }

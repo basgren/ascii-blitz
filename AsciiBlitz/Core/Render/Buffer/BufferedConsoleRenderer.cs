@@ -30,6 +30,8 @@ public class BufferedConsoleRenderer {
     int height = _front.Height;
     int width = _front.Width;
 
+    var sb = new StringBuilder();
+    
     for (int y = 0; y < height; y++) {
       bool changed = false;
 
@@ -46,7 +48,6 @@ public class BufferedConsoleRenderer {
 
       Console.SetCursorPosition(0, y);
 
-      var sb = new StringBuilder();
       int? lastFg = null;
       int? lastBg = null;
 
@@ -68,6 +69,7 @@ public class BufferedConsoleRenderer {
 
       sb.Append(AnsiColor.Reset);
       Console.Write(sb.ToString());
+      sb.Clear();
     }
 
     // Swap buffers

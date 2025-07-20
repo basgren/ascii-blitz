@@ -21,7 +21,7 @@ public static class AnsiColor {
 
   private static readonly Dictionary<(int fg, int bg), string> FgbgCache = new();
   private static readonly Dictionary<int, string> FgCache = new();
-  
+
   /// <summary>
   /// Returns color index from provided intensities of color components. Each intensity can be from 0 to 5.
   /// </summary>
@@ -48,12 +48,11 @@ public static class AnsiColor {
   /// <param name="fg"></param>
   /// <param name="bg"></param>
   /// <returns></returns>
-  public static string GetCode(int fg, int bg)
-  {
+  public static string GetCode(int fg, int bg) {
     var key = (fg, bg);
 
     if (FgbgCache.TryGetValue(key, out var code)) {
-      return code;      
+      return code;
     }
 
     code = $"\x1b[38;5;{fg};48;5;{bg}m";
@@ -67,10 +66,9 @@ public static class AnsiColor {
   /// </summary>
   /// <param name="fg"></param>
   /// <returns></returns>
-  public static string GetFgCode(int fg)
-  {
+  public static string GetFgCode(int fg) {
     if (FgCache.TryGetValue(fg, out var code)) {
-      return code;      
+      return code;
     }
 
     code = $"\x1b[38;5;{fg}m";

@@ -34,7 +34,7 @@ public class GameRunner {
     // GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
     
     // GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
-    _gameState.GoToMap(map, _input);
+    // _gameState.GoToMap(map, _input);
 
     var gameLoop = new GameLoop();
 

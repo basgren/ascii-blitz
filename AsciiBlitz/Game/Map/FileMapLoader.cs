@@ -44,6 +44,7 @@ public class FileMapGenerator : IMapGenerator {
 
     for (int y = 0; y < height; y++) {
       string line = lines[y];
+
       for (int x = 0; x < line.Length; x++) {
         char c = line[x];
         var pos = new Vec2(x, y);
@@ -70,12 +71,16 @@ public class FileMapGenerator : IMapGenerator {
             break;
           case MapSymbols.Player:
             map.PlayerSpawnPoint = pos;
+            ground.Add(TileFactory.Create<SoilTile>(gridPos));
             break;
           case MapSymbols.Enemy:
             map.AddEnemySpawnPoint(pos);
+            ground.Add(TileFactory.Create<SoilTile>(gridPos));
             break;
           default:
-            // ignore unknown symbols
+            // Add soil for any unknown symbol
+            
+            ground.Add(TileFactory.Create<SoilTile>(gridPos));
             break;
         }
       }

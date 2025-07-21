@@ -46,7 +46,7 @@ public static class MazeBuilder {
     for (int y = 1; y < height - 1; y++) {
       for (int x = 1; x < width - 1; x++) {
         if (maze[y, x] == MapSymbols.Wall && _rand.NextSingle() < 0.2) {
-          maze[y, x] = MapSymbols.Destructible;
+          maze[y, x] = MapSymbols.WeakWall;
         }
       }
     }

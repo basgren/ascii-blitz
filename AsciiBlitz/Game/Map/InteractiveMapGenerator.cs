@@ -83,7 +83,7 @@ public class InteractiveMapGenerator(int startWidth, int startHeight, int seed) 
   
   public static ConsoleColor GetForeground(char c) => c switch {
     MapSymbols.Wall => ConsoleColor.DarkGray,
-    MapSymbols.Destructible => ConsoleColor.Gray,
+    MapSymbols.WeakWall => ConsoleColor.Gray,
     MapSymbols.Grass => ConsoleColor.Green,
     MapSymbols.Wheat => ConsoleColor.Yellow,
     MapSymbols.River => ConsoleColor.Blue,
@@ -98,7 +98,7 @@ public class InteractiveMapGenerator(int startWidth, int startHeight, int seed) 
     MapSymbols.River => ConsoleColor.Blue,
     MapSymbols.Bridge => ConsoleColor.DarkYellow,
     MapSymbols.Wall => ConsoleColor.DarkGray,
-    MapSymbols.Destructible => ConsoleColor.Gray,
+    MapSymbols.WeakWall => ConsoleColor.Gray,
     MapSymbols.Grass => ConsoleColor.Green,
     MapSymbols.Wheat => ConsoleColor.Yellow,
     _ => ConsoleColor.Black,

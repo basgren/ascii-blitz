@@ -2,7 +2,7 @@
 
 public static class MapSymbols {
   public const char Wall = '#';
-  public const char Destructible = '%';
+  public const char WeakWall = '%';
   public const char Empty = ' ';
   public const char Grass = 'g';
   public const char Wheat = 'w';
@@ -12,5 +12,5 @@ public static class MapSymbols {
   public const char Exit = 'E';
   public const char Enemy = 'T';
 
-  public static readonly char[] Walkable = { Empty, Grass, Wheat, Bridge, Player, Exit, Enemy, Destructible };
+  public static readonly char[] Walkable = { Empty, Grass, Wheat, Bridge, Player, Exit, Enemy, WeakWall };
 }

@@ -53,7 +53,7 @@ public static class GroundTileHelper {
     }
     
     if (horzDmg >= 0 && (y == 0 || y == height - 1)) {
-      return RandInt(id, maxDamage) <= horzDmg ? '#' : ' ';
+      return RandInt(id, maxDamage) <= horzDmg ? '#' : null;
     }
 
     return null;

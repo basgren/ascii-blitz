@@ -4,31 +4,40 @@ using AsciiBlitz.Core.Render.Buffer;
 namespace AsciiBlitz.Game.Tiles;
 
 public class WeakWallTileSprite() : Sprite(5, 3) {
-  private static readonly string[] SpriteLines = [
-    "ППППП",
-    "ШШШШШ",
-    "ППППП",
-  ];
-
-  private static readonly string DamageChars = "wvпш%";
+  private static readonly string CrackChars = ",'.-";
+  private static readonly string DamageChars = ";:\"-!/\\";
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
-    if (context.GameObject is not WeakWallTile weakWallTile) {
+    if (context.GameObject is not WeakWallTile tile) {
       return;
     }
     
-    float healthPercent = weakWallTile.Damageable.Health / weakWallTile.Damageable.MaxHealth;
+    float healthPercent = tile.Damageable.Health / tile.Damageable.MaxHealth;
     var pos = context.CharPos;
     
     // value is based on world position of wall tile to have different damage random for different tiles.
-    int value = weakWallTile.Pos.X * 3 + weakWallTile.Pos.Y * 100 + pos.X + (pos.Y * Width);
-    bool isPartDamaged = Rand(value) >= healthPercent;
+    int fragPosX = tile.Pos.X * Width + context.CharPos.X; 
+    int fragPosY = tile.Pos.Y * Height + context.CharPos.Y;
+    int fragId = fragPosY * 100 + fragPosX;
+    
+    
+    bool isPartDamaged = Rand(fragId * 2) >= healthPercent;
 
-    char c = isPartDamaged
-      ? DamageChars[RandInt(value, DamageChars.Length)]
-      : SpriteLines[pos.Y][pos.X];
+    char c = ' ';
+
+    if (isPartDamaged) {
+      c = DamageChars[RandInt(fragId, DamageChars.Length)];
+      cell.Color = AnsiColor.Grayscale(8 - (int)((1 - healthPercent) * 6));
+    } else {
+      if (Rand(fragId * 15) < 0.3) {
+        int index = RandInt(fragId, CrackChars.Length);
+        c = CrackChars[index];
+        cell.Color = AnsiColor.Grayscale(8);
+      }
+    }
 
     cell.Char = c;
+    cell.BgColor = WallTileSprite.BaseColor;
   }
   
   private double Rand(int value) {

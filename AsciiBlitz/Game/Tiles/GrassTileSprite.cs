@@ -34,7 +34,7 @@ public class GrassTileSprite : Sprite {
       cell.Color = AnsiColor.Grayscale(Math.Clamp(grassTile.DamageLevel, 1, 7));
     } else {
       var samples = _grassChars[Math.Min(grassTile.DamageLevel, _grassChars.Length - 1)];
-      int index = RandInt(id, samples.Length - 1);
+      int index = RandInt(id, samples.Length);
       
       cell.Char = samples[index];
 

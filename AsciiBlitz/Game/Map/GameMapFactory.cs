@@ -43,8 +43,9 @@ public class GameMapFactory {
           case MapSymbols.Wall:
             solids.Add(TileFactory.Create<WallTile>(gridPos));
             break;
-          case MapSymbols.Destructible:
+          case MapSymbols.WeakWall:
             solids.Add(TileFactory.Create<WeakWallTile>(gridPos));
+            ground.Add(TileFactory.Create<SoilTile>(gridPos));
             break;
           case MapSymbols.River:
             solids.Add(TileFactory.Create<RiverTile>(gridPos));

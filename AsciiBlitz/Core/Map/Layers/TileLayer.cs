@@ -45,10 +45,6 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
     ClearCache();
   }
 
-  public bool HasTileAt(Vec2Int pos) {
-    return GetTileAt(pos) != null;
-  }
-  
   public bool HasTileAt(Vec2 pos) {
     return GetTileAt(pos) != null;
   }
@@ -86,14 +82,6 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
     return tile != null;
   }
   
-  public TileObject? GetTileAt(Vec2Int pos) {
-    if (pos.X < 0 || pos.X >= _width || pos.Y < 0 || pos.Y >= _height) {
-      return null;
-    }
-    
-    return _tiles[pos.X, pos.Y];
-  }
-
   private void ClearCache() {
     _allObjects = null;
   }

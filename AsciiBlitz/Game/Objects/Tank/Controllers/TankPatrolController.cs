@@ -1,5 +1,4 @@
-﻿using AsciiBlitz.Core.Commands;
-using AsciiBlitz.Core.Map;
+﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Game.Objects.Tank.Controllers;

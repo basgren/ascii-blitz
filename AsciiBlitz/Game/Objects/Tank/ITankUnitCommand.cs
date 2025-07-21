@@ -1,6 +1,4 @@
-﻿using AsciiBlitz.Game.Objects.Tank;
-
-namespace AsciiBlitz.Core.Commands;
+﻿namespace AsciiBlitz.Game.Objects.Tank;
 
 public interface ITankUnitCommand {
   void Execute(Tank unit);

@@ -12,7 +12,6 @@ public interface IGameMap {
   IReadOnlyList<AbstractMapLayer> GetOrderedLayers();
   bool IsMovable(Vec2 pos);
   Vec2 PlayerSpawnPoint { get; }
-  IReadOnlyList<Vec2> EnemySpawnPoints { get; }
   bool IsVisionTransparent(Vec2Int pos);
   void TileVisited(Vec2 pos, Direction dir);
 }
@@ -24,13 +23,12 @@ public class GameMap : IGameMap {
 
   public int Width => _width;
   public int Height => _height;
-  public int LayerCount => _layers.Count;
 
   public Vec2 PlayerSpawnPoint { get; set; } = new(1, 1);
   public IReadOnlyList<Vec2> EnemySpawnPoints => _enemySpawnPoints;
 
   private readonly Dictionary<int, AbstractMapLayer> _layers;
-  private List<AbstractMapLayer>? _orderedLayers = null;
+  private List<AbstractMapLayer>? _orderedLayers;
   private int _width;
   private int _height;
   private readonly List<Vec2> _enemySpawnPoints = new();
@@ -85,6 +83,7 @@ public class GameMap : IGameMap {
   
   public bool IsVisionTransparent(Vec2Int pos) {
     TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
+    
     if (layer.TryGetTileAt(pos, out var tile)) {
       return tile is not WallTile && tile is not WeakWallTile;
     }

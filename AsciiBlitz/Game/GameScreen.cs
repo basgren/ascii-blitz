@@ -10,13 +10,13 @@ public class GameScreen {
   private const int Gap = 1;
   private readonly GameViewportRenderer _mapRenderer = new();
 
-  private ScreenBuffer _gameViewport = new(0, 0);
-  private ScreenBuffer _menu = new(0, 0);
-  private ScreenBuffer _bulletViewport = new(15, 3);
+  private readonly ScreenBuffer _gameViewport = new(0, 0);
+  private readonly ScreenBuffer _menu = new(0, 0);
+  private readonly ScreenBuffer _bulletViewport = new(15, 3);
 
   private int _screenWidth;
   private int _screenHeight;
-  private DrawUtils _draw;
+  private readonly DrawUtils _draw;
 
   public GameScreen() {
     _draw = new DrawUtils(_menu);

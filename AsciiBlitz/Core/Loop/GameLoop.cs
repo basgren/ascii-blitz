@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz;
+﻿namespace AsciiBlitz.Core.Loop;
 
 public delegate bool FrameStepFunction(IFrameContext deltaTime);
 

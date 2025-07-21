@@ -5,7 +5,6 @@ namespace AsciiBlitz.Game.Tiles;
 public static class GroundTileHelper {
   public static int GetGrassColor(int x, int y, double t, double xOffsetScale) {
     // === CONFIGURATION CONSTANTS ===
-
     const double BaseFrequency = 0.5; // base wave frequency (radians per second)
     const double WaveSpeed = 0.8; // vertical wave movement speed (units per second)
 

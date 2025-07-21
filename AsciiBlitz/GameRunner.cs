@@ -1,9 +1,9 @@
 ﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Input;
+using AsciiBlitz.Core.Loop;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects.Components;
-using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Game;
 using AsciiBlitz.Game.Map;
@@ -15,26 +15,16 @@ public class GameRunner {
   private readonly GameState _gameState = new();
 
   private readonly BufferedConsoleRenderer _consoleRenderer = new();
-  private readonly GameViewportRenderer _mapRenderer = new();
   private readonly BufferedConsoleInput _input = new();
   private readonly GameScreen _screen = new();
+  private readonly GameMapFactory _mapFactory = new();
 
   public void Run() {
     Console.Clear();
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
 
-    // var mapGen = new InteractiveMapGenerator(29, 23, 7888);
-    // string[] maze = mapGen.Generate();
-
-    GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
-    _gameState.GoToMap(map, _input);
-    
-    // todo: rework filemapgenerator
-    // GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
-    
-    // GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
-    // _gameState.GoToMap(map, _input);
+    InitMap();
 
     var gameLoop = new GameLoop();
 
@@ -50,6 +40,16 @@ public class GameRunner {
       .Run();
   }
 
+  private void InitMap() {
+    var mapGen = new InteractiveMapGenerator(29, 23, 7888);
+    string[] maze = mapGen.Generate();
+
+    // GameMap map = mapFactory.CreateFromFile("PlaygroundMap.txt");
+    GameMap map = _mapFactory.CreateFromStrings(maze);
+    
+    _gameState.GoToMap(map, _input);
+  }
+
   private void ProcessInput() {
     _input.Update();
 
@@ -61,7 +61,7 @@ public class GameRunner {
         break;
 
       case ConsoleKey.D1:
-        GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
+        GameMap map = _mapFactory.CreateFromFile("Playground.txt");
         _gameState.GoToMap(map, _input);
         break;
     }
@@ -85,7 +85,7 @@ public class GameRunner {
     _screen.Render(_consoleRenderer.Buffer, _gameState.GetMap(), _gameState.Player, frameContext);
     _consoleRenderer.Render();
     
-    // Destroy dead objects
+    // Destroy dead objects at the very end, so all collisions are properly calculated.
     foreach (var obj in allObjects) {
       if (obj is IDamageable { Damageable.IsDead: true }) {
         obj.Destroy();

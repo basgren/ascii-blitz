@@ -8,6 +8,7 @@ public static class MazeGenerator {
 
     for (int attempt = 0; attempt < maxAttempts; attempt++) {
       var maze = MazeBuilder.GenerateMaze(width, height);
+
       if (IsConnected(maze, out _, out _)) {
         return ConvertToStringArray(maze);
       }

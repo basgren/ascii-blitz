@@ -6,4 +6,4 @@ public class WallTileSprite() : StaticSprite([
   "█████",
   "█████",
   "█████",
-]);
+], AnsiColor.Grayscale(17));

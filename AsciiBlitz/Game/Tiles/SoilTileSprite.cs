@@ -4,7 +4,7 @@ using AsciiBlitz.Core.Render.Buffer;
 namespace AsciiBlitz.Game.Tiles;
 
 public class SoilTileSprite() : Sprite(5, 3) {
-  private static readonly string _chars = ",.`";
+  private static readonly string Chars = ",.`";
   private const float SoilFillPercent = 0.3f;
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
@@ -23,8 +23,8 @@ public class SoilTileSprite() : Sprite(5, 3) {
       double val = Rand(id);
 
       if (val <= SoilFillPercent) {
-        int charId = (int)(val / SoilFillPercent * _chars.Length);
-        cell.Char = _chars[charId]; 
+        int charId = (int)(val / SoilFillPercent * Chars.Length);
+        cell.Char = Chars[charId]; 
       }
 
       cell.Color = AnsiColor.Grayscale(RandInt(id, 8) + 3);

@@ -6,22 +6,11 @@ using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Game.Map;
 
-public class FileMapGenerator : IMapGenerator {
-  private string _filename = string.Empty;
+public class GameMapFactory {
   private readonly string _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Maps");
-  // private readonly string _basePath = "Assets/Maps";
 
-  public FileMapGenerator(string filename) {
-    _filename = filename;
-  }
-
-  public IMapGenerator SetSize(int width, int height) {
-    // Размер задается автоматически по содержимому файла
-    return this;
-  }
-
-  public GameMap Build() {
-    string path = Path.Combine(_basePath, _filename);
+  public GameMap CreateFromFile(string filename) {
+    string path = Path.Combine(_basePath, filename);
     if (!File.Exists(path))
       throw new FileNotFoundException($"Map file not found: {path}");
 
@@ -29,10 +18,10 @@ public class FileMapGenerator : IMapGenerator {
       .Where(line => !string.IsNullOrWhiteSpace(line))
       .ToArray();
 
-    return BuildFromStrings(lines);
+    return CreateFromStrings(lines);
   }
   
-  public GameMap BuildFromStrings(string[] lines) {
+  public GameMap CreateFromStrings(string[] lines) {
     int height = lines.Length;
     int width = lines.Max(line => line.Length);
 

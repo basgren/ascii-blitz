@@ -23,4 +23,12 @@ public class BaseDamageableComponent(float health, Action<float>? onDamage = nul
     _health = Math.Clamp(_health - amount, 0, _maxHealth);
     onDamage?.Invoke(amount);
   }
+  
+  public void SetMaxHealth(float maxHealth) {
+    _maxHealth = maxHealth;
+  }
+  
+  public void SetHealth(float health) {
+    _health = Math.Clamp(health, 0, _maxHealth);
+  }
 }

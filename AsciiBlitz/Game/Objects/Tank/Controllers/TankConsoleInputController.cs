@@ -1,7 +1,7 @@
 ﻿using AsciiBlitz.Core.Commands;
 using AsciiBlitz.Core.Input;
 
-namespace AsciiBlitz.Game.Objects.Tank;
+namespace AsciiBlitz.Game.Objects.Tank.Controllers;
 
 public class TankConsoleInputController : ITankController {
   private IGameInput _input;

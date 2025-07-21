@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
+using AsciiBlitz.Game.Tiles;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map;
@@ -11,6 +12,7 @@ public interface IGameMap {
   bool IsMovable(Vec2 pos);
   Vec2 PlayerSpawnPoint { get; }
   IReadOnlyList<Vec2> EnemySpawnPoints { get; }
+  bool IsVisionTransparent(Vec2Int pos);
 }
 
 public class GameMap : IGameMap {
@@ -77,6 +79,15 @@ public class GameMap : IGameMap {
     
     TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
     return !layer.HasTileAt(pos);
+  }
+  
+  public bool IsVisionTransparent(Vec2Int pos) {
+    TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
+    if (layer.TryGetTileAt(pos, out var tile)) {
+      return tile is not WallTile && tile is not WeakWallTile;
+    }
+
+    return true;
   }
 
   public T GetLayer<T>(int id) where T : AbstractMapLayer {

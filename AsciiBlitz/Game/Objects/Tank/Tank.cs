@@ -37,18 +37,24 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   private readonly TankWeaponStateMachine _weaponState = new(TankWeaponState.Idle);
   private readonly TankDamageStateMachine _damageState = new(TankDamageState.Normal);
   private readonly TankAttrs _attrs = new();
-  
-  public IDamageableComponent Damageable { get; }
-  
+
+  public IDamageableComponent Damageable => _damageable;
+
   // The next cell that tank will move to. Updated only during state = Moving.
   public Vec2 TargetPos { get; private set; } = Vec2.Zero;
   public Vec2 PrevPos { get; private set; } = Vec2.Zero;
   
+  
   // todo: implement by inheritance.
   public bool IsPlayer = false;
+  private readonly BaseDamageableComponent _damageable;
+  public RectFloat Bounds => new(Pos.X, Pos.Y, 1f, 1f);
+
+  public bool IsActive { get; } = true;
+  public float FireRange { get; set; } = 6f;
 
   public Tank() {
-    Damageable = new BaseDamageableComponent(3, OnHit);
+    _damageable = new BaseDamageableComponent(3, OnHit);
   }
   
   public override void Update(float deltaTime) {
@@ -65,15 +71,19 @@ public class Tank : UnitObject, ICollidable, IDamageable {
     command?.Execute(this);
   }
 
+  public void SetMaxHealth(float maxHealth) {
+    _damageable.SetMaxHealth(maxHealth);
+  }
+
+  public void ResetHealth() {
+    _damageable.SetHealth(_damageable.MaxHealth);
+  }
+
   private void OnHit(float damage) {
     if (_damageState.Go(TankDamageState.Hit)) {
       _damageState.GoDelayed(TankDamageState.Normal, 0.15f);
     }
   }
-
-  public RectFloat Bounds => new(Pos.X, Pos.Y, 1f, 1f);
-
-  public bool IsActive { get; } = true;
 
   public void OnCollision(TileObject? tile) {
     // Do nothing.
@@ -88,6 +98,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
       var bullet = GameState.CreateUnit<Projectile>();
       bullet.Speed = Dir.ToVec2() * 4f;
       bullet.Pos = GetShootPoint(bullet);
+      bullet.MaxTravelDistance = FireRange;
       
       _weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {
         _weaponState.GoDelayed(TankWeaponState.Idle, _attrs.WeaponReloadTime);

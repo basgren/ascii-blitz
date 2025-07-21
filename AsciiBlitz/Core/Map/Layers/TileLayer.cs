@@ -70,6 +70,10 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
     return _tiles[x, y];
   }
   
+  public bool TryGetTileAt(Vec2Int pos, out TileObject? tile) {
+    return TryGetTileAt(pos.X, pos.Y, out tile);
+  }
+  
   public bool TryGetTileAt(int x, int y, out TileObject? tile) {
     tile = null;
 
@@ -83,6 +87,10 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
   }
   
   public TileObject? GetTileAt(Vec2Int pos) {
+    if (pos.X < 0 || pos.X >= _width || pos.Y < 0 || pos.Y >= _height) {
+      return null;
+    }
+    
     return _tiles[pos.X, pos.Y];
   }
 

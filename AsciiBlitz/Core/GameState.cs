@@ -3,6 +3,7 @@ using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Game.Objects.Tank;
+using AsciiBlitz.Game.Objects.Tank.Controllers;
 using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core;
@@ -36,7 +37,8 @@ public class GameState : IGameState {
   private void InitEnemies(IReadOnlyList<Vec2> spawnPoints) {
     foreach (var point in spawnPoints) {
       var enemy = CreateUnit<Tank>();
-      enemy.Controller = new TankPatrolController(GetMap());
+      //enemy.Controller = new TankPatrolController(GetMap());
+      enemy.Controller = new TankRandomWalkController(GetMap(), Player);
       enemy.Pos = point;
     }
   }
@@ -113,6 +115,8 @@ public class GameState : IGameState {
     Player = CreateUnit<Tank>();
     Player.Controller = new TankConsoleInputController(input);
     Player.IsPlayer = true;
+    Player.SetMaxHealth(9);
+    Player.ResetHealth();
     Player.Pos = GetMap().PlayerSpawnPoint;
   }
 }

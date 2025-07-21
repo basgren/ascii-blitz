@@ -2,7 +2,7 @@
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Game.Objects.Tank;
+namespace AsciiBlitz.Game.Objects.Tank.Controllers;
 
 /// <summary>
 /// Very simple patrolling controller to test enemy tank movement. 

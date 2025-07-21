@@ -7,14 +7,14 @@ namespace AsciiBlitz.Game.Tiles;
 public class GrassTileSprite : Sprite {
   public GrassTileSprite() : base(5, 3) {
   }
+  
+  private const int damageThreshold = 4;
 
   private static readonly string[] _grassChars = [
     "WVYwv ",
     "wwvv,.' ",
     "v.,.' ",
-    ",.`   ",
-    "#.`   ",
-    "#.      ",
+    ",.`  ",
   ];
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
@@ -22,24 +22,31 @@ public class GrassTileSprite : Sprite {
       return;
     }
 
-    var samples = _grassChars[Math.Min(grassTile.GrassDamageLevel, _grassChars.Length - 1)];
     int fragY = grassTile.Pos.Y * Height + context.CharPos.Y;
     int fragX = grassTile.Pos.X * Width + context.CharPos.X;
     
     int id = (fragY + fragX) * 100 * fragX;
-    int index = RandInt(id, samples.Length - 1);
 
-    cell.Char = samples[index];
+    char? dmgChar = GroundTileHelper.GetDamageChar(context.CharPos.X, context.CharPos.Y, grassTile, damageThreshold);
 
-
-    if (grassTile.GrassDamageLevel >= 4) {
-      cell.Color = AnsiColor.Grayscale(8);
+    if (dmgChar.HasValue) {
+      cell.Char = dmgChar.Value;
+      cell.Color = AnsiColor.Grayscale(Math.Clamp(grassTile.DamageLevel, 1, 7));
     } else {
-      var value = Math.Cos(context.GameTime / 3 + Math.Cos(id)) * 0.5 + 0.5;
+      var samples = _grassChars[Math.Min(grassTile.DamageLevel, _grassChars.Length - 1)];
+      int index = RandInt(id, samples.Length - 1);
+      
+      cell.Char = samples[index];
 
-      var i = GrassTileHelper.GetGrassColor(fragX, fragY, context.GameTime * 3, 1);
-      cell.Color = AnsiColor.Rgb(0, i + 2, 0);
+      if (grassTile.DamageLevel < damageThreshold) {
+        var i = GroundTileHelper.GetGrassColor(fragX, fragY, context.GameTime * 3, 1);
+        cell.Color = AnsiColor.Rgb(0, i + 2, 0);        
+      } else {
+        cell.Color = AnsiColor.Rgb(0, 2, 0);
+      }
     }
+
+    cell.BgColor = AnsiColor.Grayscale(2);
   }
 
   private double Rand(int value) {

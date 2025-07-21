@@ -3,32 +3,37 @@ using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class SoilTileSprite : Sprite {
-  public SoilTileSprite() : base(5, 3) {
-  }
-
-  private static readonly string _chars = ",.'`-";
-  private const float SoilFillPercent = 0.1f;
+public class SoilTileSprite() : Sprite(5, 3) {
+  private static readonly string _chars = ",.`";
+  private const float SoilFillPercent = 0.3f;
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     if (context.GameObject is not SoilTile grassTile) {
       return;
     }
     
-    int fragY = grassTile.Pos.Y * Height + context.CharPos.Y;
-    int fragX = grassTile.Pos.X * Width + context.CharPos.X;
-    int id = fragY * 100 + fragX;
+    char? dmgChar = GroundTileHelper.GetDamageChar(context.CharPos.X, context.CharPos.Y, grassTile, 1);
 
-    cell.Char = ' ';
-    double val = Rand(id);
+    if (!dmgChar.HasValue) {
+      int fragY = grassTile.Pos.Y * Height + context.CharPos.Y;
+      int fragX = grassTile.Pos.X * Width + context.CharPos.X;
+      int id = fragY * 100 + fragX;
 
-    if (val <= SoilFillPercent) {
-      int charId = (int)(val / SoilFillPercent * _chars.Length);
-      cell.Char = _chars[charId]; 
+      cell.Char = ' ';
+      double val = Rand(id);
+
+      if (val <= SoilFillPercent) {
+        int charId = (int)(val / SoilFillPercent * _chars.Length);
+        cell.Char = _chars[charId]; 
+      }
+
+      cell.Color = AnsiColor.Grayscale(RandInt(id, 8) + 3);
+    } else {
+      cell.Char = dmgChar.Value;
+      cell.Color = AnsiColor.Grayscale(Math.Clamp(grassTile.DamageLevel + 2, 2, 6));
     }
     
-    cell.BgColor = AnsiColor.Grayscale(1);
-    cell.Color = AnsiColor.Grayscale(RandInt(id, 8) + 3);
+    cell.BgColor = AnsiColor.Grayscale(2);
   }
 
   private double Rand(int value) {

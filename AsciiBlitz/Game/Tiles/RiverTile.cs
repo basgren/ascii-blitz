@@ -5,13 +5,7 @@ using AsciiBlitz.Game.Objects;
 namespace AsciiBlitz.Game.Tiles;
 
 public class RiverTile : TileObject {
-  public override Sprite Sprite => SpriteRepo.Get<RiverTileSprite>(); 
-  public int GrassDamageLevel = 0;
-
-  public override void Visited() {
-    GrassDamageLevel += 1;
-  }
-
+  public override Sprite Sprite => SpriteRepo.Get<RiverTileSprite>();
   public override bool CollidesWith(GameObject obj) {
     if (obj is Projectile) {
       return false;

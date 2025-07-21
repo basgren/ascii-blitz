@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
+using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Game.Tiles;
 using AsciiBlitz.Types;
 
@@ -13,6 +14,7 @@ public interface IGameMap {
   Vec2 PlayerSpawnPoint { get; }
   IReadOnlyList<Vec2> EnemySpawnPoints { get; }
   bool IsVisionTransparent(Vec2Int pos);
+  void TileVisited(Vec2 pos, Direction dir);
 }
 
 public class GameMap : IGameMap {
@@ -100,6 +102,14 @@ public class GameMap : IGameMap {
     }
 
     return typedLayer;
+  }
+  
+  public void TileVisited(Vec2 pos, Direction dir) {
+    TileObject? tile = GetLayer<TileLayer>(LayerGroundId).GetTileAt(pos);
+
+    if (tile is GroundTile groundTile) {
+      groundTile.Visited(dir);
+    }
   }
 
   private void ClearCache() {

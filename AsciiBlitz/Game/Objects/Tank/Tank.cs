@@ -44,7 +44,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public Vec2 TargetPos { get; private set; } = Vec2.Zero;
   public Vec2 PrevPos { get; private set; } = Vec2.Zero;
   
-  public readonly Action<Vec2>? OnVisit;
+  public Action<Vec2>? OnVisit;
   
   // todo: implement by inheritance.
   public bool IsPlayer = false;
@@ -112,6 +112,8 @@ public class Tank : UnitObject, ICollidable, IDamageable {
       _state.GoDelayed(TankMovementState.Idle, _attrs.TurnTime, _ => {
         // Change tank movement direction only after turning is "finished".
         Dir = counterclockwise ? Dir.TurnCcw() : Dir.TurnCw();
+
+        OnVisit?.Invoke(Pos);
       });
     }
   }

@@ -21,7 +21,4 @@ public abstract class GameObject {
   
   public event Action<GameObject>? OnDestroyed;
   public void Destroy() => OnDestroyed?.Invoke(this);
-
-  public virtual void Visited() {
-  }
 }

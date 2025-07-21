@@ -118,5 +118,8 @@ public class GameState : IGameState {
     Player.SetMaxHealth(9);
     Player.ResetHealth();
     Player.Pos = GetMap().PlayerSpawnPoint;
+    Player.OnVisit += (pos) => {
+      GetMap().TileVisited(pos, Player.Dir);
+    };
   }
 }

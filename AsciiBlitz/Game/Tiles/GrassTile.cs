@@ -3,11 +3,6 @@ using AsciiBlitz.Core.Render;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class GrassTile : TileObject {
-  public override Sprite Sprite => SpriteRepo.Get<GrassTileSprite>(); 
-  public int GrassDamageLevel = 0;
-
-  public override void Visited() {
-    GrassDamageLevel += 1;
-  }
+public class GrassTile : GroundTile {
+  public override Sprite Sprite => SpriteRepo.Get<GrassTileSprite>();
 }

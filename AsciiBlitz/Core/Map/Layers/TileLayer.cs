@@ -54,6 +54,10 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
   }
   
   public TileObject? GetTileAt(Vec2 pos) {
+    if (pos.X < 0 || pos.X >= _width || pos.Y < 0 || pos.Y >= _height) {
+      return null;
+    }
+
     var posInt = MapUtils.PosToGrid(pos);
     return _tiles[posInt.X, posInt.Y];
   }

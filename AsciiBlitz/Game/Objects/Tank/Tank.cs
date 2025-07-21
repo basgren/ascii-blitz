@@ -1,7 +1,5 @@
 ﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Commands;
-using AsciiBlitz.Core.Map;
-using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
@@ -129,7 +127,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   private bool TryStartMove(Direction dir) {
     Vec2 nextPos = Pos + dir.ToVec2();
 
-    if (!CanMove(nextPos)) {
+    if (!GameState.GetMap().IsMovable(nextPos)) {
       return false;
     }
 
@@ -140,11 +138,6 @@ public class Tank : UnitObject, ICollidable, IDamageable {
 
   private void EndMove() {
     Pos = TargetPos;
-  }
-
-  private bool CanMove(Vec2 cellPos) {
-    TileLayer layer = GameState.GetMap().GetLayer<TileLayer>(GameMap.LayerSolidsId);
-    return !layer.HasTileAt(cellPos);
   }
 
   private Vec2 GetShootPoint(UnitObject projectile) {

@@ -71,6 +71,10 @@ public class GameMap : IGameMap {
   }
 
   public bool IsMovable(Vec2 pos) {
+    if (pos.X < 0 || pos.X >= _width || pos.Y < 0 || pos.Y >= _height) {
+      return false;
+    }
+    
     TileLayer layer = GetLayer<TileLayer>(LayerSolidsId);
     return !layer.HasTileAt(pos);
   }

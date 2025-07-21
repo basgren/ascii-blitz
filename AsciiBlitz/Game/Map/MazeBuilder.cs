@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Map.Generator;
+﻿namespace AsciiBlitz.Game.Map;
 
 public static class MazeBuilder {
   private static Random _rand = new();
@@ -50,10 +50,10 @@ public static class MazeBuilder {
         }
       }
     }
-
+    
+    PlacePatches(maze, MapSymbols.Grass, 8, (3, 3), (6, 6), false);
+    PlacePatches(maze, MapSymbols.Wheat, 4, (3, 3), (5, 6), true);
     PlaceRiver(maze);
-    PlacePatches(maze, MapSymbols.Grass, 8, (3, 3), (6, 6));
-    PlacePatches(maze, MapSymbols.Wheat, 6, (3, 3), (5, 6));
     PlacePlayerAndExit(maze);
     PlaceEnemies(maze, 3);
 
@@ -66,6 +66,14 @@ public static class MazeBuilder {
     }
     
     maze[y, x] = c; 
+  }
+  
+  private static char GetChar(char[,] maze, int x, int y) {
+    if (x < 0 || y < 0 || x >= maze.GetLength(1) || y >= maze.GetLength(0)) {
+      return '\0';
+    }
+    
+    return maze[y, x]; 
   }
 
   private static void PlaceRiver(char[,] maze) {
@@ -82,8 +90,18 @@ public static class MazeBuilder {
       }
       
       // Grass should be along the river.
-      SetChar(maze, x - 1, y, MapSymbols.Grass);
-      SetChar(maze, x + riverWidth, y, MapSymbols.Grass);
+      for (int dy = -1; dy <= 1; dy++) {
+        var sym = GetChar(maze, x - 1, y + dy);
+
+        if (sym != MapSymbols.River && sym != MapSymbols.Bridge) {
+          SetChar(maze, x - 1, y + dy, MapSymbols.Grass);
+        }
+        
+        var sym2 = GetChar(maze, x + riverWidth, y + dy);
+        if (sym2 != MapSymbols.River && sym2 != MapSymbols.Bridge) {
+          SetChar(maze, x + riverWidth, y + dy, MapSymbols.Grass);
+        }
+      }
 
       cols.Add((x, x + riverWidth - 1));
     }
@@ -104,8 +122,16 @@ public static class MazeBuilder {
     }
   }
 
-  private static void PlacePatches(char[,] maze, char symbol, int count, (int, int) min, (int, int) max) {
+  private static void PlacePatches(
+    char[,] maze,
+    char symbol,
+    int count,
+    (int, int) min,
+    (int, int) max,
+    bool overwriteWalls
+  ) {
     int h = maze.GetLength(0), w = maze.GetLength(1);
+
     for (int i = 0; i < count; i++) {
       int ph = _rand.Next(min.Item1, max.Item1 + 1);
       int pw = _rand.Next(min.Item2, max.Item2 + 1);
@@ -114,7 +140,8 @@ public static class MazeBuilder {
 
       for (int dy = 0; dy < ph; dy++) {
         for (int dx = 0; dx < pw; dx++) {
-          if (maze[y + dy, x + dx] == MapSymbols.Empty) {
+          var sym = maze[y + dy, x + dx];
+          if (sym == MapSymbols.Empty || (overwriteWalls && sym == MapSymbols.Wall)) {
             maze[y + dy, x + dx] = symbol;
           }
         }

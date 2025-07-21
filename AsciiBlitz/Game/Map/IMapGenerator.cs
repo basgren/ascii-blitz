@@ -1,4 +1,6 @@
-﻿namespace AsciiBlitz.Core.Map.Generator;
+﻿using AsciiBlitz.Core.Map;
+
+namespace AsciiBlitz.Game.Map;
 
 public interface IMapGenerator {
   IMapGenerator SetSize(int width, int height);

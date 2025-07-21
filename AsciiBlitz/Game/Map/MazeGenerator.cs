@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Map.Generator;
+﻿namespace AsciiBlitz.Game.Map;
 
 public static class MazeGenerator {
   public static string[] GenerateValidMaze(int width, int height, int maxAttempts = 10, int? seed = null) {
@@ -94,19 +94,5 @@ public static class MazeGenerator {
     }
 
     return result;
-  }
-
-  public static void DrawColoredMaze(string[] maze) {
-    foreach (var line in maze) {
-      foreach (var c in line) {
-        Console.ForegroundColor = MapSymbols.GetForeground(c);
-        Console.BackgroundColor = MapSymbols.GetBackground(c);
-        Console.Write(c);
-      }
-
-      Console.WriteLine();
-    }
-
-    Console.ResetColor();
   }
 }

@@ -1,12 +1,12 @@
 ﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
-using AsciiBlitz.Core.Map.Generator;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Game;
+using AsciiBlitz.Game.Map;
 
 namespace AsciiBlitz;
 
@@ -23,20 +23,14 @@ public class GameRunner {
     Console.Clear();
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
-    
-    string[] maze = MazeGenerator.GenerateValidMaze(20, 10, 10, 1);
-//    MazeGenerator.DrawColoredMaze(maze);
-//    Console.ReadKey();
+
+    var mapGen = new InteractiveMapGenerator(29, 23, 7888);
+    string[] maze = mapGen.Generate();
     
     GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
     
     // GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
     _gameState.GoToMap(map, _input);
-
-    // Test rendering - when needed to show generated map.
-    // MiniMapRenderer mapRenderer = new MiniMapRenderer();
-    // mapRenderer.Render(_consoleRenderer.Buffer, _gameState.GetMap());
-    // Console.ReadKey();
 
     var gameLoop = new GameLoop();
 
@@ -50,16 +44,6 @@ public class GameRunner {
         return _gameRunning;
       })
       .Run();
-  }
-
-  private void InitTestMap() {
-    IMapGenerator mapGen = new TestMapGenerator();
-
-    var map = mapGen
-      .SetSize(40, 13)
-      .Build();
-
-    _gameState.GoToMap(map, _input);
   }
 
   private void ProcessInput() {

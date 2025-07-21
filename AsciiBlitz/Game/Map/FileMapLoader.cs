@@ -1,9 +1,10 @@
-﻿using AsciiBlitz.Core.Map.Layers;
+﻿using AsciiBlitz.Core.Map;
+using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Game.Tiles;
 using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core.Map.Generator;
+namespace AsciiBlitz.Game.Map;
 
 public class FileMapGenerator : IMapGenerator {
   private string _filename = string.Empty;

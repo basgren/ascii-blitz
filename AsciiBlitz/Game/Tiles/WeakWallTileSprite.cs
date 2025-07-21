@@ -3,7 +3,7 @@ using AsciiBlitz.Core.Render.Buffer;
 
 namespace AsciiBlitz.Game.Tiles;
 
-public class WeakWallTileSprite : Sprite {
+public class WeakWallTileSprite() : Sprite(5, 3) {
   private static readonly string[] SpriteLines = [
     "ППППП",
     "ШШШШШ",
@@ -11,8 +11,6 @@ public class WeakWallTileSprite : Sprite {
   ];
 
   private static readonly string DamageChars = "wvпш%";
-    
-  public WeakWallTileSprite() : base(5, 3) { }
 
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     if (context.GameObject is not WeakWallTile weakWallTile) {

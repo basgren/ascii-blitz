@@ -44,6 +44,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   public Vec2 TargetPos { get; private set; } = Vec2.Zero;
   public Vec2 PrevPos { get; private set; } = Vec2.Zero;
   
+  public readonly Action<Vec2>? OnVisit;
   
   // todo: implement by inheritance.
   public bool IsPlayer = false;
@@ -149,6 +150,8 @@ public class Tank : UnitObject, ICollidable, IDamageable {
 
   private void EndMove() {
     Pos = TargetPos;
+
+    OnVisit?.Invoke(Pos);
   }
 
   private Vec2 GetShootPoint(UnitObject projectile) {

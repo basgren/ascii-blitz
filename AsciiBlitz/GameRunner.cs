@@ -24,10 +24,14 @@ public class GameRunner {
     Console.CursorVisible = false;
     _consoleRenderer.SetSize(120, 29);
 
-    var mapGen = new InteractiveMapGenerator(29, 23, 7888);
-    string[] maze = mapGen.Generate();
+    // var mapGen = new InteractiveMapGenerator(29, 23, 7888);
+    // string[] maze = mapGen.Generate();
+
+    GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
+    _gameState.GoToMap(map, _input);
     
-    GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
+    // todo: rework filemapgenerator
+    // GameMap map = new FileMapGenerator("PlaygroundMap.txt").BuildFromStrings(maze);
     
     // GameMap map = new FileMapGenerator("PlaygroundMap.txt").Build();
     _gameState.GoToMap(map, _input);

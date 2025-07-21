@@ -23,7 +23,10 @@ public class GrassTileSprite : Sprite {
     }
 
     var samples = _grassChars[Math.Min(grassTile.GrassDamageLevel, _grassChars.Length - 1)];
-    int id = (grassTile.Pos.Y * Height + context.CharPos.Y) * grassTile.Pos.X * Width * context.CharPos.X;
+    int fragY = grassTile.Pos.Y * Height + context.CharPos.Y;
+    int fragX = grassTile.Pos.X * Width + context.CharPos.X;
+    
+    int id = (fragY + fragX) * 100 * fragX;
     int index = RandInt(id, samples.Length - 1);
 
     cell.Char = samples[index];
@@ -32,20 +35,15 @@ public class GrassTileSprite : Sprite {
     if (grassTile.GrassDamageLevel >= 4) {
       cell.Color = AnsiColor.Grayscale(8);
     } else {
-      var value = Math.Cos(context.GameTime / 3 + id) * 0.5 + 0.5;
+      var value = Math.Cos(context.GameTime / 3 + Math.Cos(id)) * 0.5 + 0.5;
 
-      if (value < 0.3) {
-        cell.Color = AnsiColor.Rgb(0, 2, 0);
-      } else if (value < 0.6) {
-        cell.Color = AnsiColor.Rgb(0, 3, 0);
-      } else {
-        cell.Color = AnsiColor.Rgb(0, 4, 0);
-      }
+      var i = GrassTileHelper.GetGrassColor(fragX, fragY, context.GameTime * 3, 1);
+      cell.Color = AnsiColor.Rgb(0, i + 2, 0);
     }
   }
 
   private double Rand(int value) {
-    double v = 12345f * (Math.Sin(value * 45678f) * 0.5f + 0.5f);
+    double v = 12345.234f * (Math.Sin(value * 4567.89f) * 0.5f + 0.5f);
 
     return v - Math.Truncate(v);
   }

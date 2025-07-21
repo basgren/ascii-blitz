@@ -40,6 +40,9 @@ public class GameState : IGameState {
       //enemy.Controller = new TankPatrolController(GetMap());
       enemy.Controller = new TankRandomWalkController(GetMap(), Player);
       enemy.Pos = point;
+      enemy.OnVisit = (pos) => {
+        GetMap().TileVisited(pos, enemy.Dir);
+      };
     }
   }
 
@@ -118,7 +121,7 @@ public class GameState : IGameState {
     Player.SetMaxHealth(9);
     Player.ResetHealth();
     Player.Pos = GetMap().PlayerSpawnPoint;
-    Player.OnVisit += (pos) => {
+    Player.OnVisit = (pos) => {
       GetMap().TileVisited(pos, Player.Dir);
     };
   }

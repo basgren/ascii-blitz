@@ -66,7 +66,7 @@ public class GameRunner {
         break;
 
       case ConsoleKey.D1:
-        GameMap map = _mapFactory.CreateFromFile("Playground.txt");
+        GameMap map = _mapFactory.CreateFromFile("PlaygroundMap.txt");
         _gameState.GoToMap(map, _input);
         break;
     }

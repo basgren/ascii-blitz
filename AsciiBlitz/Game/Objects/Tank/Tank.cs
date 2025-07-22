@@ -48,7 +48,6 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   // todo: implement by inheritance.
   public bool IsPlayer = false;
   private readonly BaseDamageableComponent _damageable;
-  public RectFloat Bounds => new(Pos.X, Pos.Y, 1f, 1f);
 
   public bool IsActive { get; } = true;
   public float FireRange { get; set; } = 6f;
@@ -140,7 +139,9 @@ public class Tank : UnitObject, ICollidable, IDamageable {
   private bool TryStartMove(Direction dir) {
     Vec2 nextPos = Pos + dir.ToVec2();
 
-    if (!GameState.GetMap().IsMovable(nextPos)) {
+    var map = GameState.GetMap();
+
+    if (!map.IsMovable(nextPos) || map.IsColliding(this, nextPos)) {
       return false;
     }
 

@@ -14,6 +14,7 @@ public interface IGameMap {
   Vec2 PlayerSpawnPoint { get; }
   bool IsVisionTransparent(Vec2Int pos);
   void TileVisited(Vec2 pos, Direction dir);
+  bool IsColliding(UnitObject obj, Vec2 nextPos);
 }
 
 public class GameMap : IGameMap {
@@ -109,6 +110,23 @@ public class GameMap : IGameMap {
     if (tile is GroundTile groundTile) {
       groundTile.Visited(dir);
     }
+  }
+
+  public bool IsColliding(UnitObject obj, Vec2 nextPos) {
+    var layer = GetLayer<ObjectLayer>(LayerObjectsId);
+    var bounds = obj.Bounds.MoveTo(nextPos.X, nextPos.Y);
+
+    foreach (var obj2 in layer.GetObjects()) {
+      if (obj2 == obj || !obj2.BlocksMovement) {
+        continue;
+      }
+
+      if (obj2.Bounds.Intersects(bounds)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private void ClearCache() {

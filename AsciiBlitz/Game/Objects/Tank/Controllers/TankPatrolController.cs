@@ -7,8 +7,6 @@ namespace AsciiBlitz.Game.Objects.Tank.Controllers;
 /// Very simple patrolling controller to test enemy tank movement. 
 /// </summary>
 public class TankPatrolController(IGameMap map) : ITankController {
-  private IGameMap _map = map;
-
   public ITankUnitCommand? GetNextCommand(Tank unit) {
     if (unit.MovementState.State != TankMovementState.Idle) {
       return null;
@@ -17,7 +15,7 @@ public class TankPatrolController(IGameMap map) : ITankController {
     // Try to move to the cell in front of the tank.
     var cellInFront = unit.Pos + unit.Dir.ToVec2();
 
-    if (_map.IsMovable(cellInFront)) {
+    if (map.IsMovable(cellInFront) && !map.IsColliding(unit, cellInFront)) {
       return new TankMoveForwardCommand();
     }
     

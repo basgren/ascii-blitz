@@ -11,7 +11,7 @@ public class Projectile : UnitObject, ICollidable, IDamager {
   public float MaxTravelDistance = 5f;
   public IDamagerComponent Damager { get; } = new BaseDamagerComponent(1f);
   public override Sprite Sprite => SpriteRepo.Get<ProjectileSprite>();
-  public RectFloat Bounds => new(Pos.X, Pos.Y, Size.X, Size.Y);
+  public override bool BlocksMovement => false;
 
   public Projectile() {
     Size = new Vec2(1f / 3, 1f / 3);

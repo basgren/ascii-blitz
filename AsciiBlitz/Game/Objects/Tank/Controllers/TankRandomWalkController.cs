@@ -12,13 +12,14 @@ public class TankRandomWalkController(IGameMap map, Tank player, int? seed = nul
     }
 
     // Shoot player if on sight
-    if (IsPlayerInSight(unit) && unit.WeaponState.State == TankWeaponState.Idle)
+    if (IsPlayerInSight(unit) && unit.WeaponState.State == TankWeaponState.Idle) {
       return new TankFireCommand();
+    }
 
     // Try to move forward
-    var forward = unit.Pos + unit.Dir.ToVec2();
+    var nextPos = unit.Pos + unit.Dir.ToVec2();
 
-    if (map.IsMovable(forward)) {
+    if (map.IsMovable(nextPos) && !map.IsColliding(unit, nextPos)) {
       return new TankMoveForwardCommand();
     }
 
@@ -27,7 +28,7 @@ public class TankRandomWalkController(IGameMap map, Tank player, int? seed = nul
 
     foreach (var dir in directions) {
       var target = unit.Pos + dir.ToVec2();
-      if (map.IsMovable(target)) {
+      if (map.IsMovable(target) && !map.IsColliding(unit, nextPos)) {
         if (dir != unit.Dir) {
           return TurnCommand(unit.Dir, dir);
         }

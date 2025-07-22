@@ -37,7 +37,7 @@ public class GameState : IGameState {
   private void InitEnemies(IReadOnlyList<Vec2> spawnPoints) {
     foreach (var point in spawnPoints) {
       var enemy = CreateUnit<Tank>();
-      //enemy.Controller = new TankPatrolController(GetMap());
+      // enemy.Controller = new TankPatrolController(GetMap());
       enemy.Controller = new TankRandomWalkController(GetMap(), Player);
       enemy.Pos = point;
       enemy.OnVisit = (pos) => {

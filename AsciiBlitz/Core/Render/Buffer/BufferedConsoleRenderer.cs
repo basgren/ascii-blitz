@@ -16,8 +16,10 @@ public class BufferedConsoleRenderer {
     Console.OutputEncoding = Encoding.UTF8;
   }
 
-  public void SetSize(int width, int height) {
-    SetConsoleSize(width, height);
+  public void Init() {
+    int width = Console.WindowWidth;
+    int height = Console.WindowHeight;
+    
     _front.SetSize(width, height);
     _back.SetSize(width, height);
   }
@@ -75,16 +77,5 @@ public class BufferedConsoleRenderer {
     // Swap buffers
     (_front, _back) = (_back, _front);
     _front.Clear();
-  }
-
-  private static void SetConsoleSize(int width, int height) {
-    // Set window size using escape sequence.
-    Console.Write($"\x1b[8;{height};{width}t");
-
-    // To prevent exception in Linux.
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-      Console.SetBufferSize(width, height);
-      Console.SetWindowSize(width, height);
-    }
   }
 }

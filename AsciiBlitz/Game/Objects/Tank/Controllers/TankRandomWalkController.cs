@@ -28,7 +28,7 @@ public class TankRandomWalkController(IGameMap map, Tank player, int? seed = nul
 
     foreach (var dir in directions) {
       var target = unit.Pos + dir.ToVec2();
-      if (map.IsMovable(target) && !map.IsColliding(unit, nextPos)) {
+      if (map.IsMovable(target) && !map.IsColliding(unit, target)) {
         if (dir != unit.Dir) {
           return TurnCommand(unit.Dir, dir);
         }

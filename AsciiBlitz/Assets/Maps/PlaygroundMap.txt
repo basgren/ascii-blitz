@@ -8,14 +8,14 @@
 #  gggggg   %%%%%% P ######   ###  ###    #
 #                                         #
 #                                         #
-#  %%%%%%%%   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   wwwwwwwwwwwwwwwwwwwwwwww    #
-#  %      %   gggggggggggggggggggggggg    #
-#  %   T  %   gggggggggggggggggggggggg    #
-#  %      %   gggggggggggggggggggggggg    #
-#  %%%%%%%%   gggggggggggggggggggggggg    #
+#  %%%%%%%%%%%%  wwwwwwwwwwwwwwwwwwwww    #
+#  % T      T %  wwwwwwwwwwwwwwwwwwwww    #
+#  %%%%%%%%%%%%  wwwwwwwwwwwwwwwwwwwww    #
+#  %          %  wwwwwwwwwwwwwwwwwwwww    #
+#  %          %  ggggggggggggggggggggg    #
+#  %   T      %  ggggggggggggggggggggg    #
+#  %          %  ggggggggggggggggggggg    #
+#  %%%%%%%%%%%%  ggggggggggggggggggggg    #
 #                                         #
 #                                         #
 ###########################################

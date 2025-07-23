@@ -162,8 +162,10 @@ public class Tank : UnitObject, ICollidable, IDamageable {
     Vec2 offs = Dir switch {
       Direction.Up => new Vec2(0.5f - halfSize.X, -halfSize.Y * 2),
       Direction.Down => new Vec2(0.5f - halfSize.X, 1),
-      Direction.Left => new Vec2(-halfSize.X * 2f, 0.5f - halfSize.Y),
-      Direction.Right => new Vec2(1, 0.5f - halfSize.Y),
+      
+      // 0.1f - minor compensation due to rounding, so the projectile is always in the middle.
+      Direction.Left => new Vec2(-halfSize.X * 2f, 0.5f - halfSize.Y + 0.01f),
+      Direction.Right => new Vec2(1, 0.5f - halfSize.Y + 0.01f),
       _ => throw new ArgumentOutOfRangeException()
     };
 

@@ -80,7 +80,7 @@ public class GameViewportRenderer {
           // projectile is misaligned, but with rounding situation a bit better, but tank shakes
           // only when panning vertically. 
           int x = (int)Math.Round(obj.Pos.X * ScaleX - viewportOffset.X);
-          int y = (int)Math.Round(obj.Pos.Y * ScaleY - viewportOffset.Y);
+          int y = (int)(obj.Pos.Y * ScaleY - viewportOffset.Y);
           int spriteWidth = obj.Sprite?.Width ?? 0;
           int spriteHeight = obj.Sprite?.Height ?? 0;
 

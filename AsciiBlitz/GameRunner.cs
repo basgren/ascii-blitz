@@ -102,9 +102,6 @@ public class GameRunner {
     switch (stage.State) {
       case GameStage.LevelIntro:
         if (_input.GetKey() != null) {
-          string [] maze = MazeGenerator.GenerateValidMaze(_mazeOptions);
-          var map = _mapFactory.CreateFromStrings(maze);
-          _gameState.GoToMap(map, _input);
           _gameState.StartLevel();
         }
         break;
@@ -165,6 +162,10 @@ public class GameRunner {
     _mazeOptions.Width = _initialMazeOptions.Width + (_gameState.Level - 1) * 2;
     _mazeOptions.Height = _initialMazeOptions.Width + _gameState.Level - 1;
     _mazeOptions.Seed = _initialMazeOptions.Seed + _gameState.Level;
+    
+    string [] maze = MazeGenerator.GenerateValidMaze(_mazeOptions);
+    var map = _mapFactory.CreateFromStrings(maze);
+    _gameState.GoToMap(map, _input);
   }
 
   private void OnQuit() {

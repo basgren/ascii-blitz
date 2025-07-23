@@ -93,4 +93,8 @@ public class DrawUtils {
     _target.Clear();
     return this;
   }
+  
+  public DrawUtils DrawTextCentered(int x, int y, string str) {
+    return DrawText(x - str.Length / 2, y, str);
+  }
 }

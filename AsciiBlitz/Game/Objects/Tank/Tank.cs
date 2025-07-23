@@ -12,7 +12,7 @@ public interface ITankController {
 
 public class TankAttrs {
   // How long it takes to turn 90deg
-  public readonly float TurnTime = 0.5f;
+  public readonly float TurnTime = 0.4f;
   
   // How long it takes to move forward by 1 tile
   public readonly float MoveForwardTime = 0.5f;

@@ -1,9 +1,7 @@
 ﻿namespace AsciiBlitz.Game.Map;
 
 public class InteractiveMapGenerator(int startWidth, int startHeight, int seed) {
-  private int _width = MakeOdd(startWidth);
-  private int _height = MakeOdd(startHeight);
-  private int _seed = seed;
+  private MazeGenerationOptions _options = new(MakeOdd(startWidth), MakeOdd(startHeight), seed); 
 
   private const int MinWidth = 11;
   private const int MaxWidth = 49;
@@ -11,46 +9,48 @@ public class InteractiveMapGenerator(int startWidth, int startHeight, int seed) 
   private const int MaxHeight = 25; // Limit just to make everything fit window height.
   private const int MinSeed = 1;
 
-  public string[] Generate() {
+  public MazeGenerationOptions ReadOptions() {
     ConsoleKey key;
     string[] maze = null!;
 
     do {
       Console.Clear();
-      maze = MazeGenerator.GenerateValidMaze(_width, _height, 10, _seed);
+      maze = MazeGenerator.GenerateValidMaze(_options, 10);
       Console.WriteLine("Ascii Blitz - Interactive Map Generator");
       Console.WriteLine("[←→] Width  [↑↓] Height  [Q/A] Seed  [R]andom  [Enter] Confirm  [Esc] Exit");
-      Console.WriteLine($"Width: {_width}, Height: {_height}, Seed: {_seed}");
+      Console.WriteLine($"Width: {_options.Width}, Height: {_options.Height}, Seed: {_options.Seed}");
       DrawColoredMaze(maze);
       key = Console.ReadKey(true).Key;
 
       switch (key) {
         case ConsoleKey.LeftArrow:
-          _width = Math.Max(MinWidth, _width - 2);
+          _options.Width = Math.Max(MinWidth, _options.Width - 2);
           break;
         case ConsoleKey.RightArrow:
-          _width = Math.Min(MaxWidth, _width + 2);
+          _options.Width = Math.Min(MaxWidth, _options.Width + 2);
           break;
         case ConsoleKey.UpArrow:
-          _height = Math.Min(MaxHeight, _height + 2);
+          _options.Height = Math.Min(MaxHeight, _options.Height + 2);
           break;
         case ConsoleKey.DownArrow:
-          _height = Math.Max(MinHeight, _height - 2);
+          _options.Height = Math.Max(MinHeight, _options.Height - 2);
           break;
         case ConsoleKey.Q:
-          _seed++;
+          _options.Seed++;
           break;
         case ConsoleKey.A:
-          _seed = Math.Max(MinSeed, _seed - 1);
+          _options.Seed = Math.Max(MinSeed, _options.Seed - 1);
           break;
         case ConsoleKey.R:
           var rng = new Random();
-          _width = MakeOdd(rng.Next(MinWidth, MaxWidth + 1));
-          _height = MakeOdd(rng.Next(MinHeight, MaxHeight + 1));
-          _seed = rng.Next(MinSeed, 10000);
+          _options.Width = MakeOdd(rng.Next(MinWidth, MaxWidth + 1));
+          _options.Height = MakeOdd(rng.Next(MinHeight, MaxHeight + 1));
+          _options.Seed = rng.Next(MinSeed, 10000);
           break;
+        
         case ConsoleKey.Enter:
-          return maze;
+          return _options;
+        
         case ConsoleKey.Escape:
           Environment.Exit(0);
           break;

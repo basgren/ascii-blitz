@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Types;
+﻿using AsciiBlitz.Game;
+using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Objects;
 

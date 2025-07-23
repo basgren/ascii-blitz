@@ -1,13 +1,17 @@
 ﻿namespace AsciiBlitz.Game.Map;
 
+public struct MazeGenerationOptions(int width, int height, int? seed) {
+  public int Width { get; set; } = width;
+  public int Height { get; set; } = height;
+  public int Seed { get; set; } = seed ?? 1;
+}
+
 public static class MazeGenerator {
-  public static string[] GenerateValidMaze(int width, int height, int maxAttempts = 10, int? seed = null) {
-    if (seed.HasValue) {
-      MazeBuilder.SetSeed(seed.Value);
-    }
+  public static string[] GenerateValidMaze(MazeGenerationOptions attrs, int maxAttempts = 10) {
+    MazeBuilder.SetSeed(attrs.Seed);
 
     for (int attempt = 0; attempt < maxAttempts; attempt++) {
-      var maze = MazeBuilder.GenerateMaze(width, height);
+      var maze = MazeBuilder.GenerateMaze(attrs.Width, attrs.Height);
 
       if (IsConnected(maze, out _, out _)) {
         return ConvertToStringArray(maze);

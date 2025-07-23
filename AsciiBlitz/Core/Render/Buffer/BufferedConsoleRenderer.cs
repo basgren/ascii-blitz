@@ -78,4 +78,9 @@ public class BufferedConsoleRenderer {
     (_front, _back) = (_back, _front);
     _front.Clear();
   }
+
+  public void Clear() {
+    _front.Clear();
+    _back.Clear();
+  }
 }

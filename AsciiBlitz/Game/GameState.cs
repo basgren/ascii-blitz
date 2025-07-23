@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Core.Input;
+﻿using AsciiBlitz.Core;
+using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
@@ -6,25 +7,40 @@ using AsciiBlitz.Game.Objects.Tank;
 using AsciiBlitz.Game.Objects.Tank.Controllers;
 using AsciiBlitz.Types;
 
-namespace AsciiBlitz.Core;
+namespace AsciiBlitz.Game;
 
 public interface IGameState {
   T CreateUnit<T>() where T : UnitObject, new();
   IGameMap GetMap();
+  Tank Player { get; }
+  IReadonlyStateMachine<GameStage> Stage { get; }
+  int Level { get; }
+  int Score { get; }
+  int EnemiesCount { get; }
+  int EnemiesDestroyed { get; }
 }
 
 public class GameState : IGameState {
   public Tank Player { get; private set; }
+  public IReadonlyStateMachine<GameStage> Stage => _stage;
+  public int Level { get; private set; } = 1;
+  public int Score { get; set; } = 0;
+  public int EnemiesCount { get; private set; }
+  public int EnemiesDestroyed { get; set; }
 
+  private readonly GameStageStateMachine _stage = new();
   private GameMap _map = new();
   private readonly List<UnitObject> _objects = new();
   private readonly Dictionary<GameObject, int> _objectLayerMap = new();
-  private HashSet<UnitObject> _markedForDestruction = new();
-
-  // TODO: think about init order - currently we have to add map first, then init Player.
+  private readonly HashSet<UnitObject> _markedForDestruction = new();
 
   public IGameMap GetMap() {
     return _map;
+  }
+
+  public void Update(IFrameContext frameContext) {
+    RemoveMarkedForDestruction();
+    _stage.Update(frameContext.DeltaTime);
   }
 
   public void GoToMap(GameMap map, BufferedConsoleInput input) {
@@ -32,6 +48,8 @@ public class GameState : IGameState {
     SetMap(map);
     InitPlayer(input);
     InitEnemies(map.EnemySpawnPoints);
+
+    EnemiesCount = map.EnemySpawnPoints.Count;
   }
 
   private void InitEnemies(IReadOnlyList<Vec2> spawnPoints) {
@@ -124,5 +142,25 @@ public class GameState : IGameState {
     Player.OnVisit = (pos) => {
       GetMap().TileVisited(pos, Player.Dir);
     };
+  }
+
+  public void StartLevel() {
+    _stage.Go(GameStage.InGame);
+  }
+
+  public void GameOver() {
+    _stage.Go(GameStage.GameOver);
+  }
+
+  public void Reset() {
+    Score = 0;
+    Level = 1;
+    _stage.Go(GameStage.LevelIntro);
+  }
+
+  public void GoNextLevel() {
+    Level++;
+    EnemiesDestroyed = 0;
+    _stage.Go(GameStage.LevelIntro);
   }
 }

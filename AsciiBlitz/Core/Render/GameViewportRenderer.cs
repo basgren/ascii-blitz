@@ -76,10 +76,11 @@ public class GameViewportRenderer {
 
       if (layer is ObjectLayer objLayer) {
         foreach (UnitObject obj in objLayer.GetObjects()) {
-          // Strange case - we have to round x value and just trim decimals in y to prevent player
-          // tank shaking during viewport panning  
+          // Strange case - without rounding player tank is shaking during viewport panning and
+          // projectile is misaligned, but with rounding situation a bit better, but tank shakes
+          // only when panning vertically. 
           int x = (int)Math.Round(obj.Pos.X * ScaleX - viewportOffset.X);
-          int y = (int)(obj.Pos.Y * ScaleY - viewportOffset.Y);
+          int y = (int)Math.Round(obj.Pos.Y * ScaleY - viewportOffset.Y);
           int spriteWidth = obj.Sprite?.Width ?? 0;
           int spriteHeight = obj.Sprite?.Height ?? 0;
 

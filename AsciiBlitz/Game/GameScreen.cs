@@ -22,14 +22,38 @@ public class GameScreen {
     _draw = new DrawUtils(_menu);
   }
 
-  public void Render(ScreenBuffer target, IGameMap map, Tank player, IFrameContext frame) {
+  public void Render(ScreenBuffer target, IGameState gameState, IFrameContext frame) {
     InitSurfaces(target);
+    
+    var player = gameState.Player;
+    var map = gameState.GetMap();
+    var stage = gameState.Stage;
 
-    _mapRenderer
-      .SetCameraCenterWorldCoords(player.Pos)
-      .Render(_gameViewport, map, frame.ElapsedTime);
+    switch (stage.State) {
+      case GameStage.LevelIntro:
+        _draw
+          .SetTarget(_gameViewport)
+          .DrawTextCentered(_gameViewport.Width / 2, _gameViewport.Height / 2 - 1, $"Level {gameState.Level}")
+          .DrawTextCentered(_gameViewport.Width / 2, _gameViewport.Height / 2 + 1, $"Press any key to start...");
+        break;
+      
+      case GameStage.InGame:
+        _mapRenderer
+          .SetCameraCenterWorldCoords(player.Pos)
+          .Render(_gameViewport, map, frame.ElapsedTime);
+        break;
+      
+      case GameStage.GameOver:
+        _draw
+          .SetTarget(_gameViewport)
+          .DrawTextCentered(_gameViewport.Width / 2, _gameViewport.Height / 2 - 1, "Game Over")
+          .DrawTextCentered(_gameViewport.Width / 2, _gameViewport.Height / 2 + 1, $"Press any key to start...");
+        break;
+      
+      default: throw new ArgumentOutOfRangeException();
+    }
 
-    DrawInfoPanel(player, frame);
+    DrawInfoPanel(gameState, frame);
 
     _draw
       .SetTarget(target)
@@ -40,13 +64,18 @@ public class GameScreen {
     target.DrawFrom(_menu, _screenWidth - MenuWidth - Gap, 1);
   }
 
-  private void DrawInfoPanel(Tank player, IFrameContext frame) {
+  private void DrawInfoPanel(IGameState gameState, IFrameContext frame) {
+    var player = gameState.Player;
+
     _draw
       .SetTarget(_menu)
-      .DrawTextLines(1, 0, HeaderLines);
-
+      .DrawTextLines(1, 0, HeaderLines)
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 2, $"Level {gameState.Level}")
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 3, $"Destroyed: {gameState.EnemiesDestroyed} / {gameState.EnemiesCount}")
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 4, $"Score: {gameState.Score.ToString().PadLeft(4, '0')}");
+    
     int weapX = 2;
-    int weapY = 7;
+    int weapY = 12;
     int weapWidth = 15;
 
     _draw

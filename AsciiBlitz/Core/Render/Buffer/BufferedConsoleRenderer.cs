@@ -1,5 +1,6 @@
-using System.Runtime.InteropServices;
 using System.Text;
+
+using AsciiBlitz.Core.Utils;
 
 namespace AsciiBlitz.Core.Render.Buffer;
 
@@ -16,9 +17,8 @@ public class BufferedConsoleRenderer {
     Console.OutputEncoding = Encoding.UTF8;
   }
 
-  public void Init() {
-    int width = Console.WindowWidth;
-    int height = Console.WindowHeight;
+  public void SetSize(int width, int height) {
+    ConsoleUtils.SetConsoleSizeSafe(width, height);
     
     _front.SetSize(width, height);
     _back.SetSize(width, height);

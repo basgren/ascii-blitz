@@ -25,7 +25,7 @@ public class GameRunner {
   public void Run() {
     Console.Clear();
     Console.CursorVisible = false;
-    _consoleRenderer.Init();
+    _consoleRenderer.SetSize(120, 30);
 
     InitMap(false);
 

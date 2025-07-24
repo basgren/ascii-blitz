@@ -1,6 +1,4 @@
 ﻿using AsciiBlitz;
-using AsciiBlitz.Debug;
-using AsciiBlitz.Game;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 

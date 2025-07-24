@@ -12,6 +12,18 @@
       <Content Include="Assets\Maps\PlaygroundMap.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Assets\Images\Intro.txt" />
+      <Content Include="Assets\Images\Intro.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Images\SmallLogo.txt" />
+      <Content Include="Assets\Images\SmallLogo.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Images\BigLogo.txt" />
+      <Content Include="Assets\Images\BigLogo.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

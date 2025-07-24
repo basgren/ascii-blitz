@@ -1,8 +1,12 @@
-﻿using AsciiBlitz.Core;
+﻿using System.Collections;
+
+using AsciiBlitz.Core;
 using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Services;
+using AsciiBlitz.Game.Map;
 using AsciiBlitz.Game.Objects.Tank;
 using AsciiBlitz.Game.Objects.Tank.Controllers;
 using AsciiBlitz.Types;
@@ -10,14 +14,29 @@ using AsciiBlitz.Types;
 namespace AsciiBlitz.Game;
 
 public interface IGameState {
+  /// <summary>
+  /// Parameters of maze generation for the first room. If set to null, test map will be loaded from file when
+  /// player enters the game room.
+  /// </summary>
+  MazeGenerationOptions? InitialMazeOptions { get; set; } 
+  MazeGenerationOptions? CurrentMazeOptions { get; set; } 
+  
   T CreateUnit<T>() where T : UnitObject, new();
   IGameMap GetMap();
   Tank Player { get; }
   IReadonlyStateMachine<GameStage> Stage { get; }
   int Level { get; }
-  int Score { get; }
+  int Score { get; set; }
   int EnemiesCount { get; }
-  int EnemiesDestroyed { get; }
+  int EnemiesDestroyed { get; set; }
+
+  void GoToMap(GameMap map);
+  void Reset();
+  IReadOnlyList<UnitObject> GetObjects();
+  IReadOnlyList<GameObject> GetObjectsOfType<T>();
+  void GameOver();
+  void GoNextLevel();
+  void StartLevel();
 }
 
 public class GameState : IGameState {
@@ -27,12 +46,15 @@ public class GameState : IGameState {
   public int Score { get; set; } = 0;
   public int EnemiesCount { get; private set; }
   public int EnemiesDestroyed { get; set; }
-
+  public MazeGenerationOptions? InitialMazeOptions { get; set; }
+  public MazeGenerationOptions? CurrentMazeOptions { get; set; }
+  
   private readonly GameStageStateMachine _stage = new();
   private GameMap _map = new();
   private readonly List<UnitObject> _objects = new();
   private readonly Dictionary<GameObject, int> _objectLayerMap = new();
   private readonly HashSet<UnitObject> _markedForDestruction = new();
+  private readonly IGameInput _input = Services.Get<IGameInput>();
 
   public IGameMap GetMap() {
     return _map;
@@ -43,10 +65,10 @@ public class GameState : IGameState {
     _stage.Update(frameContext.DeltaTime);
   }
 
-  public void GoToMap(GameMap map, BufferedConsoleInput input) {
+  public void GoToMap(GameMap map) {
     DestroyAll();
     SetMap(map);
-    InitPlayer(input);
+    InitPlayer(_input);
     InitEnemies(map.EnemySpawnPoints);
 
     EnemiesCount = map.EnemySpawnPoints.Count;

@@ -19,7 +19,7 @@ public class ScreenBuffer {
   public void Clear() {
     for (int y = 0; y < Height; y++) {
       for (int x = 0; x < Width; x++) {
-        Surface[y, x] = null;        
+        Surface[y, x] = new ScreenCell(' ', 7, 0);        
       }
     }
   }

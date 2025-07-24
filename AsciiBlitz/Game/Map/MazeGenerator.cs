@@ -1,12 +1,19 @@
 ﻿namespace AsciiBlitz.Game.Map;
 
-public struct MazeGenerationOptions(int width, int height, int? seed) {
+public class MazeGenerationOptions(int width, int height, int? seed) {
   public int Width { get; set; } = width;
   public int Height { get; set; } = height;
   public int Seed { get; set; } = seed ?? 1;
 }
 
 public static class MazeGenerator {
+  private const int MinWidth = 15;
+  private const int MaxWidth = 59;
+  private const int MinHeight = 15;
+  private const int MaxHeight = 59;
+  private const int MinSeed = 1;
+  private const int MaxSeed = 10000;
+
   public static string[] GenerateValidMaze(MazeGenerationOptions attrs, int maxAttempts = 10) {
     MazeBuilder.SetSeed(attrs.Seed);
 
@@ -87,10 +94,10 @@ public static class MazeGenerator {
     int height = grid.GetLength(0);
     int width = grid.GetLength(1);
     var result = new string[height];
-    
+
     for (int y = 0; y < height; y++) {
       char[] row = new char[width];
-      
+
       for (int x = 0; x < width; x++) {
         row[x] = grid[y, x];
       }
@@ -100,4 +107,28 @@ public static class MazeGenerator {
 
     return result;
   }
+
+  public static void ClampGenerationOptions(MazeGenerationOptions options) {
+    // Sizes must be odd.
+    options.Width = Math.Clamp(options.Width, MinWidth, MaxWidth);
+    options.Height = Math.Clamp(options.Height, MinHeight, MaxHeight);
+    options.Seed = Math.Clamp(options.Seed, MinSeed, MaxSeed);
+  }
+
+  public static MazeGenerationOptions GetRandomOptions() {
+    var rng = new Random();
+
+    return new MazeGenerationOptions(
+      MakeOdd(rng.Next(MinWidth, MaxWidth + 1)),
+      MakeOdd(rng.Next(MinHeight, MaxHeight + 1)),
+      rng.Next(MinSeed, MaxSeed)
+    );
+  }
+
+  /// <summary>
+  /// To avoid issues with generating walls, we have to provide odd numbers for width and height.
+  /// </summary>
+  /// <param name="value"></param>
+  /// <returns></returns>
+  private static int MakeOdd(int value) => (value % 2 == 0) ? value + 1 : value;
 }

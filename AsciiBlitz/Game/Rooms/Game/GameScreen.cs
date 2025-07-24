@@ -1,9 +1,8 @@
-﻿using AsciiBlitz.Core.Map;
-using AsciiBlitz.Core.Render;
+﻿using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Game.Objects.Tank;
 
-namespace AsciiBlitz.Game;
+namespace AsciiBlitz.Game.Rooms.Game;
 
 public class GameScreen {
   private const int MenuWidth = 21;
@@ -66,16 +65,24 @@ public class GameScreen {
 
   private void DrawInfoPanel(IGameState gameState, IFrameContext frame) {
     var player = gameState.Player;
-
+    
     _draw
       .SetTarget(_menu)
       .DrawTextLines(1, 0, HeaderLines)
-      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 2, $"Level {gameState.Level}")
-      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 3, $"Destroyed: {gameState.EnemiesDestroyed} / {gameState.EnemiesCount}")
-      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 4, $"Score: {gameState.Score.ToString().PadLeft(4, '0')}");
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 1, $"Level {gameState.Level}")
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 2, $"Destroyed: {gameState.EnemiesDestroyed} / {gameState.EnemiesCount}")
+      .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 3, $"Score: {gameState.Score.ToString().PadLeft(4, '0')}");
+
+    var options = gameState.CurrentMazeOptions;
+    
+    if (options != null) {
+      _draw  
+        .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 5, $"Seed: {options?.Seed}")
+        .DrawTextCentered(_menu.Width / 2, HeaderLines.Length + 6, $"Size: {options?.Width}x{options?.Height}");;      
+    }
     
     int weapX = 2;
-    int weapY = 12;
+    int weapY = 13;
     int weapWidth = 15;
 
     _draw
@@ -112,14 +119,13 @@ public class GameScreen {
     _menu.DrawFrom(_bulletViewport, weapX + 1, weapY + 2);
 
     string[] menuLines = [
-      "\u2190\u2192 Turn   \u2191\u2193 Move",
-      "   [space] Fire",
-      "",
-      "1 - Test map",
-      "Esc - Quit",
+      "[\u2190\u2192] Turn",
+      "[\u2191\u2193] Move",
+      "[space] Fire",
+      "[Esc] Main Menu",
     ];
     
-    var dbgMenuY = _menu.Height - menuLines.Length - 3;
+    var dbgMenuY = _menu.Height - menuLines.Length - 4;
     
     _draw
       .SetTarget(_menu)

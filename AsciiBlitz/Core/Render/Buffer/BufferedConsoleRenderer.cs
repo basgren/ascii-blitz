@@ -4,12 +4,28 @@ using AsciiBlitz.Core.Utils;
 
 namespace AsciiBlitz.Core.Render.Buffer;
 
+public interface IConsoleRenderer {
+  /// <summary>
+  /// Returns currently active buffer. Don't store this value, as it will change after every rendering to console.
+  /// Use actual value every time you render something to the buffer.
+  /// </summary>
+  ScreenBuffer Buffer { get; }
+  void Clear();
+  void SetSize(int width, int height);
+  void Render();
+}
+
 /// <summary>
 /// Tightly linked with Console. Renders contents of the buffer right on the screen. 
 /// </summary>
-public class BufferedConsoleRenderer {
+public class BufferedConsoleRenderer : IConsoleRenderer {
   private ScreenBuffer _front = new(1, 1);
   private ScreenBuffer _back = new(1, 1);
+  
+  /// <summary>
+  /// Should be set to true when full screen should be re-rendered. For example, when both buffers are cleared.
+  /// </summary>
+  private bool _forceRender = false;
 
   public ScreenBuffer Buffer => _front;
 
@@ -38,7 +54,7 @@ public class BufferedConsoleRenderer {
       bool changed = false;
 
       for (int x = 0; x < width; x++) {
-        if (curr[y, x] != prev[y, x]) {
+        if (_forceRender || curr[y, x] != prev[y, x]) {
           changed = true;
           break;
         }
@@ -77,10 +93,13 @@ public class BufferedConsoleRenderer {
     // Swap buffers
     (_front, _back) = (_back, _front);
     _front.Clear();
+    
+    _forceRender = false;
   }
 
   public void Clear() {
     _front.Clear();
     _back.Clear();
+    _forceRender = true;
   }
 }

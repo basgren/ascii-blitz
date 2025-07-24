@@ -6,7 +6,7 @@ namespace AsciiBlitz.Game.Tiles;
 public class BridgeTileSprite() : Sprite(5, 3) {
   public override void UpdateCell(in CharContext context, ref ScreenCell cell) {
     cell.Char = '|';
-    // cell.BgColor = AnsiColor.Rgb(1, 1, 1);
+    cell.BgColor = AnsiColor.Rgb(1, 1, 1);
     // 94, 130, 136
     cell.BgColor = 94;
     cell.Color = 136;

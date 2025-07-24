@@ -1,4 +1,5 @@
-﻿using AsciiBlitz.Core.Objects;
+﻿using AsciiBlitz.Core.Audio;
+using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Sprites;
@@ -33,10 +34,12 @@ public class Projectile : UnitObject, ICollidable, IDamager {
   }
 
   public void OnCollision(TileObject? tile) {
+    GameSoundService.Instance.PlaySound("explosion.wav");
     Destroy();
   }
 
   public void OnCollision(ICollidable? tile) {
+    GameSoundService.Instance.PlaySound("explosion.wav");
     // TODO: do we need 2 OnCollision handlers? Think later - maybe unite handling of Tiles and Objects
     Destroy();
   }

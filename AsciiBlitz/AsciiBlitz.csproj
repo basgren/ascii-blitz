@@ -5,11 +5,20 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
       <None Remove="Assets\Maps\PlaygroundMap.txt" />
       <Content Include="Assets\Maps\PlaygroundMap.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Sounds\tank-firing.wav" />
+      <Content Include="Assets\Sounds\tank-firing.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Assets\Sounds\explosion.wav" />
+      <Content Include="Assets\Sounds\explosion.wav">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <None Remove="Assets\Images\Intro.txt" />
@@ -27,7 +36,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Assets\Sounds\" />
       <Folder Include="Core\Commands\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK" Version="4.9.4" />
     </ItemGroup>
 
 </Project>

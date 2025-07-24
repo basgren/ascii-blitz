@@ -1,4 +1,5 @@
 ﻿using AsciiBlitz.Core;
+using AsciiBlitz.Core.Audio;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render.Sprites;
@@ -108,6 +109,7 @@ public class Tank : UnitObject, ICollidable, IDamageable {
       bullet.Speed = Dir.ToVec2() * 4f;
       bullet.Pos = GetShootPoint(bullet);
       bullet.MaxTravelDistance = FireRange;
+      GameSoundService.Instance.PlaySound("tank-firing.wav");
       
       _weaponState.GoDelayed(TankWeaponState.Reloading, _attrs.WeaponShotTime, _ => {
         _weaponState.GoDelayed(TankWeaponState.Idle, _attrs.WeaponReloadTime);

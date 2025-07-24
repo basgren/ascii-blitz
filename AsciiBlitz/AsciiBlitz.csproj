@@ -33,6 +33,10 @@
       <Content Include="Assets\Images\BigLogo.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Assets\Sounds\rocks-falling.wav" />
+      <Content Include="Assets\Sounds\rocks-falling.wav">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

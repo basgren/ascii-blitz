@@ -41,6 +41,7 @@ public class TileLayer(int id, int order) : AbstractMapLayer<TileObject>(id, ord
 
   public override void Remove(TileObject obj) {
     _tiles[obj.Pos.X, obj.Pos.Y] = null;
+    obj.Destroy();
     
     ClearCache();
   }

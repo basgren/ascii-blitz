@@ -39,8 +39,8 @@ public class MapGenScreen {
     
     _draw
       .SetTarget(target)
-      .DrawBorder(0, 0, _gameViewport.Width + 2, _gameViewport.Height + 2, DrawUtils.Rounded)
-      .DrawBorder(_screenWidth - MenuWidth - Gap * 2, 0, MenuWidth + 2, _screenHeight, DrawUtils.DoubleLine);
+      .DrawRect(0, 0, _gameViewport.Width + 2, _gameViewport.Height + 2, DrawUtils.Rounded)
+      .DrawRect(_screenWidth - MenuWidth - Gap * 2, 0, MenuWidth + 2, _screenHeight, DrawUtils.DoubleLine);
 
     int x = _gameViewport.Width / 2 - _mapBuffer.Width / 2 + mapGenContext.OffsX;
     int y = _gameViewport.Height / 2 - _mapBuffer.Height / 2 + mapGenContext.OffsY;

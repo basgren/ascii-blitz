@@ -1,8 +1,8 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
 using AsciiBlitz.Core.Render;
+using AsciiBlitz.Core.Render.Sprites;
 using AsciiBlitz.Core.Types;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Game.Objects;
 

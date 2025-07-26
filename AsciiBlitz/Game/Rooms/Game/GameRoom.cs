@@ -11,6 +11,8 @@ using AsciiBlitz.Game.Objects.Tank;
 namespace AsciiBlitz.Game.Rooms.Game;
 
 public class GameRoom : AbstractRoom {
+  private const float LevelCompleteDelay = 2f;
+  
   private readonly IGameState _gameState = Services.Get<IGameState>();
   private readonly IConsoleRenderer _renderer = Services.Get<IConsoleRenderer>();
   private readonly IRoomService _roomService = Services.Get<IRoomService>();
@@ -33,11 +35,12 @@ public class GameRoom : AbstractRoom {
       case GameStage.LevelIntro:
         if (_input.GetKey() != null) {
           _gameState.StartLevel();
+          _input.Consume();
         }
-
         break;
 
       case GameStage.InGame:
+      case GameStage.LevelComplete:
         ProcessInGameFrame(frameContext);
         break;
 
@@ -45,8 +48,8 @@ public class GameRoom : AbstractRoom {
         if (_input.GetKey() != null) {
           InitMap();
           _gameState.Reset();
+          _input.Consume();
         }
-
         break;
 
       default:
@@ -73,6 +76,7 @@ public class GameRoom : AbstractRoom {
 
     foreach (var obj in allObjects) {
       if (obj is IDamageable { Damageable.IsDead: true }) {
+        obj.OnBeforeDestroy();
         obj.Destroy();
 
         if (obj == _gameState.Player) {
@@ -82,7 +86,7 @@ public class GameRoom : AbstractRoom {
           _gameState.Score += 10;
 
           if (_gameState.EnemiesDestroyed >= _gameState.EnemiesCount) {
-            GoNextLevel();
+            _gameState.LevelComplete(LevelCompleteDelay, GoNextLevel);
           }
         }
       }
@@ -120,11 +124,6 @@ public class GameRoom : AbstractRoom {
         _roomService.GoToRoom<MenuRoom>();
         break;
 
-      case ConsoleKey.D1:
-        GameMap map = _mapFactory.CreateFromFile("PlaygroundMap.txt");
-        _gameState.GoToMap(map);
-        break;
-
       // Debug keys - to quickly destroy enemies or player - just to test process of dying or win/lose conditions
       case ConsoleKey.F3:
         _gameState.Player.Damageable.ApplyDamage(1);
@@ -158,13 +157,11 @@ public class GameRoom : AbstractRoom {
     if (_gameState.InitialMazeOptions == null) {
       map = _mapFactory.CreateFromFile("PlaygroundMap.txt");
     } else {
-      if (_gameState.CurrentMazeOptions == null) {
-        _gameState.CurrentMazeOptions = new MazeGenerationOptions(
-          _gameState.InitialMazeOptions.Width,
-          _gameState.InitialMazeOptions.Height,
-          _gameState.InitialMazeOptions.Seed
-        );
-      }
+      _gameState.CurrentMazeOptions ??= new MazeGenerationOptions(
+        _gameState.InitialMazeOptions.Width,
+        _gameState.InitialMazeOptions.Height,
+        _gameState.InitialMazeOptions.Seed
+      );
 
       string[] maze = MazeGenerator.GenerateValidMaze(_gameState.CurrentMazeOptions);
       map = _mapFactory.CreateFromStrings(maze);

@@ -1,8 +1,9 @@
 ﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Objects.Components;
-using AsciiBlitz.Core.Render;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Render.Sprites;
+using AsciiBlitz.Core.Types;
+using AsciiBlitz.Game.Objects.ParticleSystems;
 
 namespace AsciiBlitz.Game.Objects.Tank;
 
@@ -92,9 +93,18 @@ public class Tank : UnitObject, ICollidable, IDamageable {
     // Do nothing
   }
 
+  public override void OnBeforeDestroy() {
+    // TODO: move to separate system, Tank should not know about effects 
+    var pSystem = GameState.SpawnPartSys<TankExplosionPSystem>();
+
+    Sprite.UpdateAll(this, 0); // we don't care about game time right now, so 0.
+    pSystem.SetParticleChars(Sprite.GetCells());
+    pSystem.SetPos(Pos);
+  }
+
   public void Fire() {
     if (_weaponState.Go(TankWeaponState.Shooting)) {
-      var bullet = GameState.CreateUnit<Projectile>();
+      var bullet = GameState.SpawnUnit<Projectile>();
       bullet.Speed = Dir.ToVec2() * 4f;
       bullet.Pos = GetShootPoint(bullet);
       bullet.MaxTravelDistance = FireRange;

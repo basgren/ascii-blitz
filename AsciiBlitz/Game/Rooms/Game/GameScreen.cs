@@ -23,9 +23,7 @@ public class GameScreen {
 
   public void Render(ScreenBuffer target, IGameState gameState, IFrameContext frame) {
     InitSurfaces(target);
-    
-    var player = gameState.Player;
-    var map = gameState.GetMap();
+
     var stage = gameState.Stage;
 
     switch (stage.State) {
@@ -37,9 +35,8 @@ public class GameScreen {
         break;
       
       case GameStage.InGame:
-        _mapRenderer
-          .SetCameraCenterWorldCoords(player.Pos)
-          .Render(_gameViewport, map, frame.ElapsedTime);
+      case GameStage.LevelComplete:
+        RenderGameView(gameState, frame);
         break;
       
       case GameStage.GameOver:
@@ -56,11 +53,30 @@ public class GameScreen {
 
     _draw
       .SetTarget(target)
-      .DrawBorder(0, 0, _gameViewport.Width + 2, _gameViewport.Height + 2, DrawUtils.Rounded)
-      .DrawBorder(_screenWidth - MenuWidth - Gap * 2, 0, MenuWidth + 2, _screenHeight, DrawUtils.DoubleLine);
+      .DrawRect(0, 0, _gameViewport.Width + 2, _gameViewport.Height + 2, DrawUtils.Rounded)
+      .DrawRect(_screenWidth - MenuWidth - Gap * 2, 0, MenuWidth + 2, _screenHeight, DrawUtils.DoubleLine);
 
     target.DrawFrom(_gameViewport, 1, 1);
     target.DrawFrom(_menu, _screenWidth - MenuWidth - Gap, 1);
+  }
+
+  private void RenderGameView(IGameState gameState, IFrameContext frame) {
+    var player = gameState.Player;
+    var map = gameState.GetMap();
+
+    _mapRenderer
+      .SetCameraCenterWorldCoords(player.Pos)
+      .Render(_gameViewport, map, frame.ElapsedTime);
+
+    if (gameState.Stage.State == GameStage.LevelComplete) {
+      var centerX = _gameViewport.Width / 2;
+      var centerY = _gameViewport.Height / 2;
+
+      _draw
+        .SetTarget(_gameViewport)
+        .DrawRect(centerX - 12, centerY - 2, 24, 5, DrawUtils.Rounded, true)
+        .DrawTextCentered(centerX, centerY, "Level Complete");
+    }
   }
 
   private void DrawInfoPanel(IGameState gameState, IFrameContext frame) {
@@ -92,7 +108,7 @@ public class GameScreen {
           ? AnsiColor.Green
           : AnsiColor.Grayscale(10)
       )
-      .DrawBorder(weapX, weapY + 1, weapWidth + 2, 5, DrawUtils.HeavyLine)
+      .DrawRect(weapX, weapY + 1, weapWidth + 2, 5, DrawUtils.HeavyLine)
       .ResetColor();
 
     int baseBulletX = 2;

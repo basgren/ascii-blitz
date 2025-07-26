@@ -1,6 +1,7 @@
 ﻿using AsciiBlitz.Core.Render;
 using AsciiBlitz.Core.Render.Buffer;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Render.Sprites;
+using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Game.Tiles;
 

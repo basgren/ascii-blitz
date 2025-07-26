@@ -1,4 +1,4 @@
-namespace AsciiBlitz.Types;
+namespace AsciiBlitz.Core.Types;
 
 public readonly struct RectFloat {
   public readonly float X, Y, Width, Height;

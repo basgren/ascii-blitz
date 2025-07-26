@@ -1,6 +1,6 @@
 ﻿using AsciiBlitz.Core.Render.Buffer;
 
-namespace AsciiBlitz.Core.Render;
+namespace AsciiBlitz.Core.Render.Sprites;
 
 public abstract class StaticSprite : Sprite {
   protected StaticSprite(string[] lines, int fgColor = 7, int bgColor = 0)

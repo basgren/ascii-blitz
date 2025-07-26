@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Types;
+﻿namespace AsciiBlitz.Core.Types;
 
 public record struct Vec2(float X, float Y) {
   public static Vec2 Zero => new(0, 0);
@@ -22,6 +22,13 @@ public record struct Vec2(float X, float Y) {
   
   public float Length => MathF.Sqrt(X * X + Y * Y);
   public bool IsZero => X == 0 && Y == 0;
+
+  public Vec2 Normalized() {
+    float len = Length;
+    return len > 0f
+      ? new Vec2(X / len, Y / len)
+      : new Vec2(0f, 0f);
+  }
 
   public override string ToString() {
     return $"[{X}, {Y}]";

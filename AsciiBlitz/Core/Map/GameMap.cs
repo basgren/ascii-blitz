@@ -1,7 +1,7 @@
 ﻿using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Types;
 using AsciiBlitz.Game.Tiles;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Core.Map;
 
@@ -21,6 +21,7 @@ public class GameMap : IGameMap {
   public const int LayerGroundId = 1;
   public const int LayerSolidsId = 2;
   public const int LayerObjectsId = 3;
+  public const int LayerParticlesId = 4;
 
   public int Width => _width;
   public int Height => _height;
@@ -40,6 +41,7 @@ public class GameMap : IGameMap {
     AddTileLayer(LayerGroundId, 10);
     AddTileLayer(LayerSolidsId, 20);
     AddUnitLayer(LayerObjectsId, 30);
+    AddParticlesLayer(LayerParticlesId, 40);
   }
 
   public void SetSize(int width, int height) {
@@ -60,6 +62,13 @@ public class GameMap : IGameMap {
 
   public ObjectLayer AddUnitLayer(int id, int order) {
     var layer = new ObjectLayer(id, order);
+    _layers.Add(id, layer);
+    ClearCache();
+    return layer;
+  }
+  
+  public ParticlesLayer AddParticlesLayer(int id, int order) {
+    var layer = new ParticlesLayer(id, order);
     _layers.Add(id, layer);
     ClearCache();
     return layer;

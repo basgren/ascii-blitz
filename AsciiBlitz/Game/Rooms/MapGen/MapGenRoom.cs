@@ -15,7 +15,7 @@ public class MapGenRoom : AbstractRoom {
   private readonly MapGenContext _mapGenContext = new();
 
   public override void OnRoomEnter() {
-    _mapGenContext.Options = _gameState.InitialMazeOptions ?? new MazeGenerationOptions(41, 41, 7888);
+    _mapGenContext.Options = _gameState.InitialMazeOptions ?? new MazeGenerationOptions(31, 31, 7770);
   }
 
   public override bool ProcessFrame(IFrameContext frameContext) {

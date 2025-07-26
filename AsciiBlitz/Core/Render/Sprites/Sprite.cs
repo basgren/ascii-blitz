@@ -1,9 +1,8 @@
 ﻿using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Render.Buffer;
-using AsciiBlitz.Game.Tiles;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Types;
 
-namespace AsciiBlitz.Core.Render;
+namespace AsciiBlitz.Core.Render.Sprites;
 
 public readonly struct CharContext(GameObject? gameObject, double gameTime, Vec2Int charPos) {
   public GameObject? GameObject { get; } = gameObject;

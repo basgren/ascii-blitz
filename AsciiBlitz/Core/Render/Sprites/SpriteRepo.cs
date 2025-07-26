@@ -1,4 +1,4 @@
-﻿namespace AsciiBlitz.Core.Render;
+﻿namespace AsciiBlitz.Core.Render.Sprites;
 
 public static class SpriteRepo {
   private static readonly Dictionary<Type, Sprite> Cache = new();

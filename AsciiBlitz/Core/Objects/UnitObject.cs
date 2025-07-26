@@ -1,5 +1,5 @@
-﻿using AsciiBlitz.Game;
-using AsciiBlitz.Types;
+﻿using AsciiBlitz.Core.Types;
+using AsciiBlitz.Game;
 
 namespace AsciiBlitz.Core.Objects;
 
@@ -14,8 +14,5 @@ public abstract class UnitObject : GameObject {
   public IGameState GameState {
     get => _gameState ?? throw new NullReferenceException($"Game state is not set for object {this}");
     set => _gameState = value;
-  }
-
-  public virtual void Update(float deltaTime) {
   }
 }

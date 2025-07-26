@@ -1,9 +1,10 @@
 ﻿using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
+using AsciiBlitz.Core.Objects.ParticleSystems;
 using AsciiBlitz.Core.Render.Buffer;
 using AsciiBlitz.Core.Render.Sprites;
-using AsciiBlitz.Types;
+using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Render;
 
@@ -88,6 +89,10 @@ public class GameViewportRenderer {
             RenderGameObjectSprite(target, obj, x, y, timeFromStartSec);            
           }
         }
+      } else if (layer is ParticlesLayer partLayer) {
+        foreach (var partSys in partLayer.GetObjects()) {
+          RenderParticleSystem(target, partSys, viewportOffset);
+        }
       }
     }
   }
@@ -135,5 +140,22 @@ public class GameViewportRenderer {
     }
 
     return null;
+  }
+  
+  private void RenderParticleSystem(ScreenBuffer buffer, ParticleSystem partSys, Vec2Int viewportOffset) {
+    foreach (var particle in partSys.Particles) {
+      if (!particle.IsAlive) {
+        continue;
+      }
+
+      int screenX = (int)(particle.Pos.X * ScaleX - viewportOffset.X);
+      int screenY = (int)(particle.Pos.Y * ScaleY - viewportOffset.Y);
+
+      char symbol = particle.Symbol;
+      int fg = particle.Color;
+      int bg = 0;
+
+      buffer.Set(screenX, screenY, symbol, fg, bg);
+    }
   }
 }

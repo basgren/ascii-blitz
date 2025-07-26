@@ -1,15 +1,14 @@
-﻿using System.Collections;
-
-using AsciiBlitz.Core;
+﻿using AsciiBlitz.Core;
 using AsciiBlitz.Core.Input;
 using AsciiBlitz.Core.Map;
 using AsciiBlitz.Core.Map.Layers;
 using AsciiBlitz.Core.Objects;
 using AsciiBlitz.Core.Services;
+using AsciiBlitz.Core.Types;
 using AsciiBlitz.Game.Map;
+using AsciiBlitz.Game.Objects.ParticleSystems;
 using AsciiBlitz.Game.Objects.Tank;
 using AsciiBlitz.Game.Objects.Tank.Controllers;
-using AsciiBlitz.Types;
 
 namespace AsciiBlitz.Game;
 
@@ -21,7 +20,8 @@ public interface IGameState {
   MazeGenerationOptions? InitialMazeOptions { get; set; } 
   MazeGenerationOptions? CurrentMazeOptions { get; set; } 
   
-  T CreateUnit<T>() where T : UnitObject, new();
+  T SpawnUnit<T>() where T : UnitObject, new();
+  T SpawnPartSys<T>() where T : TankExplosionPSystem, new(); // TODO: implement on abstract class. currently added BigExplosionPSys  just for test.
   IGameMap GetMap();
   Tank Player { get; }
   IReadonlyStateMachine<GameStage> Stage { get; }
@@ -32,11 +32,12 @@ public interface IGameState {
 
   void GoToMap(GameMap map);
   void Reset();
-  IReadOnlyList<UnitObject> GetObjects();
+  IReadOnlyList<GameObject> GetObjects();
   IReadOnlyList<GameObject> GetObjectsOfType<T>();
   void GameOver();
   void GoNextLevel();
   void StartLevel();
+  void LevelComplete(float delay, Action action);
 }
 
 public class GameState : IGameState {
@@ -51,9 +52,9 @@ public class GameState : IGameState {
   
   private readonly GameStageStateMachine _stage = new();
   private GameMap _map = new();
-  private readonly List<UnitObject> _objects = new();
+  private readonly List<GameObject> _objects = new();
   private readonly Dictionary<GameObject, int> _objectLayerMap = new();
-  private readonly HashSet<UnitObject> _markedForDestruction = new();
+  private readonly HashSet<GameObject> _markedForDestruction = new();
   private readonly IGameInput _input = Services.Get<IGameInput>();
 
   public IGameMap GetMap() {
@@ -76,7 +77,7 @@ public class GameState : IGameState {
 
   private void InitEnemies(IReadOnlyList<Vec2> spawnPoints) {
     foreach (var point in spawnPoints) {
-      var enemy = CreateUnit<Tank>();
+      var enemy = SpawnUnit<Tank>();
       // enemy.Controller = new TankPatrolController(GetMap());
       enemy.Controller = new TankRandomWalkController(GetMap(), Player);
       enemy.Pos = point;
@@ -90,14 +91,16 @@ public class GameState : IGameState {
     _map = map;
   }
 
-  public T CreateUnit<T>() where T : UnitObject, new() {
-    return CreateObject<T>(GameMap.LayerObjectsId);
+  public T SpawnUnit<T>() where T : UnitObject, new() {
+    var unit = SpawnObject<T>(GameMap.LayerObjectsId);
+    unit.GameState = this;
+    
+    return unit;
   }
 
-  public T CreateObject<T>(int layerId) where T : UnitObject, new() {
+  public T SpawnObject<T>(int layerId) where T : GameObject, new() {
     ObjectLayer layer = _map.GetLayer<ObjectLayer>(layerId);
     T obj = new T();
-    obj.GameState = this;
 
     obj.OnDestroyed += DestroyObject;
 
@@ -105,6 +108,21 @@ public class GameState : IGameState {
     AddObject(obj);
 
     _objectLayerMap[obj] = layerId;
+
+    return obj;
+  }
+  
+  // TODO: implement on abstract class. currently added BigExplosionPSys  just for test.
+  public T SpawnPartSys<T>() where T : TankExplosionPSystem, new() {
+    ParticlesLayer layer = _map.GetLayer<ParticlesLayer>(GameMap.LayerParticlesId);
+    T obj = new T();
+
+    obj.OnDestroyed += DestroyObject;
+
+    layer.Add(obj);
+    AddObject(obj);
+
+    _objectLayerMap[obj] = GameMap.LayerParticlesId;
 
     return obj;
   }
@@ -117,11 +135,14 @@ public class GameState : IGameState {
 
   public void DestroyObject(GameObject obj) {
     if (_objectLayerMap.TryGetValue(obj, out int layerId)) {
-      var layer = _map.GetLayer<ObjectLayer>(layerId);
-
       if (obj is UnitObject unit) {
+        var layer = _map.GetLayer<ObjectLayer>(layerId);
         layer.Remove(unit);
         _markedForDestruction.Add(unit);
+      } else if (obj is TankExplosionPSystem particle) {
+        var layer = _map.GetLayer<ParticlesLayer>(layerId);
+        layer.Remove(particle);
+        _markedForDestruction.Add(particle);
       }
 
       _objectLayerMap.Remove(obj);
@@ -129,7 +150,7 @@ public class GameState : IGameState {
     }
   }
 
-  public IReadOnlyList<UnitObject> GetObjects() {
+  public IReadOnlyList<GameObject> GetObjects() {
     return _objects.Where((obj) => !_markedForDestruction.Contains(obj)).ToList();
   }
 
@@ -139,7 +160,7 @@ public class GameState : IGameState {
       .ToList();
   }
 
-  private void AddObject(UnitObject obj) {
+  private void AddObject(GameObject obj) {
     _objects.Add(obj);
   }
 
@@ -155,7 +176,7 @@ public class GameState : IGameState {
   }
 
   private void InitPlayer(IGameInput input) {
-    Player = CreateUnit<Tank>();
+    Player = SpawnUnit<Tank>();
     Player.Controller = new TankConsoleInputController(input);
     Player.IsPlayer = true;
     Player.SetMaxHealth(9);
@@ -168,6 +189,11 @@ public class GameState : IGameState {
 
   public void StartLevel() {
     _stage.Go(GameStage.InGame);
+  }
+
+  public void LevelComplete(float delay, Action action) {
+    _stage.Go(GameStage.LevelComplete);
+    _stage.GoDelayed(GameStage.LevelIntro, delay, (_) => action());
   }
 
   public void GameOver() {

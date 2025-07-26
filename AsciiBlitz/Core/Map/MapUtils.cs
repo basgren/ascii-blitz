@@ -1,4 +1,4 @@
-﻿using AsciiBlitz.Types;
+﻿using AsciiBlitz.Core.Types;
 
 namespace AsciiBlitz.Core.Map;
 

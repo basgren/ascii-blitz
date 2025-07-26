@@ -9,5 +9,7 @@ try {
   GameRunner gameRunner = new GameRunner();
   gameRunner.Run();
 } catch (Exception e) {
+  Console.Clear();
   Console.WriteLine(e);
+  Console.ReadKey();
 }

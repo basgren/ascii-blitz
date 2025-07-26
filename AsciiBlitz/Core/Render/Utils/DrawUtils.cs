@@ -67,7 +67,7 @@ public class DrawUtils {
     return this;
   }
 
-  public DrawUtils DrawBorder(int x, int y, int width, int height, BorderStyle style) {
+  public DrawUtils DrawRect(int x, int y, int width, int height, BorderStyle style, bool fill = false) {
     int xMax = x + width - 1;
     int yMax = y + height - 1;
 
@@ -86,6 +86,14 @@ public class DrawUtils {
     _target.Set(x, yMax, style.BottomLeft, _fgColor, _bgColor);
     _target.Set(xMax, yMax, style.BottomRight, _fgColor, _bgColor);
 
+    if (fill) {
+      for (int i = x + 1; i < xMax; i++) {
+        for (int j = y + 1; j < yMax; j++) {
+          _target.Set(i, j, ' ', _fgColor, _bgColor);
+        }
+      }
+    }
+    
     return this;
   }
 

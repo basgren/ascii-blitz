@@ -16,7 +16,7 @@ public abstract class GameObject : IUpdatable {
   public virtual void OnBeforeDestroy() {
   }
 
-  public void Destroy() => OnDestroyed?.Invoke(this);
+  public virtual void Destroy() => OnDestroyed?.Invoke(this);
 
   public virtual void Update(float deltaTime) {
   }
